@@ -6,6 +6,9 @@ A typing game for the Eagle Chase 5K. The faster you type, the faster the runner
 
 - `index.html` is the whole game. Double-click it to play in your browser.
 - `street-photos.js` is the list of Street View photos. Add or remove links there.
+- `eagles.png` is the eagle logo shown at the top of the game.
+
+The game's colors and lettering are copied from the Eagle Chase race posters.
 
 ## Adding more street photos
 

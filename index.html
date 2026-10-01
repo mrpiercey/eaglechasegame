@@ -3,97 +3,118 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1B4A42">
 <style>html{color-scheme:light}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>Eagle Chase 5K The Game</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<link rel="icon" href="eagles.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=League+Gothic&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@500;700&display=swap">
 <style>
-/* Layout: one centered column. Scoreboard on top, the street in the middle, and a race bib you type on at the bottom. */
+/* Look: matches the Eagle Chase posters. White paper inside a green frame, green bands between sections,
+   heavy green letters with a tan-gold outline, and the eagle logo up top. */
 :root{
-  --bg:#EDF1F4; --surface:#FFFFFF; --ink:#13233A; --muted:#56667C; --line:#C3CEDA;
-  --gold:#F2B21B; --gold-ink:#13233A; --go:#1B7A4B; --miss:#C5312A; --on-miss:#FFFFFF;
-  --track:#D3DCE5; --scrim:rgba(19,35,58,.66);
-  --display:"Barlow Condensed","Arial Narrow",Impact,sans-serif;
+  --paper:#FFFFFF; --green:#1B4A42; --green-deep:#123630; --tan:#E3CC92; --gold:#D6AB3C;
+  --ink:#1B4A42; --muted:#4D635E; --line:#C7D3CF; --track:#E4EAE7;
+  --typed:#B38F2B; --miss:#C5312A; --on-miss:#FFFFFF; --scrim:rgba(18,54,48,.74);
+  --display:"Archivo Black","Arial Black",Impact,sans-serif;
+  --label:"League Gothic","Arial Narrow",Impact,sans-serif;
   --body:"Atkinson Hyperlegible",Verdana,system-ui,sans-serif;
   --mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
 }
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --bg:#0E1726; --surface:#16233A; --ink:#EAF0F7; --muted:#9DAEC4; --line:#2B3B55;
-    --gold:#F5BC2F; --gold-ink:#13233A; --go:#63D49B; --miss:#FF7A6B; --on-miss:#1C0D0B;
-    --track:#24344D; --scrim:rgba(6,12,22,.72); color-scheme:dark;
-  }
-}
-:root[data-theme="dark"]{
-  --bg:#0E1726; --surface:#16233A; --ink:#EAF0F7; --muted:#9DAEC4; --line:#2B3B55;
-  --gold:#F5BC2F; --gold-ink:#13233A; --go:#63D49B; --miss:#FF7A6B; --on-miss:#1C0D0B;
-  --track:#24344D; --scrim:rgba(6,12,22,.72); color-scheme:dark;
-}
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:1rem;line-height:1.45}
-.wrap{max-width:1020px;margin:0 auto;padding-inline:16px;padding-block:20px 28px;display:flex;flex-direction:column;gap:14px}
+body{background:var(--green);color:var(--ink);font-family:var(--body);font-size:1rem;line-height:1.45;padding:10px}
+.wrap{max-width:1020px;margin:0 auto;background:var(--paper);display:flex;flex-direction:column}
+.band{padding:14px 20px;display:flex;flex-direction:column;gap:12px}
+.band + .band{border-top:5px solid var(--green)}
 
-.top{display:flex;flex-direction:column;gap:2px}
-.eyebrow{margin:0;font-family:var(--display);font-weight:600;font-size:.95rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
-h1{margin:0;font-family:var(--display);font-weight:800;font-size:clamp(2rem,6.2vw,3.3rem);line-height:.98;text-transform:uppercase;letter-spacing:.005em;text-wrap:balance}
-h1 span{display:inline-block;background:var(--gold);color:var(--gold-ink);padding:0 .22em;transform:skew(-8deg)}
-.how{margin:6px 0 0;color:var(--muted);max-width:60ch}
+/* Poster lettering: green letters on a tan-gold outline */
+.ol{--o:.075em;color:var(--green);text-shadow:
+  var(--o) 0 var(--tan),calc(var(--o)*-1) 0 var(--tan),0 var(--o) var(--tan),0 calc(var(--o)*-1) var(--tan),
+  calc(var(--o)*.71) calc(var(--o)*.71) var(--tan),calc(var(--o)*-.71) calc(var(--o)*.71) var(--tan),
+  calc(var(--o)*.71) calc(var(--o)*-.71) var(--tan),calc(var(--o)*-.71) calc(var(--o)*-.71) var(--tan),
+  calc(var(--o)*.92) calc(var(--o)*.38) var(--tan),calc(var(--o)*-.92) calc(var(--o)*.38) var(--tan),
+  calc(var(--o)*.92) calc(var(--o)*-.38) var(--tan),calc(var(--o)*-.92) calc(var(--o)*-.38) var(--tan),
+  calc(var(--o)*.38) calc(var(--o)*.92) var(--tan),calc(var(--o)*-.38) calc(var(--o)*.92) var(--tan),
+  calc(var(--o)*.38) calc(var(--o)*-.92) var(--tan),calc(var(--o)*-.38) calc(var(--o)*-.92) var(--tan)}
+
+.top{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 22px;align-items:center}
+.logo{display:block;width:clamp(104px,25vw,260px);height:auto}
+.eyebrow{margin:0 0 2px;font-family:var(--label);font-size:1.2rem;line-height:1;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+h1{margin:0;font-family:var(--display);font-weight:400;font-size:clamp(1.3rem,5.3vw,3.1rem);line-height:1.08;text-transform:uppercase;text-wrap:balance}
+h1 .tag{display:inline-block;background:var(--green);color:var(--tan);text-shadow:none;padding:.04em .32em;font-size:.72em;vertical-align:.1em}
+.how{grid-column:1/-1;margin:2px 0 0;color:var(--muted);max-width:60ch}
 
 .board{display:grid;grid-template-columns:auto auto auto minmax(0,1fr);gap:10px 26px;align-items:end}
-.stat{display:flex;flex-direction:column;gap:0}
-.stat .k{font-family:var(--display);font-weight:600;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
-.stat .v{font-family:var(--display);font-weight:800;font-size:2rem;line-height:1;font-variant-numeric:tabular-nums;min-width:3.4ch}
-.stat small{font-size:.95rem;font-weight:600;color:var(--muted);letter-spacing:.04em}
+.stat{display:flex;flex-direction:column;gap:2px}
+.stat .k{font-family:var(--label);font-size:1.1rem;line-height:1;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.stat .v{font-family:var(--display);font-size:1.75rem;line-height:1;font-variant-numeric:tabular-nums;min-width:3.7ch}
+#sTime{min-width:5.3ch}
+.stat small{font-family:var(--label);font-size:1.15rem;color:var(--muted);letter-spacing:.05em;text-transform:uppercase}
 .course{display:flex;flex-direction:column;gap:5px;min-width:0;padding-bottom:3px}
-.course .names{display:flex;justify-content:space-between;gap:8px;font-family:var(--display);font-weight:600;font-size:.85rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
-.course .names b{color:var(--ink);font-weight:600}
+.course .names{display:flex;justify-content:space-between;gap:8px;font-family:var(--label);font-size:1.1rem;line-height:1;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.course .names b{color:var(--ink);font-weight:400}
 .rail{position:relative;height:10px;border-radius:5px;background:var(--track)}
-.rail .fill{position:absolute;inset:0 auto 0 0;width:0;border-radius:5px;background:var(--gold)}
-.rail .dot{position:absolute;top:50%;left:0;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;background:var(--ink);border:3px solid var(--gold)}
+.rail .fill{position:absolute;inset:0 auto 0 0;width:0;border-radius:5px;background:var(--green)}
+.rail .dot{position:absolute;top:50%;left:0;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;background:var(--gold);border:3px solid var(--green)}
 
-.stage{position:relative;aspect-ratio:16/7;max-width:100%;border-radius:12px;overflow:hidden;border:2px solid var(--ink);background:#8EC3E8}
+.stage{position:relative;aspect-ratio:16/7;max-width:100%;border-radius:6px;overflow:hidden;border:4px solid var(--green);background:#8EC3E8}
 .stage canvas{display:block;width:100%;height:100%}
 .result{position:absolute;inset:0;display:grid;place-items:center;padding:12px;overflow:auto;background:var(--scrim)}
-.card{background:var(--surface);color:var(--ink);border-radius:10px;padding:16px 20px;max-width:440px;width:100%;display:flex;flex-direction:column;gap:10px;text-align:left}
-.card h2{margin:0;font-family:var(--display);font-weight:800;font-size:1.7rem;line-height:1.02;text-transform:uppercase;text-wrap:balance}
+.card{background:var(--paper);color:var(--ink);border-radius:6px;box-shadow:0 0 0 5px var(--tan);padding:16px 20px;max-width:460px;width:100%;display:flex;flex-direction:column;gap:10px;text-align:left}
+.card h2{margin:0;font-family:var(--display);font-weight:400;font-size:1.45rem;line-height:1.08;text-transform:uppercase;text-wrap:balance}
 .card dl{margin:0;display:grid;grid-template-columns:repeat(4,auto);gap:8px 20px;justify-content:start}
-.card dt{font-family:var(--display);font-weight:600;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
-.card dd{margin:0;font-family:var(--display);font-weight:800;font-size:1.5rem;line-height:1;font-variant-numeric:tabular-nums}
+.card dt{font-family:var(--label);font-size:1rem;line-height:1.1;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.card dd{margin:0;font-family:var(--display);font-size:1.2rem;line-height:1.1;font-variant-numeric:tabular-nums}
 .card p{margin:0;font-size:.95rem;color:var(--muted)}
 .card a{color:var(--ink);font-weight:700}
 .row{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
 
-.bib{position:relative;background:var(--surface);border:2px solid var(--ink);border-radius:10px;padding:0 0 12px;overflow:hidden}
+.bib{position:relative;background:var(--paper);border:4px solid var(--green);border-radius:6px;padding:0 0 12px;overflow:hidden}
 .bib:focus-within{outline:3px solid var(--gold);outline-offset:2px}
-.bibhead{display:flex;justify-content:space-between;gap:12px;background:var(--gold);color:var(--gold-ink);font-family:var(--display);font-weight:800;font-size:1.05rem;letter-spacing:.08em;text-transform:uppercase;padding:5px 40px}
-.pin{position:absolute;width:13px;height:13px;border-radius:50%;background:var(--bg);border:2px solid var(--ink)}
+.bibhead{display:flex;justify-content:space-between;gap:12px;background:var(--green);color:var(--tan);font-family:var(--display);font-size:.95rem;letter-spacing:.04em;text-transform:uppercase;padding:6px 40px}
+.pin{position:absolute;width:13px;height:13px;border-radius:50%;background:var(--paper);border:2px solid var(--green)}
 .pin.tl{top:9px;left:12px}.pin.tr{top:9px;right:12px}.pin.bl{bottom:10px;left:12px}.pin.br{bottom:10px;right:12px}
 .phrase{margin:0;padding:16px 40px 8px;font-family:var(--mono);font-weight:700;font-size:clamp(1.2rem,4.6vw,2.2rem);line-height:1.38;white-space:break-spaces;overflow-wrap:anywhere;min-height:calc(2.76em + 24px)}
-.phrase .d{color:var(--go)}
-.phrase .t{color:var(--ink);opacity:.62}
-.phrase .c{background:var(--gold);color:var(--gold-ink);border-radius:4px}
+.phrase .d{color:var(--typed)}
+.phrase .t{color:var(--ink)}
+.phrase .c{background:var(--green);color:#FFFFFF;border-radius:4px}
 .bib.oops .phrase .c{background:var(--miss);color:var(--on-miss)}
-.bibfoot{margin:0;padding:0 40px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 16px;color:var(--muted);font-size:.95rem}
-.bibfoot span:last-child{font-family:var(--display);font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+.bibfoot{margin:0;padding:0 40px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 16px;color:var(--muted);font-size:.95rem}
+.bibfoot span:last-child{font-family:var(--label);font-size:1.1rem;letter-spacing:.08em;text-transform:uppercase}
 #typebox{position:absolute;inset:0;width:100%;height:100%;opacity:0;border:0;padding:0;font-size:16px;cursor:text}
 
 .foot{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;color:var(--muted);font-size:.92rem}
 .foot p{margin:0;flex:1 1 260px;min-width:0}
-button{font-family:var(--display);font-weight:800;font-size:1.05rem;letter-spacing:.08em;text-transform:uppercase;background:var(--ink);color:var(--bg);border:0;border-radius:8px;padding:9px 18px;cursor:pointer}
-button:hover{filter:brightness(1.12)}
-button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+button{font-family:var(--display);font-size:.9rem;letter-spacing:.04em;text-transform:uppercase;background:var(--green);color:#FFFFFF;border:0;border-radius:6px;box-shadow:0 0 0 3px var(--tan);padding:10px 18px;margin:3px;cursor:pointer}
+button:hover{background:var(--green-deep)}
+button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+
+.reg{align-items:center;text-align:center;gap:6px;padding-block:16px 18px}
+.reg a{font-family:var(--display);font-size:clamp(1.25rem,5.6vw,2.7rem);line-height:1.1;text-transform:uppercase;text-decoration:none;overflow-wrap:anywhere}
+.reg a:hover{text-decoration:underline;text-decoration-thickness:.08em;text-underline-offset:.14em}
+.reg p{margin:0;font-family:var(--label);font-size:clamp(1.15rem,3.4vw,1.6rem);line-height:1.15;letter-spacing:.05em;text-transform:uppercase;text-wrap:balance}
 
 @media (max-width:640px){
+  body{padding:8px}
+  .band{padding:12px 14px}
+  .top{gap:6px 12px}
   .board{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px 12px}
+  .stat .v{font-size:1.25rem}
+  .stat small{font-size:1rem}
   .course{grid-column:1/-1}
+  .course .names{font-size:1rem}
   .stage{aspect-ratio:5/4}
   .bibhead,.phrase,.bibfoot{padding-inline:32px}
+  .bibhead{font-size:.72rem;letter-spacing:.02em;white-space:nowrap}
   .phrase{min-height:calc(4.14em + 24px)}
-  .card{padding:12px 14px;gap:8px}
-  .card h2{font-size:1.3rem}
-  .card dl{grid-template-columns:repeat(2,auto);gap:6px 28px}
-  .card dd{font-size:1.2rem}
-  .card p{font-size:.85rem}
-  .course .names{font-size:.74rem}
+  .result{padding:10px}
+  .card{padding:10px 12px;gap:6px;box-shadow:0 0 0 4px var(--tan)}
+  .card h2{font-size:1rem}
+  .card dl{grid-template-columns:repeat(2,auto);gap:4px 24px}
+  .card dt{font-size:.9rem}
+  .card dd{font-size:1rem}
+  .card p{font-size:.82rem}
+  .card button{font-size:.8rem;padding:8px 14px}
+  .row{gap:6px 12px}
 }
 @media (prefers-reduced-motion:no-preference){
   .bib.oops{animation:shake .16s linear}
@@ -104,53 +125,65 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
 <body>
 
 <main class="wrap">
-  <header class="top">
-    <p class="eyebrow">Test lap, side view</p>
-    <h1>The Ashland Eagle Chase 5K <span>The Game</span></h1>
+  <header class="band top">
+    <img class="logo" src="eagles.png" width="720" height="310" alt="Two green eagles in flight, the Ashland Elementary logo">
+    <div>
+      <p class="eyebrow">Test lap, side view</p>
+      <h1 class="ol">The Ashland Eagle Chase 5K <span class="tag">The Game</span></h1>
+    </div>
     <p class="how">Type the words on the race bib. The faster you type, the faster you run down Cramer Ave.</p>
   </header>
 
-  <section class="board" aria-label="Scoreboard">
-    <div class="stat"><span class="k">Time</span><span class="v" id="sTime">0:00.0</span></div>
-    <div class="stat"><span class="k">Speed</span><span class="v"><span id="sSpeed">0.0</span><small> mph</small></span></div>
-    <div class="stat"><span class="k">Typing</span><span class="v"><span id="sWpm">0</span><small> wpm</small></span></div>
-    <div class="course">
-      <div class="names"><b>Ashland Elementary</b><span>Cramer Ave</span><b>Wilson's Grocery</b></div>
-      <div class="rail"><div class="fill" id="fill"></div><div class="dot" id="dot"></div></div>
-    </div>
-  </section>
+  <div class="band">
+    <section class="board" aria-label="Scoreboard">
+      <div class="stat"><span class="k">Time</span><span class="v" id="sTime">0:00.0</span></div>
+      <div class="stat"><span class="k">Speed</span><span class="v"><span id="sSpeed">0.0</span><small> mph</small></span></div>
+      <div class="stat"><span class="k">Typing</span><span class="v"><span id="sWpm">0</span><small> wpm</small></span></div>
+      <div class="course">
+        <div class="names"><b>Ashland Elementary</b><span>Cramer Ave</span><b>Wilson's Grocery</b></div>
+        <div class="rail"><div class="fill" id="fill"></div><div class="dot" id="dot"></div></div>
+      </div>
+    </section>
 
-  <div class="stage" id="stage">
-    <canvas id="street" role="img" aria-label="A runner on Cramer Ave, seen from the side. The street scrolls past as you type."></canvas>
-    <div class="result" id="result" hidden>
-      <div class="card" role="status">
-        <h2 id="rTitle">You made it to Wilson's Grocery!</h2>
-        <dl>
-          <div><dt>Time</dt><dd id="rTime">0:00.0</dd></div>
-          <div><dt>Typing</dt><dd id="rWpm">0 wpm</dd></div>
-          <div><dt>Top speed</dt><dd id="rTop">0 mph</dd></div>
-          <div><dt>Accuracy</dt><dd id="rAcc">100%</dd></div>
-        </dl>
-        <div class="row">
-          <button type="button" id="again">Run it again</button>
-          <p>Sign up for the real race at <a href="https://eaglechase5k.com" target="_blank" rel="noopener">eaglechase5k.com</a></p>
+    <div class="stage" id="stage">
+      <canvas id="street" role="img" aria-label="A runner on Cramer Ave, seen from the side. The street scrolls past as you type."></canvas>
+      <div class="result" id="result" hidden>
+        <div class="card" role="status">
+          <h2 id="rTitle">You made it to Wilson's Grocery!</h2>
+          <dl>
+            <div><dt>Time</dt><dd id="rTime">0:00.0</dd></div>
+            <div><dt>Typing</dt><dd id="rWpm">0 wpm</dd></div>
+            <div><dt>Top speed</dt><dd id="rTop">0 mph</dd></div>
+            <div><dt>Accuracy</dt><dd id="rAcc">100%</dd></div>
+          </dl>
+          <div class="row">
+            <button type="button" id="again">Run it again</button>
+            <p>Sign up for the real race at <a href="https://eaglechase5k.com" target="_blank" rel="noopener">eaglechase5k.com</a></p>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <section class="bib" id="bib" aria-label="Race bib. Type the phrase shown here.">
-    <i class="pin tl"></i><i class="pin tr"></i><i class="pin bl"></i><i class="pin br"></i>
-    <div class="bibhead"><span>Eagle Chase 5K</span><span>Sat, Nov 7</span></div>
-    <p class="phrase" id="phrase"></p>
-    <p class="bibfoot"><span id="hint">Type the first letter to start running.</span><span id="count">Phrase 1 of 7</span></p>
-    <input id="typebox" type="text" inputmode="text" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" aria-label="Type the phrase here">
-  </section>
+  <div class="band">
+    <section class="bib" id="bib" aria-label="Race bib. Type the phrase shown here.">
+      <i class="pin tl"></i><i class="pin tr"></i><i class="pin bl"></i><i class="pin br"></i>
+      <div class="bibhead"><span>Eagle Chase 5K</span><span>Sat, Nov 7</span></div>
+      <p class="phrase" id="phrase"></p>
+      <p class="bibfoot"><span id="hint">Type the first letter to start running.</span><span id="count">Phrase 1 of 7</span></p>
+      <input id="typebox" type="text" inputmode="text" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" aria-label="Type the phrase here">
+    </section>
 
-  <footer class="foot">
-    <button type="button" id="restart">Start over</button>
-    <p id="note">This is a test lap. The street is a cartoon stand-in for Cramer Ave for now. Capital letters and spaces count.</p>
-  </footer>
+    <footer class="foot">
+      <button type="button" id="restart">Start over</button>
+      <p id="note">This is a test lap. The street is a cartoon stand-in for Cramer Ave for now. Capital letters and spaces count.</p>
+    </footer>
+  </div>
+
+  <section class="band reg" aria-label="Sign up for the real race">
+    <a class="ol" href="https://eaglechase5k.com" target="_blank" rel="noopener">Register at eaglechase5k.com</a>
+    <p>Saturday, November 7 at 9:00AM &middot; Ashland Elementary School &middot; Walkers are welcome!</p>
+  </section>
 </main>
 
 <!-- The list of Street View photos lives in street-photos.js -->
@@ -178,7 +211,8 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   var cv=$("street"), ctx=cv.getContext("2d"), bib=$("bib"), box=$("typebox");
   var elPhrase=$("phrase"), elHint=$("hint"), elCount=$("count"), elResult=$("result");
   var scale=1, st, last=0, hudT=0, prevVal="", oopsTimer=0, doneTimer=0;
-  var FONT='"Barlow Condensed","Arial Narrow",sans-serif';
+  var FONT='"League Gothic","Arial Narrow",Impact,sans-serif', BIGFONT='"Archivo Black","Arial Black",Impact,sans-serif';
+  var GREEN="#1B4A42", TAN="#E3CC92", GOLD="#D6AB3C";
 
   function rngMaker(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
   function hash(i){var s=Math.sin(i*127.1+11.7)*43758.5453;return s-Math.floor(s)}
@@ -269,13 +303,13 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   }
   function drawLoading(){
     ctx.fillStyle="#BFD9EA";ctx.fillRect(0,0,W,H);
-    label("LOADING CRAMER AVE...",W/2,H/2,26,"#13233A",W-40);
+    label("LOADING CRAMER AVE...",W/2,H/2,24,GREEN,W-40,true);
   }
 
   /* ---------- drawing helpers ---------- */
   function circle(x,y,r){ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill()}
   function limb(x1,y1,x2,y2,w,c){ctx.strokeStyle=c;ctx.lineWidth=w;ctx.lineCap="round";ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke()}
-  function label(t,x,y,size,color,maxW){ctx.font="800 "+size+"px "+FONT;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillStyle=color;ctx.fillText(t,x,y,maxW)}
+  function label(t,x,y,size,color,maxW,big){ctx.font=size+"px "+(big?BIGFONT:FONT);ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillStyle=color;ctx.fillText(t,x,y,maxW)}
   function win(x,y,w,h){
     ctx.fillStyle="#F4F0E6";ctx.fillRect(x-2,y-2,w+4,h+4);
     ctx.fillStyle="#A9CBDD";ctx.fillRect(x,y,w,h);
@@ -324,8 +358,8 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     if(h.sign){ // a race sign in the yard
       var x=sx+h.signAt,y=b+2;
       ctx.fillStyle="#5A5148";ctx.fillRect(x+5,y+12,2,12);ctx.fillRect(x+25,y+12,2,12);
-      ctx.fillStyle="#F2B21B";ctx.fillRect(x,y-4,32,18);
-      label("5K",x+16,y+5,13,"#13233A",28);
+      ctx.fillStyle=TAN;ctx.fillRect(x,y-4,32,18);
+      label("5K",x+16,y+5.5,12,GREEN,28,true);
     }
   }
 
@@ -338,18 +372,18 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     for(r=0;r<2;r++) for(x=24;x<w-40;x+=46){ if(x>340&&x<540) continue; win(sx+x,top+18+r*52,26,34); }
     ctx.fillStyle="#8E4838";ctx.fillRect(sx+372,top-24,156,b-top+24);
     ctx.fillStyle="#DDD2BC";ctx.fillRect(sx+368,top-30,164,8);ctx.fillRect(sx+382,top-12,136,24);
-    label("ASHLAND ELEMENTARY",sx+450,top+1,15,"#3A2A22",126);
+    label("ASHLAND ELEMENTARY",sx+450,top+1,19,"#3A2A22",126);
     win(sx+403,top+26,22,30);win(sx+475,top+26,22,30);
     ctx.fillStyle="#DDD2BC";ctx.beginPath();ctx.moveTo(sx+418,b);ctx.lineTo(sx+418,b-46);ctx.arc(sx+450,b-46,32,Math.PI,0);ctx.lineTo(sx+482,b);ctx.closePath();ctx.fill();
-    ctx.fillStyle="#23408E";ctx.fillRect(sx+425,b-50,24,50);ctx.fillRect(sx+451,b-50,24,50);
+    ctx.fillStyle=GREEN;ctx.fillRect(sx+425,b-50,24,50);ctx.fillRect(sx+451,b-50,24,50);
     ctx.fillStyle="#A9CBDD";ctx.fillRect(sx+429,b-45,16,18);ctx.fillRect(sx+455,b-45,16,18);
     ctx.fillStyle="#C9C4B8";ctx.fillRect(sx+406,b-3,88,6);
     ctx.fillStyle="#8A8F98";ctx.fillRect(sx+609,146,3,128);
     ctx.fillStyle="#B3362B";ctx.fillRect(sx+612,148,30,18);ctx.fillStyle="#F4F0E6";ctx.fillRect(sx+612,154,30,3);ctx.fillRect(sx+612,160,30,3);
     ctx.fillStyle="#23408E";ctx.fillRect(sx+612,148,13,10);
     ctx.fillStyle="#5A5148";ctx.fillRect(sx+700,268,3,14);ctx.fillRect(sx+761,268,3,14);
-    ctx.fillStyle="#23408E";ctx.fillRect(sx+694,252,76,20);
-    label("GO EAGLES",sx+732,262.5,13,"#F6D36B",68);
+    ctx.fillStyle=GREEN;ctx.fillRect(sx+694,252,76,20);
+    label("GO EAGLES",sx+732,263,17,TAN,68);
   }
 
   function wilsons(sx){
@@ -357,14 +391,14 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     if(sx>W+30||sx+w<-30) return;
     ctx.fillStyle="#EDE3CC";ctx.fillRect(sx,top,w,h);
     ctx.fillStyle="#CFC3A8";ctx.fillRect(sx-3,top-5,w+6,7);
-    ctx.fillStyle="#1F5A3A";ctx.fillRect(sx+28,top+7,w-56,25);
-    label("WILSON'S GROCERY",sx+w/2,top+20,18,"#F6D36B",w-72);
+    ctx.fillStyle=GREEN;ctx.fillRect(sx+28,top+7,w-56,25);
+    label("WILSON'S GROCERY",sx+w/2,top+20.5,22,TAN,w-72);
     ctx.fillStyle="#22303A";ctx.fillRect(sx+22,top+50,96,40);ctx.fillRect(sx+182,top+50,96,40);
     ctx.fillStyle="#A9CBDD";ctx.fillRect(sx+25,top+53,90,34);ctx.fillRect(sx+185,top+53,90,34);
     ctx.fillStyle="rgba(255,255,255,.35)";ctx.fillRect(sx+25,top+53,36,34);ctx.fillRect(sx+185,top+53,36,34);
     ctx.fillStyle="#7A2E22";ctx.fillRect(sx+132,b-46,36,46);
     ctx.fillStyle="#A9CBDD";ctx.fillRect(sx+137,b-41,26,22);
-    for(i=0;i<14;i++){ctx.fillStyle=i%2?"#F4F1E8":"#2E7A4F";quad(sx+16+i*seg,top+36,sx+16+(i+1)*seg,top+36,sx+12+(i+1)*seg*1.03,top+52,sx+12+i*seg*1.03,top+52)}
+    for(i=0;i<14;i++){ctx.fillStyle=i%2?"#F4F1E8":GREEN;quad(sx+16+i*seg,top+36,sx+16+(i+1)*seg,top+36,sx+12+(i+1)*seg*1.03,top+52,sx+12+i*seg*1.03,top+52)}
     ctx.fillStyle="#8A6A45";ctx.fillRect(sx+30,b-2,34,12);ctx.fillRect(sx+70,b-2,34,12);
     ctx.fillStyle="#E8862A";for(i=0;i<4;i++)circle(sx+35+i*8,b-3,4);
     ctx.fillStyle="#9BBF3F";for(i=0;i<4;i++)circle(sx+75+i*8,b-3,4);
@@ -374,8 +408,8 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     if(sx<-120||sx>W+120) return;
     ctx.fillStyle="#DADFE5";ctx.fillRect(sx-74,146,5,178);ctx.fillRect(sx+69,146,5,178);
     ctx.fillStyle=fill;ctx.fillRect(sx-74,146,148,38);
-    label(word,sx,166,27,ink,130);
-    if(checker){for(var i=0;i<18;i++){ctx.fillStyle=i%2?"#FFFFFF":"#13233A";ctx.fillRect(sx-72+i*8,184,8,7)}}
+    label(word,sx,166.5,25,ink,130,true);
+    if(checker){for(var i=0;i<18;i++){ctx.fillStyle=i%2?"#FFFFFF":GREEN;ctx.fillRect(sx-72+i*8,184,8,7)}}
   }
   function roadLine(sx,checker){
     if(sx<-60||sx>W+60) return;
@@ -404,7 +438,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
       var ex=sx+UA*Math.sin(ua), ey=sy+3+UA*Math.cos(ua);
       return {ex:ex,ey:ey,hx:ex+FA*Math.sin(fa),hy:ey+FA*Math.cos(fa)};
     });
-    var SKIN="#C98B62",SKIN2="#A9714D",SHIRT="#23408E",SHIRT2="#1B3272",SHORT="#13233A",SHORT2="#0D1828",SHOE="#F26B1D",SHOE2="#C9540F";
+    var SKIN="#C98B62",SKIN2="#A9714D",SHIRT=GREEN,SHIRT2="#123630",SHORT=GOLD,SHORT2="#B08A2C",SHOE="#FFFFFF",SHOE2="#D5D2C8";
     ctx.fillStyle="rgba(0,0,0,.22)";ctx.beginPath();ctx.ellipse(x+2,gy+4,Math.max(12,27-hop*1.6),5,0,0,PI*2);ctx.fill();
     function leg(l,skin,shorts,shoe){
       limb(hx,hy,hx+l.kx,hy+l.ky,8.5,skin);limb(hx+l.kx,hy+l.ky,hx+l.fx,hy+l.fy,7.5,skin);
@@ -417,16 +451,16 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     }
     arm(arms[1],SKIN2,SHIRT2);leg(legs[1],SKIN2,SHORT2,SHOE2);
     limb(hx,hy-3,sx,sy,19,SHIRT);
-    ctx.save();ctx.translate((hx+sx)/2,(hy-3+sy)/2);ctx.rotate(lean);ctx.fillStyle="#FFFFFF";ctx.fillRect(-2,-8,10,12);ctx.fillStyle="#13233A";ctx.fillRect(0,-3,6,2);ctx.restore();
+    ctx.save();ctx.translate((hx+sx)/2,(hy-3+sy)/2);ctx.rotate(lean);ctx.fillStyle="#FFFFFF";ctx.fillRect(-2,-8,10,12);ctx.fillStyle=GREEN;ctx.fillRect(0,-3,6,2);ctx.restore();
     leg(legs[0],SKIN,SHORT,SHOE);
     var nx=sx+17*Math.sin(lean*0.8), ny=sy-17*Math.cos(lean*0.8);
     limb(sx,sy-4,nx,ny,7,SKIN);
     ctx.fillStyle=SKIN;circle(nx,ny,11.5);
     ctx.fillStyle="#2B1D17";ctx.beginPath();ctx.arc(nx,ny,12.2,PI*0.78,PI*1.84);ctx.closePath();ctx.fill();
     var bx=nx+12*Math.cos(PI*1.06), by=ny+12*Math.sin(PI*1.06), fx=nx+12*Math.cos(PI*1.8), fy=ny+12*Math.sin(PI*1.8);
-    limb(bx,by,fx,fy,3.4,"#F2B21B");
+    limb(bx,by,fx,fy,3.4,GOLD);
     var fl=Math.sin(t*13)*3*(0.3+s), tl=9+16*s;
-    limb(bx,by,bx-tl,by+2+fl-5*s,2.6,"#F2B21B");limb(bx,by,bx-tl*0.8,by+6-fl*0.7-3*s,2.6,"#F2B21B");
+    limb(bx,by,bx-tl,by+2+fl-5*s,2.6,GOLD);limb(bx,by,bx-tl*0.8,by+6-fl*0.7-3*s,2.6,GOLD);
     ctx.fillStyle="#1D1410";circle(nx+6,ny-1,1.5);
     arm(arms[0],SKIN,SHIRT);
   }
@@ -469,7 +503,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     }
     for(i=0;i<3;i++){ // street signs
       sx=vb+430+i*6200;
-      if(sx>-60&&sx<W+60){ctx.fillStyle="#8A8F98";ctx.fillRect(sx-1.5,226,3,84);ctx.fillStyle="#1F6B45";ctx.fillRect(sx-30,226,60,15);label("CRAMER AVE",sx,234,11,"#FFFFFF",54)}
+      if(sx>-60&&sx<W+60){ctx.fillStyle="#8A8F98";ctx.fillRect(sx-1.5,226,3,84);ctx.fillStyle=GREEN;ctx.fillRect(sx-30,226,60,15);label("CRAMER AVE",sx,234,14,"#FFFFFF",54)}
     }
     for(i=0;i<trees.length;i++){
       var t=trees[i];sx=vb+t.x;if(sx>W+80)break;if(sx<-80)continue;
@@ -493,8 +527,8 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     if(photoState==="loading"){drawLoading();return}
     if(photoState==="on") drawPhotos(d); else drawCartoon(cx,d);
     roadLine(cx-d+6,false);roadLine(cx+course-d,true);
-    banner(cx-d,"START","#F2B21B","#13233A",false);
-    banner(cx+course-d,"FINISH","#13233A","#F6D36B",true);
+    banner(cx-d,"START",TAN,GREEN,false);
+    banner(cx+course-d,"FINISH",GREEN,TAN,true);
     for(i=Math.floor((d-cx-40)/640);i<=Math.ceil((d+cx+40)/640);i++){ // race cones
       if(i<1) continue; sx=cx+i*640-d;
       ctx.fillStyle="#F26B1D";tri(sx-6,334,sx,316,sx+6,334);ctx.fillStyle="#FFFFFF";ctx.fillRect(sx-3,324,6,3);ctx.fillStyle="#C9540F";ctx.fillRect(sx-8,333,16,3);
@@ -503,7 +537,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     for(i=0;i<st.dust.length;i++){var p=st.dust[i];ctx.fillStyle="rgba(236,230,218,"+(0.34*p.life).toFixed(3)+")";circle(cx+p.x-d,GY-(1-p.life)*6,2+(1-p.life)*5)}
     runner(cx,GY,st.p,Math.min(1,st.v/520),st.clock);
 
-    ctx.fillStyle="#E9C84A";
+    ctx.fillStyle=GOLD;
     var lo=(d*1.12)%86;for(x=-lo-86;x<W+86;x+=86)ctx.fillRect(x,388,46,5);
 
     for(i=0;i<st.confetti.length;i++){var c=st.confetti[i];ctx.save();ctx.translate(c.x,c.y);ctx.rotate(c.rot);ctx.fillStyle=c.c;ctx.fillRect(-4,-2,8,4);ctx.restore()}
@@ -572,7 +606,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     $("sTime").textContent=fmtTime(st.t);$("sWpm").textContent=wpm();
     elHint.textContent="You crossed the finish line!";
     if(!RM){
-      var cols=["#F2B21B","#23408E","#F26B1D","#FFFFFF","#2E7A4F","#B3362B"];
+      var cols=[GOLD,GREEN,TAN,"#FFFFFF","#2E7A4F","#F0E8D8"];
       for(var i=0;i<130;i++) st.confetti.push({x:W/2+(Math.random()-0.5)*W*0.9,y:-10-Math.random()*150,vx:(Math.random()-0.5)*120,vy:40+Math.random()*120,rot:Math.random()*6,vr:(Math.random()-0.5)*12,c:cols[i%cols.length]});
     }
     var total=st.ok+st.miss;
