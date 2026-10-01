@@ -253,6 +253,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     var hm=u.match(/,(-?[\d.]+)h,/), fm=u.match(/,(\d+(?:\.\d+)?)y,/);
     if(isNaN(yaw)) yaw=hm?parseFloat(hm[1]):0;
     if(isNaN(pitch)) pitch=10;
+    if(pitch>19) pitch=19; // a link tilted down at the road gets leveled, so the houses stay in view
     return {id:id,yaw:yaw,pitch:pitch,fov:fm?parseFloat(fm[1]):90};
   }
   function photoURL(p){
