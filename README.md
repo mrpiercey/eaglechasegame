@@ -10,7 +10,7 @@ A typing game for the Eagle Chase 5K. The faster you type, the faster the runner
 - `titlescreenmusic1.webm` plays on the title screen and the runner picker.
 - `ding.webm` and `startbeep.webm` are the countdown sounds.
 - `runningmuiscgame.webm` plays on a loop during the race.
-- `raceendingmusic.webm` plays when you cross the finish line, while your place is shown. This file is not in the folder yet. Until it is, your place shows for 4 seconds with no music.
+- `finishline.webm` plays when you cross the finish line, while your place is shown. The podium follows when it ends.
 - `endingmusic.webm` plays on the podium screen.
 - `startracesoundeffect.webm` is not used by the game yet.
 - `street-photos.js` is the old list of Street View photos. The game no longer uses it.

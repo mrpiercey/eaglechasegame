@@ -1358,7 +1358,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   var SND=(function(){var a=document.createElement("audio");return a.canPlayType&&a.canPlayType('audio/webm; codecs="opus"')?".webm":".m4a"})();
   function audio(name,loop,vol){var a=new Audio(name+SND);a.loop=loop;a.volume=vol;a.preload="auto";return a}
   var titleMusic=audio("titlescreenmusic1",true,0.5), raceMusic=audio("runningmuiscgame",true,0.45), ding=audio("ding",false,0.9), startBeep=audio("startbeep",false,0.9);
-  var finishMusic=audio("raceendingmusic",false,0.7), endMusic=audio("endingmusic",false,0.7); // crossing the line, then the podium
+  var finishMusic=audio("finishline",false,0.7), endMusic=audio("endingmusic",false,0.7); // crossing the line, then the podium
   // Phones and tablets only let a sound play once a tap has started it. So on every tap or key press,
   // any sound that has not had its turn yet is started silently and stopped again. After that it can play whenever it is needed.
   function unlock(){
