@@ -1,16 +1,26 @@
 // STREET VIEW PHOTOS FOR THE EAGLE CHASE GAME
 //
-// Each line below is one Google Maps Street View link, in running order.
-// The first link is the start of the race. The last link is the finish line.
+// Each line in quotes is one Google Maps Street View link. The links are in running order.
+// The race has three parts:
+//   START  - from the start line on Cramer Ave to the corner where the lap begins
+//   LAP    - one full lap of the neighborhood (the game repeats it)
+//   FINISH - from the end of the last lap to the finish line in front of the school
 //
 // To add a photo:
 //   1. In Google Maps Street View, face the houses (side view) and copy the web address.
-//   2. Paste it on a new line below, inside "quotes", with a comma at the end.
+//   2. Paste it on a new line in the right part below, inside "quotes", with a comma at the end.
 //
 // Each photo adds about 14 letters of typing to the race.
 
-window.STREET_VIEW_LINKS = [
+// How many times the runner goes around the lap.
+window.RACE_LAPS = 3;
+
+window.STREET_VIEW_START = [
   "https://www.google.com/maps/place/Ashland+Elementary+School/@38.0383922,-84.4804238,307a,90y,51.17h,79.7t/data=!3m7!1e1!3m5!1sNwP5nGU8mvN3S4md0-qo6Q!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D10.303100064710236%26panoid%3DNwP5nGU8mvN3S4md0-qo6Q%26yaw%3D51.16634333185295!7i16384!8i8192!4m6!3m5!1s0x884244df8ec36a0b:0x655dc41f279bc911!8m2!3d38.0380511!4d-84.4809337!16s%2Fm%2F076jfcc?entry=ttu&g_ep=EgoyMDI2MDkyOC4wIKXMDSoASAFQAw%3D%3D",
+];
+
+window.STREET_VIEW_LAP = [
+  // Cramer Ave, from N Ashland Ave down to Mentelle Park
   "https://www.google.com/maps/place/Ashland+Elementary+School/@38.0381226,-84.4801357,307a,75y,45.61h,78.07t/data=!3m7!1e1!3m5!1sr8X8jDvlGsjNO8D-yp6Wtg!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D11.934942004181138%26panoid%3Dr8X8jDvlGsjNO8D-yp6Wtg%26yaw%3D45.610383203104576!7i16384!8i8192!4m6!3m5!1s0x884244df8ec36a0b:0x655dc41f279bc911!8m2!3d38.0380511!4d-84.4809337!16s%2Fm%2F076jfcc?entry=ttu&g_ep=EgoyMDI2MDkyOC4wIKXMDSoASAFQAw%3D%3D",
   "https://www.google.com/maps/place/Ashland+Elementary+School/@38.037937,-84.4799326,307a,75y,48.07h,76.17t/data=!3m7!1e1!3m5!1slHIB-lClOMtG1U6veINvsg!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D13.827062061363137%26panoid%3DlHIB-lClOMtG1U6veINvsg%26yaw%3D48.07103625932852!7i16384!8i8192!4m6!3m5!1s0x884244df8ec36a0b:0x655dc41f279bc911!8m2!3d38.0380511!4d-84.4809337!16s%2Fm%2F076jfcc?entry=ttu&g_ep=EgoyMDI2MDkyOC4wIKXMDSoASAFQAw%3D%3D",
   "https://www.google.com/maps/place/Ashland+Elementary+School/@38.0377869,-84.4797678,308a,75y,50.22h,76.4t/data=!3m7!1e1!3m5!1sTi06VDn1savZGXF7E6ilJg!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D13.601917075833796%26panoid%3DTi06VDn1savZGXF7E6ilJg%26yaw%3D50.220190585327565!7i13312!8i6656!4m6!3m5!1s0x884244df8ec36a0b:0x655dc41f279bc911!8m2!3d38.0380511!4d-84.4809337!16s%2Fm%2F076jfcc?entry=ttu&g_ep=EgoyMDI2MDkyOC4wIKXMDSoASAFQAw%3D%3D",
@@ -24,6 +34,54 @@ window.STREET_VIEW_LINKS = [
   "https://www.google.com/maps/place/Ashland+Elementary+School/@38.0369012,-84.4787982,310a,75y,48.28h,66.62t/data=!3m7!1e1!3m5!1sD2s197AyzcsOwz-N5TPz4g!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D23.375996439367256%26panoid%3DD2s197AyzcsOwz-N5TPz4g%26yaw%3D48.279087810540204!7i13312!8i6656!4m6!3m5!1s0x884244df8ec36a0b:0x655dc41f279bc911!8m2!3d38.0380511!4d-84.4809337!16s%2Fm%2F076jfcc?entry=ttu&g_ep=EgoyMDI2MDkyOC4wIKXMDSoASAFQAw%3D%3D",
   "https://www.google.com/maps/place/Ashland+Elementary+School/@38.0368019,-84.4786759,310a,75y,47.34h,57.77t/data=!3m8!1e1!3m6!1sV2v5GS3OSbVyIVgMJ4PjAA!2e0!5s20190601T000000!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D32.226463304660435%26panoid%3DV2v5GS3OSbVyIVgMJ4PjAA%26yaw%3D47.340738182252615!7i16384!8i8192!4m6!3m5!1s0x884244df8ec36a0b:0x655dc41f279bc911!8m2!3d38.0380511!4d-84.4809337!16s%2Fm%2F076jfcc?entry=ttu&g_ep=EgoyMDI2MDkyOC4wIKXMDSoASAFQAw%3D%3D",
   "https://www.google.com/maps/place/Ashland+Elementary+School/@38.0367312,-84.4786046,310a,75y,48.92h,58.29t/data=!3m8!1e1!3m6!1sfGxcfQTzuBAmYGkwOmyy5A!2e0!5s20190601T000000!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D31.711792378549625%26panoid%3DfGxcfQTzuBAmYGkwOmyy5A%26yaw%3D48.91917447372794!7i16384!8i8192!4m6!3m5!1s0x884244df8ec36a0b:0x655dc41f279bc911!8m2!3d38.0380511!4d-84.4809337!16s%2Fm%2F076jfcc?entry=ttu&g_ep=EgoyMDI2MDkyOC4wIKXMDSoASAFQAw%3D%3D",
+  "https://www.google.com/maps/@38.0365389,-84.4784113,3a,75y,49.3h,76t/data=!3m7!1e1!3m5!1sNhuWkKUqQ0JhendvnRLDPw!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D14%26panoid%3DNhuWkKUqQ0JhendvnRLDPw%26yaw%3D49.3!7i16384!8i8192",
+
+  // Mentelle Park, down the near side to the turnaround
+  "https://www.google.com/maps/@38.0362474,-84.4784515,3a,75y,138.8h,76t/data=!3m7!1e1!3m5!1srYfBh7j6IrpzC9uKjYIh1A!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D14%26panoid%3DrYfBh7j6IrpzC9uKjYIh1A%26yaw%3D138.8!7i16384!8i8192",
+  "https://www.google.com/maps/@38.0360727,-84.4787404,3a,75y,139.1h,76t/data=!3m7!1e1!3m5!1sJHuCS12KEAJ3W_CC1vlP7A!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D14%26panoid%3DJHuCS12KEAJ3W_CC1vlP7A%26yaw%3D139.1!7i16384!8i8192",
+  "https://www.google.com/maps/@38.035838,-84.4790881,3a,75y,139.1h,76t/data=!3m7!1e1!3m5!1s13ikgL5hYPHbrEEDEGynoA!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D14%26panoid%3D13ikgL5hYPHbrEEDEGynoA%26yaw%3D139.1!7i16384!8i8192",
+  "https://www.google.com/maps/@38.0355965,-84.4794362,3a,75y,139.8h,76t/data=!3m7!1e1!3m5!1sRN485h3hVC6w1NwL2oj4gA!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D14%26panoid%3DRN485h3hVC6w1NwL2oj4gA%26yaw%3D139.8!7i16384!8i8192",
+  "https://www.google.com/maps/@38.0353511,-84.4797871,3a,75y,139h,76t/data=!3m7!1e1!3m5!1sy3lxLb6IyE9TxGd7-dNVWg!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D14%26panoid%3Dy3lxLb6IyE9TxGd7-dNVWg%26yaw%3D139!7i16384!8i8192",
+  "https://www.google.com/maps/@38.0351146,-84.4801407,3a,75y,139h,76t/data=!3m7!1e1!3m5!1sYZLkzodVutRhtPXsxZu6Zw!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D14%26panoid%3DYZLkzodVutRhtPXsxZu6Zw%26yaw%3D139!7i16384!8i8192",
+
+  // Mentelle Park, back up the far side
+  "https://www.google.com/maps/@38.0350128,-84.4801129,3a,75y,319h,76t/data=!3m7!1e1!3m5!1sfedgJATLiAVRQPOH75ihzg!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D14%26panoid%3DfedgJATLiAVRQPOH75ihzg%26yaw%3D319!7i16384!8i8192",
+  "https://www.google.com/maps/@38.0352498,-84.4797665,3a,75y,319h,76t/data=!3m7!1e1!3m5!1sfnePeakzRnw5YPTkXBygaw!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D14%26panoid%3DfnePeakzRnw5YPTkXBygaw%26yaw%3D319!7i16384!8i8192",
+  "https://www.google.com/maps/@38.0354853,-84.4794165,3a,75y,319h,76t/data=!3m7!1e1!3m5!1szj_1-cfhNBl08RApHxcueg!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D14%26panoid%3Dzj_1-cfhNBl08RApHxcueg%26yaw%3D319!7i16384!8i8192",
+  "https://www.google.com/maps/@38.0357322,-84.4790589,3a,75y,318.8h,76t/data=!3m7!1e1!3m5!1skH_kUTkz4KSuh0ngIpq2gA!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D14%26panoid%3DkH_kUTkz4KSuh0ngIpq2gA%26yaw%3D318.8!7i16384!8i8192",
+  "https://www.google.com/maps/@38.0359771,-84.4786852,3a,75y,318.8h,76t/data=!3m7!1e1!3m5!1s5AW0HZT56ElN-sbzUiyQow!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D14%26panoid%3D5AW0HZT56ElN-sbzUiyQow%26yaw%3D318.8!7i16384!8i8192",
+  "https://www.google.com/maps/@38.0362305,-84.4783199,3a,75y,318.8h,76t/data=!3m7!1e1!3m5!1sKN8O7u6dit-rbdz3spwalw!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D14%26panoid%3DKN8O7u6dit-rbdz3spwalw%26yaw%3D318.8!7i16384!8i8192",
+
+  // Cramer Ave, from Mentelle Park to Richmond Ave
+  "https://www.google.com/maps/@38.036175,-84.4780181,3a,75y,49.3h,76t/data=!3m7!1e1!3m5!1sx5gJtylGF50PMJOYwPpTRA!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D14%26panoid%3Dx5gJtylGF50PMJOYwPpTRA%26yaw%3D49.3!7i16384!8i8192",
+  "https://www.google.com/maps/@38.0358302,-84.477641,3a,75y,49.3h,76t/data=!3m7!1e1!3m5!1sj5B-nWYg2MlByecIcDm2Gg!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D14%26panoid%3Dj5B-nWYg2MlByecIcDm2Gg%26yaw%3D49.3!7i16384!8i8192",
+
+  // Richmond Ave, the block by Wilson's Grocery
+  "https://www.google.com/maps/@38.0357678,-84.4773673,3a,75y,317.8h,76t/data=!3m7!1e1!3m5!1s9AdOeFuWNek_tWdgTRtifg!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D14%26panoid%3D9AdOeFuWNek_tWdgTRtifg%26yaw%3D317.8!7i16384!8i8192",
+  "https://www.google.com/maps/@38.03602,-84.4770227,3a,75y,317.8h,76t/data=!3m7!1e1!3m5!1sZdeOgaCsVbwhdAmihB02AQ!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D14%26panoid%3DZdeOgaCsVbwhdAmihB02AQ%26yaw%3D317.8!7i16384!8i8192",
+  "https://www.google.com/maps/@38.0361886,-84.476762,3a,75y,317.8h,76t/data=!3m7!1e1!3m5!1s5qtOMGBJ8SeSUA9nStvtiA!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D14%26panoid%3D5qtOMGBJ8SeSUA9nStvtiA%26yaw%3D317.8!7i16384!8i8192",
+
+  // Aurora Ave, heading back toward the school
+  "https://www.google.com/maps/@38.0364579,-84.4768063,3a,75y,229.1h,76t/data=!3m7!1e1!3m5!1saA7nkly49yrZwrjuEjEzyg!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D14%26panoid%3DaA7nkly49yrZwrjuEjEzyg%26yaw%3D229.1!7i16384!8i8192",
+  "https://www.google.com/maps/@38.0366661,-84.477039,3a,75y,229.1h,76t/data=!3m7!1e1!3m5!1sYCoEoUqTHL6uS-fqJla65Q!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D14%26panoid%3DYCoEoUqTHL6uS-fqJla65Q%26yaw%3D229.1!7i16384!8i8192",
+  "https://www.google.com/maps/@38.0369709,-84.4773581,3a,75y,228.7h,76t/data=!3m7!1e1!3m5!1sdlGx7_T6ykAKC70XL58XBw!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D14%26panoid%3DdlGx7_T6ykAKC70XL58XBw%26yaw%3D228.7!7i16384!8i8192",
+  "https://www.google.com/maps/@38.037255,-84.4776772,3a,75y,228.7h,76t/data=!3m7!1e1!3m5!1sxd1KqUDFfHFh5Yy8rOT6Dg!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D14%26panoid%3Dxd1KqUDFfHFh5Yy8rOT6Dg%26yaw%3D228.7!7i16384!8i8192",
+  "https://www.google.com/maps/@38.0375016,-84.477949,3a,75y,228.7h,76t/data=!3m7!1e1!3m5!1s27GuVzT3h-3JEL5X989RiA!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D14%26panoid%3D27GuVzT3h-3JEL5X989RiA%26yaw%3D228.7!7i13312!8i6656",
+  "https://www.google.com/maps/@38.0378144,-84.4782977,3a,75y,229.6h,76t/data=!3m7!1e1!3m5!1svOViGxCLbuqw85nrBzNfhw!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D14%26panoid%3DvOViGxCLbuqw85nrBzNfhw%26yaw%3D229.6!7i13312!8i6656",
+  "https://www.google.com/maps/@38.0381793,-84.4786878,3a,75y,229.6h,76t/data=!3m7!1e1!3m5!1sCJIXtPafgznsNIm84UYmoA!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D14%26panoid%3DCJIXtPafgznsNIm84UYmoA%26yaw%3D229.6!7i16384!8i8192",
+  "https://www.google.com/maps/@38.0383315,-84.4788456,3a,75y,230.5h,76t/data=!3m7!1e1!3m5!1snjeLS1EUOpv4Vk55DaWb2Q!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D14%26panoid%3DnjeLS1EUOpv4Vk55DaWb2Q%26yaw%3D230.5!7i16384!8i8192",
+  "https://www.google.com/maps/@38.038607,-84.4791431,3a,75y,230.5h,76t/data=!3m7!1e1!3m5!1sGVSg2U7P01O7tdWvWbzBOw!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D14%26panoid%3DGVSg2U7P01O7tdWvWbzBOw%26yaw%3D230.5!7i16384!8i8192",
+
+  // N Ashland Ave, from Aurora Ave back to Cramer Ave
+  "https://www.google.com/maps/@38.0386178,-84.4794147,3a,75y,138.9h,76t/data=!3m7!1e1!3m5!1skByfNOQWngm1M4_i2CzQxA!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D14%26panoid%3DkByfNOQWngm1M4_i2CzQxA%26yaw%3D138.9!7i16384!8i8192",
+  "https://www.google.com/maps/@38.0384467,-84.4796712,3a,75y,138.9h,76t/data=!3m7!1e1!3m5!1s62oEDR68aQgJwKk1Un4mNw!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D14%26panoid%3D62oEDR68aQgJwKk1Un4mNw%26yaw%3D138.9!7i16384!8i8192",
+  "https://www.google.com/maps/@38.0382609,-84.4799493,3a,75y,139.4h,76t/data=!3m7!1e1!3m5!1sWTJSgsrYyfoa-ztDS_lo8Q!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D14%26panoid%3DWTJSgsrYyfoa-ztDS_lo8Q%26yaw%3D139.4!7i16384!8i8192",
+];
+
+// N Ashland Ave, across Cramer Ave to the bus lane. These two face the school.
+window.STREET_VIEW_FINISH = [
+  "https://www.google.com/maps/@38.0379771,-84.4804175,3a,75y,318.9h,76t/data=!3m7!1e1!3m5!1sdi4N7QHivzt61alj9YrrQw!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D14%26panoid%3Ddi4N7QHivzt61alj9YrrQw%26yaw%3D318.9!7i16384!8i8192",
+  "https://www.google.com/maps/@38.0377883,-84.4806797,3a,75y,318.9h,76t/data=!3m7!1e1!3m5!1sQqawwSZZzeKo94IG55loMQ!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D14%26panoid%3DQqawwSZZzeKo94IG55loMQ%26yaw%3D318.9!7i16384!8i8192",
 ];
 
 // Optional: paste a Google Maps API key between the quotes before you share the game online.
