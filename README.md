@@ -45,6 +45,21 @@ You race 19 other runners and one Eagle. The other runners type between about 15
 The Eagle is always the fastest. Its pace is picked fresh each race, somewhere between 50 and 80 words per minute.
 The scoreboard shows your place, and the little eagle above the progress bar shows how far the Eagle has gone.
 
+## High scores
+
+The title screen has a High scores button, and after a race the podium screen asks for two initials (first and last) to put the run on the board.
+Only the initials are stored, with the time, the typing speed and the number of errors.
+
+There is a separate board for every way to play: computer or phone and tablet, times 1, 2 or 3 laps. The game decides computer or phone on its own, the same way it decides whether to use touch mode.
+Each board can be ranked three ways: fastest time, fastest typing (words per minute), or fewest errors, with ties broken by the faster time. Each ranking shows the top 50.
+Every finished race that gets initials goes on its board, whether or not it makes the top 50.
+
+The scores live in a Firebase database (project `eaglechase`, on the free plan) at https://console.firebase.google.com/project/eaglechase/firestore.
+The game reads and writes it directly, with no server in between. The database's rules only let a run be added, never changed or removed, and they check each run: two capital letters, a lap count of 1 to 3, and sane numbers.
+To remove a run (a rude pair of initials, say), open the database in the Firebase console, find it under `boards`, and delete it there.
+
+Add `#scores` to the end of the game's web address to open straight to the boards: https://game.eaglechase5k.com/#scores
+
 ## Phones and tablets
 
 The game works in the browser on phones and iPads.
