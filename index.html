@@ -89,14 +89,38 @@ h1 .tag{display:inline-block;background:var(--green);color:var(--tan);text-shado
 .stage{position:relative;aspect-ratio:16/7;max-width:100%;max-height:calc(100vh - 356px);max-height:calc(100svh - 356px);min-height:190px;border-radius:6px;overflow:hidden;border:4px solid var(--green);background:#8EC3E8}
 .stage canvas{display:block;image-rendering:crisp-edges;image-rendering:pixelated}
 .result{position:absolute;inset:0;display:grid;place-items:center;padding:12px;overflow:auto;background:var(--scrim)}
-.card{background:var(--paper);color:var(--ink);border-radius:6px;box-shadow:0 0 0 5px var(--tan);padding:16px 20px;max-width:460px;width:100%;display:flex;flex-direction:column;gap:10px;text-align:left}
-.card h2{margin:0;font-family:var(--display);font-weight:400;font-size:1.45rem;line-height:1.08;text-transform:uppercase;text-wrap:balance}
-.card dl{margin:0;display:grid;grid-template-columns:repeat(4,auto);gap:8px 20px;justify-content:start}
-.card dt{font-family:var(--label);font-size:1rem;line-height:1.1;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
-.card dd{margin:0;font-family:var(--display);font-size:1.2rem;line-height:1.1;font-variant-numeric:tabular-nums}
-.card p{margin:0;font-size:.95rem;color:var(--muted)}
-.card a{color:var(--ink);font-weight:700}
-.row{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+.placecard{background:var(--paper);border-radius:6px;box-shadow:0 0 0 5px var(--tan),0 0 0 8px var(--green-deep);padding:14px 30px 16px;text-align:center;cursor:pointer}
+.placecard p{margin:0}
+.pk,.pof{font-family:var(--label);font-size:clamp(1.1rem,3vw,1.6rem);line-height:1.1;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.placecard .pbig{--o:.055em;margin:.06em 0 .1em;font-family:var(--display);font-size:clamp(3rem,13vw,6.2rem);line-height:1;text-transform:uppercase}
+
+/* The results screen: the podium over the school picture */
+.finale{position:relative;display:flex;align-items:center;justify-content:center;aspect-ratio:3/2;padding:18px 16px;background:#7FA8DC url(title.jpg) center/cover no-repeat;overflow:hidden}
+.finale .snd{position:absolute;top:10px;right:10px;margin:0;font-size:.75rem;padding:.55em .9em;box-shadow:0 0 0 3px var(--tan)}
+.fcard{display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;max-width:600px;background:var(--paper);border-radius:6px;box-shadow:0 0 0 5px var(--tan),0 0 0 8px var(--green-deep);padding:16px 20px 18px;text-align:center}
+.fcard h2{margin:0;font-family:var(--display);font-weight:400;font-size:clamp(1.2rem,4.2vw,1.9rem);line-height:1.1;text-transform:uppercase}
+.podium{display:flex;align-items:flex-end;justify-content:center;gap:6px;width:100%;max-width:400px}
+.pod{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center}
+.pod canvas{display:block;width:72px;height:124px;image-rendering:crisp-edges;image-rendering:pixelated}
+.pod canvas.bird{width:100px;height:72px}
+.pod .who{margin:3px 0 4px;padding:.05em .5em 0;border-radius:3px;font-family:var(--label);font-size:1.05rem;line-height:1.15;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.pod.me .who{background:var(--gold);color:var(--green-deep)}
+.pod .block{display:grid;place-items:center;width:100%;border-radius:4px 4px 0 0;border-top:4px solid var(--tan);background:var(--green);color:var(--tan);font-family:var(--display);font-size:1.6rem;line-height:1}
+.pod.p1 .block{height:74px;border-top-color:var(--gold)}
+.pod.p2 .block{height:52px}
+.pod.p3 .block{height:34px}
+.fplace{margin:0;font-family:var(--display);font-size:clamp(1.05rem,3.4vw,1.5rem);line-height:1.15;text-transform:uppercase}
+.fplace:empty{display:none}
+.fcard dl{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 24px;margin:0}
+.fcard dt{font-family:var(--label);font-size:1rem;line-height:1.1;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.fcard dd{margin:0;font-family:var(--display);font-size:1.15rem;line-height:1.1;font-variant-numeric:tabular-nums}
+.feagle{margin:0;font-size:.95rem;color:var(--muted)}
+.fcta{display:block;padding:.5em .9em;border:3px solid var(--gold);border-radius:6px;background:#FFF7DF;color:var(--ink);font-family:var(--display);font-size:clamp(.95rem,3.2vw,1.35rem);line-height:1.25;text-transform:uppercase;text-decoration:none}
+.fcta span{display:block;font-size:1.15em;text-decoration:underline;text-decoration-thickness:.08em;text-underline-offset:.14em;overflow-wrap:anywhere}
+.fcta:hover{background:#FFEFC2}
+.frow{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 12px}
+.wrap.outro > :not(.finale){display:none}
+.wrap:not(.outro) > .finale{display:none}
 
 .bib{position:relative;background:var(--paper);border:4px solid var(--green);border-radius:6px;padding:0 0 12px;overflow:hidden}
 .bib:focus-within{outline:3px solid var(--gold);outline-offset:2px}
@@ -148,6 +172,10 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   .wrap.kb .board{grid-template-columns:repeat(4,minmax(0,1fr));gap:4px 8px}
   .wrap.kb .stage{height:calc(var(--vvh,100vh) - 218px)}
   .title{aspect-ratio:auto;min-height:calc(100vh - 16px);min-height:calc(100svh - 16px)}
+  .finale{aspect-ratio:auto;min-height:calc(100vh - 16px);min-height:calc(100svh - 16px);padding:14px 10px}
+  .fcard{padding:14px 12px 16px;gap:8px}
+  .pod canvas{width:54px;height:93px}
+  .pod canvas.bird{width:78px;height:56px}
   .picker{padding:12px 10px 14px}
   .lapbtns{gap:6px}
   .lapbtns button{padding:10px 4px}
@@ -168,16 +196,15 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   .meter .mk,.meter .mword{font-size:1rem}
   .bibhead{font-size:.72rem;letter-spacing:.02em;white-space:nowrap}
   .result{padding:10px}
-  .card{padding:10px 12px;gap:6px;box-shadow:0 0 0 4px var(--tan)}
-  .card h2{font-size:1rem}
-  .card dl{grid-template-columns:repeat(2,auto);gap:4px 24px}
-  .card dt{font-size:.9rem}
-  .card dd{font-size:1rem}
-  .card p{font-size:.82rem}
-  .card button{font-size:.8rem;padding:8px 14px}
-  .row{gap:6px 12px}
 }
 @media (prefers-reduced-motion:no-preference){
+  .result:not([hidden]) .placecard{animation:pop .45s cubic-bezier(.2,1.5,.4,1) both}
+  @keyframes pop{from{transform:scale(.4);opacity:0}}
+  .wrap.outro .fcard,.wrap.outro .pod{animation:rise .45s ease-out both}
+  .wrap.outro .pod.p3{animation-delay:.4s}
+  .wrap.outro .pod.p2{animation-delay:.8s}
+  .wrap.outro .pod.p1{animation-delay:1.2s}
+  @keyframes rise{from{transform:translateY(22px);opacity:0}}
   .title .blink{animation:blink 1.1s steps(1) infinite}
   @keyframes blink{50%{opacity:0}}
   .bib.oops{animation:shake .16s linear}
@@ -206,6 +233,26 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
       <div class="lapbtns" id="lapbtns" role="group" aria-label="Number of laps"></div>
     </div>
   </section>
+
+  <section class="finale" id="finale" aria-label="Race results">
+    <button type="button" class="snd" id="snd3">Sound on</button>
+    <div class="fcard">
+      <h2 id="rTitle">The podium</h2>
+      <div class="podium" id="podium"></div>
+      <p class="fplace" id="rPlace"></p>
+      <dl>
+        <div><dt>Time</dt><dd id="rTime">0:00.0</dd></div>
+        <div><dt>Typing</dt><dd id="rWpm">0 wpm</dd></div>
+        <div><dt>Accuracy</dt><dd id="rAcc">100%</dd></div>
+      </dl>
+      <p class="feagle" id="rEagle"></p>
+      <a class="fcta" href="https://eaglechase5k.com" target="_blank" rel="noopener">Sign up for the REAL Eagle Chase 5K <span>at eaglechase5k.com</span></a>
+      <div class="frow">
+        <button type="button" id="again">Race again</button>
+        <button type="button" id="change2">Change runner or laps</button>
+      </div>
+    </div>
+  </section>
   <div class="band">
     <section class="board" aria-label="Scoreboard">
       <img class="mini" src="eagles.png" width="720" height="310" alt="Ashland Eagles">
@@ -222,19 +269,10 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     <div class="stage" id="stage">
       <canvas id="street" role="img" aria-label="A runner on the Eagle Chase course, drawn like a 16-bit video game. The neighborhood scrolls past as you type."></canvas>
       <div class="result" id="result" hidden>
-        <div class="card" role="status">
-          <h2 id="rTitle">You crossed the finish line!</h2>
-          <dl>
-            <div><dt>Time</dt><dd id="rTime">0:00.0</dd></div>
-            <div><dt>Typing</dt><dd id="rWpm">0 wpm</dd></div>
-            <div><dt>Place</dt><dd id="rPlace">1st</dd></div>
-            <div><dt>Accuracy</dt><dd id="rAcc">100%</dd></div>
-          </dl>
-          <p id="rEagle"></p>
-          <div class="row">
-            <button type="button" id="again">Run it again</button>
-            <p>Sign up for the real race at <a href="https://eaglechase5k.com" target="_blank" rel="noopener">eaglechase5k.com</a></p>
-          </div>
+        <div class="placecard" role="status">
+          <p class="pk">You finished</p>
+          <p class="pbig ol" id="pBig">1st</p>
+          <p class="pof" id="pOf">out of 21 racers</p>
         </div>
       </div>
     </div>
@@ -272,7 +310,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
 (function(){
   "use strict";
   // What you type: one long, chatty passage. OPENING always comes first. The other paragraphs, each a reason to sign up, follow in a new order each race.
-  var OPENING="Hey, did you know that on Saturday, November 7th at 9:00am there's a 5K race at Ashland Elementary School? It's true! It's called the Eagle Chase 5K and you can sign up at eaglechase5k.com. Seriously, after you are done playing this game, you should go to eaglechase5k.com and sign up.";
+  var OPENING="Hey, did you know that on Saturday, November 7th at 9:00am there's a 5k race at Ashland Elementary School? It's true! It's called the Eagle Chase 5k and you can sign up at eaglechase5k.com. Seriously, after you are done playing this game, you should go to eaglechase5k.com and sign up.";
   var STORY=[
     "Here's the biggest reason to sign up. All of the money raised by the Eagle Chase helps pay for field trips for Ashland's 4th and 5th graders. When you run, you are helping send a kid on a field trip. That's a pretty good reason to get out of bed on a Saturday.",
     "Need another reason? Those 4th and 5th graders take a field trip every month. The trips are about STEM, the arts, and the careers they might have someday. When you sign up, you help them see things they can't see from a classroom.",
@@ -281,9 +319,9 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     "Think you're not a runner? Sign up anyway. Walkers are welcome at the Eagle Chase. You can run it, jog it, or walk it with your family, and it counts just the same.",
     "Sign up because it's close to home. The race starts and ends at Ashland Elementary School, and the course is three laps through the neighborhood. You might even run right past your own house.",
     "Sign up because we need you. We want 300 runners this year, and every single one counts. Then find two more people and get them to sign up too. Ask your mom, your dad, your neighbor, or your best friend.",
-    "Sign up because it's good for you. A 5K is 3.1 miles, and you get to do it outside with your friends on a Saturday morning. That beats sitting on the couch.",
+    "Sign up because it's good for you. A 5k is 3.1 miles, and you get to do it outside with your friends on a Saturday morning. That beats sitting on the couch.",
     "Sign up because you care about Ashland. Our colors are green and gold, and this race is one of the ways we show up for our school. Come be part of it.",
-    "You've typed this far, so you clearly don't give up. That's exactly what it takes to finish a 5K. Sign up at eaglechase5k.com and prove it on race day.",
+    "You've typed this far, so you clearly don't give up. That's exactly what it takes to finish a 5k. Sign up at eaglechase5k.com and prove it on race day.",
     "Signing up is easy. Just go to eaglechase5k.com. The race is Saturday, November 7th at 9:00 in the morning at Ashland Elementary School. We'll see you at the starting line!"
   ];
   function newText(first){ // the opening (only at the start of a race), then the rest shuffled
@@ -299,6 +337,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   // One lap, in running order. m = length in meters. The runner turns at the last crossing of each leg.
   // The screen follows the race map: a street that heads left on the map is run to the left (left:1),
   // and at a corner the runner goes off toward the top or bottom of the screen, whichever way the next street heads on the map (exit).
+  // map = the direction the street runs on the race map (right, down), used to draw the little course map.
   // Mentelle Park (median) is run down the far lane for m meters, through a gap in the median, and back up the near lane.
   // cross = the streets met along the way, in meters from the start of the leg.
   //   far = the side street runs off behind the houses, near = it runs toward the bottom of the screen.
@@ -306,23 +345,23 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   //   A craftsman bungalow, B bungalow with a dormer, C two-story foursquare, D brick two-story with stacked porches,
   //   E cottage with a steep gable, F low brick bungalow, G garage, plus fence, picket, hedge and wall with a width.
   var LEGS=[
-    {name:"Cramer Ave",m:253,pre:63,turn:"right",exit:"down",
+    {name:"Cramer Ave",m:253,pre:63,turn:"right",exit:"down",map:[0.638,0.769],
       cross:[{at:0,name:"N Ashland Ave",far:1,near:1,light:1},{at:146,name:"N Hanover Ave",far:1,near:1},{at:253,name:"Mentelle Park",near:1,gate:1}],
       back:["D brick charcoal white","D brick charcoal white","B tanbrick brown white","A gray charcoal red","C brick brown white","A cream charcoal green"],
       lots:["F brick brown white","A blue charcoal white","A gray charcoal red","B sage brown wood","A cream brown red","B tanbrick charcoal green","C white charcoal red","A slate charcoal wood","B yellow brown white","E brick charcoal wood","A gray brown red","C brick charcoal white","B cream charcoal green","A white charcoal red"]},
-    {name:"Mentelle Park",m:350,median:1,left:1,turn:"right",exit:"down",
+    {name:"Mentelle Park",m:350,median:1,left:1,turn:"right",exit:"down",map:[-0.754,0.658],
       cross:[{at:0,name:"Cramer Ave",far:1,near:1,dead:1},{at:35,gap:1},{at:136,gap:1},{at:245,gap:1},{at:350,gap:1}],
       lots:["C brick charcoal white","C gray charcoal red","E stone brown wood","C cream brown green","D brick charcoal white","C sage charcoal wood","C white charcoal red","E brick charcoal wood","C white charcoal green","C brick brown white","C slate charcoal red","E stone charcoal wood","C tanbrick brown white","C cream charcoal red","D darkbrick charcoal white"]},
-    {name:"Cramer Ave",m:106,turn:"left",exit:"up",
+    {name:"Cramer Ave",m:106,turn:"left",exit:"up",map:[0.638,0.769],
       cross:[{at:0,name:"Mentelle Park",near:1,gate:1},{at:106,name:"Richmond Ave",far:1,near:1}],
       lots:["A blue charcoal white","C white charcoal red","A gray charcoal wood","picket 46","B slate brown white","A cream brown green"]},
-    {name:"Richmond Ave",m:101,turn:"left",exit:"up",
+    {name:"Richmond Ave",m:101,turn:"left",exit:"up",map:[0.725,-0.688],
       cross:[{at:0,name:"Cramer Ave",far:1,near:1},{at:101,name:"Aurora Ave",far:1,near:1}],
       lots:["fence 54","G white charcoal","wall 44","F tanbrick brown wood","G gray brown","fence 60","hedge 40","A blue charcoal white"]},
-    {name:"Aurora Ave",m:357,left:1,turn:"left",exit:"down",
+    {name:"Aurora Ave",m:357,left:1,turn:"left",exit:"down",map:[-0.645,-0.764],
       cross:[{at:0,name:"Richmond Ave",far:1,near:1},{at:89,name:"Memory Ln",far:1},{at:179,name:"Hanover Ct",far:1},{at:213,name:"N Hanover Ave",near:1},{at:269,name:"Given Ave",far:1},{at:357,name:"N Ashland Ave",far:1,near:1}],
       lots:["A slate charcoal white","B yellow brown red","A brick charcoal white","hedge 36","A cream brown green","B gray charcoal red","F brick brown white","A white charcoal red","B sage brown wood","A blue charcoal white","E tanbrick charcoal wood","A gray brown red","B cream charcoal green"]},
-    {name:"N Ashland Ave",m:102,post:68,left:1,turn:"left",exit:"down",school:1,
+    {name:"N Ashland Ave",m:102,post:68,left:1,turn:"left",exit:"down",school:1,map:[-0.707,0.707],
       cross:[{at:0,name:"Aurora Ave",far:1,near:1},{at:102,name:"Cramer Ave",far:1,near:1,light:1}],
       lots:["fence 50","G white charcoal","G sage brown","F darkbrick charcoal white","A gray charcoal red","B cream brown green"]}
   ];
@@ -336,9 +375,9 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   var ART=STRIDE/PX_PER_CHAR; // screen pixels per unit of running distance
   var RM=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var COARSE=window.matchMedia&&window.matchMedia("(pointer: coarse)").matches;
-  // Phones and tablets, including iPads that say they are Macs. On these you only type the letters and spaces, in either case.
+  // Phones and tablets, including iPads that say they are Macs. On these, capital letters do not count: either case is accepted.
   var TOUCH=COARSE||/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)||(navigator.maxTouchPoints>1&&/Macintosh/.test(navigator.userAgent));
-  var EASY=/[a-z ]/i; // what still has to be typed on a phone or tablet. Capitals, numbers and punctuation fill themselves in.
+  var BOOST=TOUCH?1.6:1; // how much further one letter carries the runner on a phone or tablet. This makes the Eagle catchable when typing with thumbs.
   var PREVIEW=parseFloat((location.hash.match(/at=([\d.]+)/)||[])[1])||0; // add #at=900 to the address to look at a spot 900 meters in
 
   var $=function(id){return document.getElementById(id)};
@@ -990,10 +1029,10 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     {skin:"#D6A27A",skin2:"#BC875F",hair:"#5A3320",style:"curly",glasses:1,kit:["#27375E","#1B2744",GOLD,"#B08A2C"],shoe:"#F4F1E8"}
   ];
   function darker(hex){var n=parseInt(hex.slice(1),16),f=function(v){return Math.round(v*0.72)};return "#"+(16777216+(f(n>>16)<<16)+(f(n>>8&255)<<8)+f(n&255)).toString(16).slice(1)}
-  function portrait(ci){ // a bigger, more detailed picture of each runner for the picker
-    var ch=CHARS[ci],S=ch.skin,S2=ch.skin2,H=ch.hair,H2=darker(H),k=ch.kit,st=ch.style,D="#1D1410";
+  function portrait(ci,kit,label){ // a bigger, more detailed picture of a runner, for the picker and the podium
+    var ch=CHARS[ci],S=ch.skin,S2=ch.skin2,H=ch.hair,H2=darker(H),k=kit||ch.kit,st=ch.style,D="#1D1410";
     return outlined(sprite(36,62,function(r,c2){
-      var i,n=String(ci+1);
+      var i,n=label||String(ci+1);
       // hair that falls behind the head
       if(st==="long"){r(H,8,7,20,19);r(H2,8,24,20,2)}
       if(st==="bob")r(H,9,6,18,14);
@@ -1105,11 +1144,87 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     ctx.drawImage(f,x-(w>>1),pose.y+2-h,w,h);
   }
 
+  /* ---------- the leaders and the little course map, drawn over the top corners of the street ---------- */
+  var MAP=null;
+  function crisp(c,col){ // hard pixel edges in one flat color
+    var k=c.getContext("2d"),im=k.getImageData(0,0,c.width,c.height),d=im.data,n=parseInt(col.slice(1),16),i;
+    for(i=0;i<d.length;i+=4){if(d[i+3]>90){d[i]=n>>16;d[i+1]=n>>8&255;d[i+2]=n&255;d[i+3]=255}else d[i+3]=0}
+    k.putImageData(im,0,0);return c;
+  }
+  function buildMap(){ // the lap, drawn from each leg's length and direction on the race map
+    var P=[[0,0]],pts=[],i,leg,v,nx,p,x0=1e9,y0=1e9,x1=-1e9,y1=-1e9,s,c,a,b,k;
+    function add(x,y){pts.push([x,y]);x0=Math.min(x0,x);y0=Math.min(y0,y);x1=Math.max(x1,x);y1=Math.max(y1,y)}
+    v=LEGS[0].map;add(-v[0]*(LEGS[0].pre||0),-v[1]*(LEGS[0].pre||0)); // the start line
+    for(i=0;i<LEGS.length;i++){
+      leg=LEGS[i];v=leg.map;p=P[i];add(p[0],p[1]);
+      if(leg.median){ // down one lane and back up the other, which rejoins the next street a little further along
+        nx=LEGS[(i+1)%LEGS.length].map;
+        add(p[0]+v[0]*leg.m,p[1]+v[1]*leg.m);add(p[0]+v[0]*leg.m+nx[0]*14,p[1]+v[1]*leg.m+nx[1]*14);add(p[0]+nx[0]*14,p[1]+nx[1]*14);
+        P.push(p);
+      }else P.push([p[0]+v[0]*leg.m,p[1]+v[1]*leg.m]);
+    }
+    leg=LEGS[LEGS.length-1];v=leg.map;p=P[LEGS.length-1];
+    add(p[0]+v[0]*(leg.m+(leg.post||0)),p[1]+v[1]*(leg.m+(leg.post||0))); // the finish line
+    s=Math.min(46/(x1-x0),56/(y1-y0));
+    c=mk(Math.ceil((x1-x0)*s)+16,Math.ceil((y1-y0)*s)+16);
+    function trace(w){
+      var t=mk(c.width,c.height),g=t.getContext("2d");
+      g.lineWidth=w;g.lineJoin=g.lineCap="round";g.strokeStyle="#000";g.beginPath();
+      pts.forEach(function(q,j){g[j?"lineTo":"moveTo"](8+(q[0]-x0)*s,8+(q[1]-y0)*s)});g.stroke();return t;
+    }
+    k=c.getContext("2d");a=crisp(trace(4.2),OUT);b=crisp(trace(1.8),"#FFFFFF");k.drawImage(a,0,0);k.drawImage(b,0,0);
+    p=pts[pts.length-1];a=Math.round(8+(p[0]-x0)*s);b=Math.round(8+(p[1]-y0)*s);       // a checkered square at the finish
+    R(k,OUT,a-3,b-3,6,6);R(k,"#FFFFFF",a-2,b-2,2,2);R(k,"#FFFFFF",a,b,2,2);
+    return {c:c,s:s,x0:x0,y0:y0,P:P};
+  }
+  function mapXY(d){ // where on the map a racer is, from how far they have run
+    var w=where(d),sg=route[w.si],leg=LEGS[sg.li],l=Math.max(0,d-sg.d0),P=MAP.P[sg.li],v=leg.map,a,off=0,nx;
+    if(sg.loop){
+      if(l<sg.loop)a=l;else if(l<sg.loop+GAP_RUN){a=sg.loop;off=(l-sg.loop)/GAP_RUN}else{a=Math.max(0,sg.loop-(l-sg.loop-GAP_RUN));off=1}
+      nx=LEGS[(sg.li+1)%LEGS.length].map;
+      return [P[0]+v[0]*a/PXM+nx[0]*14*off,P[1]+v[1]*a/PXM+nx[1]*14*off];
+    }
+    a=sg.x0*sg.dir+Math.min(l,Math.abs(sg.x1-sg.x0)+(w.si===route.length-1?60:0));
+    return [P[0]+v[0]*a/PXM,P[1]+v[1]*a/PXM];
+  }
+  function face(g,x,y,r){ // a racer's face, 16 by 14
+    if(r.eagle)g.drawImage(eagleSprites()[1],31,10,16,14,x,y,16,14);
+    else g.drawImage(turnSprites(r.ci,r.ki).front[1],5,0,16,14,x,y,16,14);
+  }
+  function leaderTile(g,x,y,r,n,me){
+    var t=String(n);
+    R(g,OUT,x,y,20,18);R(g,me?"#FFFFFF":n===1?GOLD:n===2?"#C9CED4":n===3?"#C98A5B":"#8A8F98",x+1,y+1,18,16);R(g,me?TAN:"#2E5E55",x+2,y+2,16,14);
+    face(g,x+2,y+2,r);
+    R(g,OUT,x+1,y+10,textW(t)+3,7);text(g,t,x+2,y+11,"#FFFFFF",1);
+  }
+  function hud(){
+    var m=MAP||(MAP=buildMap()),mx=W-m.c.width-3,my=3,all=[{me:1,ci:chosen,ki:-1,d:st.dist,fin:st.mode==="done"?st.t:0}],i,o,p,mine=0;
+    for(i=0;i<st.field.length;i++){o=st.field[i];all.push({ci:o.ci,ki:o.ki,eagle:o.eagle,d:o.d,fin:o.fin||0})}
+    // the course map, top right: everyone is a dot, the Eagle is a white dot, and you are your runner's face
+    ctx.fillStyle="rgba(18,54,48,.5)";ctx.fillRect(mx,my,m.c.width,m.c.height);
+    ctx.drawImage(m.c,mx,my);
+    for(i=1;i<all.length;i++){
+      o=all[i];p=mapXY(Math.max(route[0].d0,o.d*ART));
+      p=[mx+8+Math.round((p[0]-m.x0)*m.s),my+8+Math.round((p[1]-m.y0)*m.s)];
+      if(o.eagle){R(ctx,OUT,p[0]-2,p[1]-2,5,5);R(ctx,"#FFFFFF",p[0]-1,p[1]-1,3,3);R(ctx,GOLD,p[0],p[1],1,1)}
+      else R(ctx,TAN,p[0]-1,p[1]-1,2,2);
+    }
+    p=mapXY(Math.max(0,st.dist*ART));
+    p=[mx+8+Math.round((p[0]-m.x0)*m.s),my+8+Math.round((p[1]-m.y0)*m.s)];
+    R(ctx,OUT,p[0]-6,p[1]-6,12,12);R(ctx,"#FFFFFF",p[0]-5,p[1]-5,10,10);
+    ctx.drawImage(turnSprites(chosen,-1).front[1],7,1,12,11,p[0]-6+1,p[1]-6+1,10,10);
+    // the leaders, top left: the first three, and then you if you are further back
+    all.sort(function(a,b){return (a.fin&&b.fin)?a.fin-b.fin:a.fin?-1:b.fin?1:b.d-a.d});
+    for(i=0;i<all.length;i++)if(all[i].me)mine=i;
+    for(i=0;i<3&&i<all.length;i++)leaderTile(ctx,3,3+i*19,all[i],i+1,all[i].me);
+    if(mine>2)leaderTile(ctx,3,3+3*19+3,all[mine],mine+1,true);
+  }
+
   /* ---------- one frame ---------- */
   function callout(lines,arrow){
     var k=2,w=0,i,x,y=5,h;
     lines.forEach(function(l){w=Math.max(w,textW(l,k))});
-    if(w+(arrow?26:0)+12>W-4){k=1;w=0;lines.forEach(function(l){w=Math.max(w,textW(l,k))})}
+    if(w+(arrow?26:0)+12>W-124){k=1;w=0;lines.forEach(function(l){w=Math.max(w,textW(l,k))})} // leave room for the leaders on the left and the map on the right
     w+=(arrow?9*k+4*k:0)+6*k;h=lines.length*6*k+3*k;x=(W-w)>>1;
     R(ctx,OUT,x-2,y-2,w+4,h+4);R(ctx,TAN,x-1,y-1,w+2,h+2);R(ctx,GREEN,x,y,w,h);
     if(arrow)bits(ctx,ARROW[arrow],x+2*k,y+((h-9*k)>>1),TAN,k);
@@ -1159,6 +1274,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     if(!trees)medianTrees(ctx,w.si,w.x);
     for(i=0;i<st.confetti.length;i++){p=st.confetti[i];R(ctx,p.c,Math.round(p.x),Math.round(p.y),Math.sin(p.rot)>0?3:2,Math.sin(p.rot)>0?2:3)}
 
+    hud();
     if(st.mode==="done")return;
     if(st.mode==="count"){callout([st.cdn?String(4-st.cdn):"GET READY"]);return}
     x=seg.x0+dA-seg.d0;
@@ -1177,7 +1293,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
 
   function step(now){
     var dt=Math.min(0.05,(now-last)/1000||0), si, prev, i, o;last=now;
-    if(wrap.classList.contains("intro")){requestAnimationFrame(step);return} // the race waits until the title, runner and lap screens are done
+    if(wrap.classList.contains("intro")||wrap.classList.contains("outro")){requestAnimationFrame(step);return} // the race waits until the title, runner and lap screens are done
     st.clock+=dt;
     if(st.mode==="count")countdown(dt);
     if(st.mode!=="count"){
@@ -1194,7 +1310,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
       o.v+=(o.pace*5/60*PX_PER_CHAR*(o.eagle?1:1+0.08*Math.sin(st.clock*0.4+o.wob))-o.v)*(1-Math.exp(-1.5*dt));
       o.d+=o.v*dt;
       o.p+=(o.v/(110+130*Math.min(1,o.v/520)))*Math.PI*2*dt;
-      if(o.eagle&&!st.eagleT&&o.d>=course)st.eagleT=st.t;
+      if(!o.fin&&o.d>=course){o.fin=st.t||0.001;if(o.eagle)st.eagleT=o.fin}
     }
     si=where(st.dist*ART).si;
     if(si!==st.seg){ // the runner has gone around a corner and is arriving on the next street
@@ -1242,25 +1358,29 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   var SND=(function(){var a=document.createElement("audio");return a.canPlayType&&a.canPlayType('audio/webm; codecs="opus"')?".webm":".m4a"})();
   function audio(name,loop,vol){var a=new Audio(name+SND);a.loop=loop;a.volume=vol;a.preload="auto";return a}
   var titleMusic=audio("titlescreenmusic1",true,0.5), raceMusic=audio("runningmuiscgame",true,0.45), ding=audio("ding",false,0.9), startBeep=audio("startbeep",false,0.9);
-  var unlocked=false;
-  function unlock(){ // phones only let a sound play once it has been started by a tap, so the first tap quietly starts and stops each one
-    if(unlocked) return;unlocked=true;
-    [raceMusic,ding,startBeep].forEach(function(a){
-      function done(){if(a.warming){a.warming=false;a.pause();a.currentTime=0;a.muted=false}}
-      try{a.warming=true;a.muted=true;var p=a.play();if(p&&p.then)p.then(done,done);else done()}catch(e){a.warming=false;a.muted=false}
+  var finishMusic=audio("raceendingmusic",false,0.7), endMusic=audio("endingmusic",false,0.7); // crossing the line, then the podium
+  // Phones and tablets only let a sound play once a tap has started it. So on every tap or key press,
+  // any sound that has not had its turn yet is started silently and stopped again. After that it can play whenever it is needed.
+  function unlock(){
+    [raceMusic,ding,startBeep,finishMusic,endMusic].forEach(function(a){
+      if(a.unlocked||a.warming||!a.paused) return;
+      function ok(){if(a.warming){a.warming=false;a.pause();a.currentTime=0;a.muted=false}a.unlocked=true}
+      function no(){if(a.warming){a.warming=false;a.muted=false}} // not allowed this time: try again on the next tap
+      try{a.warming=true;a.muted=true;var p=a.play();if(p&&p.then)p.then(ok,no);else ok()}catch(e){no()}
     });
   }
   function play(a,fromStart){ // browsers only allow sound after the first click or key press, so a refused play is not an error
     if(!soundOn) return;
     try{a.warming=false;a.muted=false;if(fromStart)a.currentTime=0;var p=a.play();if(p&&p.catch)p.catch(function(){})}catch(e){}
   }
-  function quiet(a){try{a.pause()}catch(e){}}
-  function music(){ // title music on the title and picker screens, running music while the race is on
-    var intro=wrap.classList.contains("intro");
+  function quiet(a){if(a.warming)return;try{a.pause()}catch(e){}}
+  function music(){ // title music on the title, runner and lap screens, running music while the race is on
+    var intro=wrap.classList.contains("intro"), outro=wrap.classList.contains("outro");
     if(soundOn&&intro)play(titleMusic);else quiet(titleMusic);
-    if(soundOn&&!intro&&st&&st.mode==="run")play(raceMusic);else quiet(raceMusic);
+    if(soundOn&&!intro&&!outro&&st&&st.mode==="run")play(raceMusic);else quiet(raceMusic);
+    if(!soundOn||intro||!st||st.mode!=="done"){quiet(finishMusic);quiet(endMusic)}
   }
-  function showSound(){$("snd1").textContent=$("snd2").textContent=soundOn?"Sound on":"Sound off"}
+  function showSound(){$("snd1").textContent=$("snd2").textContent=$("snd3").textContent=soundOn?"Sound on":"Sound off"}
   function toggleSound(){soundOn=!soundOn;try{localStorage.setItem("eagleSound",soundOn?"on":"off")}catch(e){}showSound();music()}
   // The start: wait 2 seconds, three dings with a full second between them, then the start beep. The race begins on the beep.
   var DING_GAP=1;
@@ -1325,11 +1445,9 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     if(st.mode!=="run"||!st.lines.length) return;
     if(ch==="\u2019"||ch==="\u2018")ch="'"; // phones like to curl apostrophes
     want=st.text[st.gi];
-    if(TOUCH){if(!EASY.test(ch))return;ok=ch.toLowerCase()===want.toLowerCase()} // capital letters do not matter on a phone or tablet
-    else ok=ch===want;
+    ok=TOUCH?ch.toLowerCase()===want.toLowerCase():ch===want; // capital letters do not matter on a phone or tablet
     if(ok){
-      st.ok++;st.e+=KICK;st.gi++;was=st.li;
-      if(TOUCH)while(st.gi<st.text.length&&!EASY.test(st.text[st.gi]))st.gi++;  // numbers and punctuation type themselves
+      st.ok++;st.e+=KICK*BOOST;st.gi++;was=st.li;
       if(st.gi>=st.text.length){st.text=newText(false);st.gi=0;layoutText();return}  // typed it all: keep going with a fresh order
       while(st.li<st.lines.length-1&&st.gi>=st.lines[st.li][1])st.li++;
       if(st.li!==was)renderLines(true);else fillRow();
@@ -1348,16 +1466,52 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
       var cols=[GOLD,GREEN,TAN,"#FFFFFF","#2E7A4F","#F0E8D8"];
       for(var i=0;i<110;i++) st.confetti.push({x:W/2+(Math.random()-0.5)*W*0.9,y:-6-Math.random()*70,vx:(Math.random()-0.5)*50,vy:16+Math.random()*50,rot:Math.random()*6,vr:(Math.random()-0.5)*12,c:cols[i%cols.length]});
     }
-    var total=st.ok+st.miss;
+    var total=st.ok+st.miss, n=st.field.length+1, all=[{me:1,t:st.t}], ew=Math.round(st.eaglePace);
+    // The order of finish. Anyone still out on the course is placed by when they will get in at their own pace.
+    st.field.forEach(function(o){all.push({o:o,t:o.fin||st.t+0.001+Math.max(0,course-o.d)/Math.max(1,o.pace*5/60*PX_PER_CHAR)})});
+    all.sort(function(a,b){return a.t-b.t});
+    for(i=0;i<all.length;i++)if(all[i].me)st.place=i+1;
+    $("sPlace").textContent=st.place;
+    $("pBig").textContent=nth(st.place);$("pOf").textContent="out of "+n+" racers";
     $("rTime").textContent=fmtTime(st.t);
     $("rWpm").textContent=wpm()+" wpm";
-    st.place=place();
-    $("rPlace").textContent=nth(st.place)+" of "+(st.field.length+1);
-    $("sPlace").textContent=st.place;
-    var ew=Math.round(st.eaglePace);
-    $("rEagle").textContent=st.eagleT?"The Eagle got there "+(st.t-st.eagleT).toFixed(1)+" seconds ahead of you. It flew at "+ew+" words per minute this race.":"You beat the Eagle! It flew at "+ew+" words per minute this race.";
     $("rAcc").textContent=(total?Math.round(st.ok/total*100):100)+"%";
-    clearTimeout(doneTimer);doneTimer=setTimeout(function(){if(st.mode==="done")elResult.hidden=false},1300);
+    $("rTitle").textContent=st.place<=3?"You made the podium!":"The podium";
+    $("rPlace").textContent=st.place<=3?nth(st.place)+" place out of "+n:"You finished "+nth(st.place)+" out of "+n;
+    $("rEagle").textContent=st.eagleT?"The Eagle got there "+(st.t-st.eagleT).toFixed(1)+" seconds ahead of you. It flew at "+ew+" words per minute this race.":"You beat the Eagle! It flew at "+ew+" words per minute this race.";
+    buildPodium(all.slice(0,3));
+    // First the place, over the street, while the finish music plays. Then the podium.
+    play(finishMusic,true);
+    clearTimeout(doneTimer);
+    doneTimer=setTimeout(function(){
+      if(st.mode!=="done")return;
+      elResult.hidden=false;
+      doneTimer=setTimeout(showPodium,(isFinite(finishMusic.duration)&&finishMusic.duration>0?Math.min(15,finishMusic.duration):4)*1000-300);
+    },600);
+  }
+  function buildPodium(top){ // the first three across the line: second on the left, first in the middle, third on the right
+    var el=$("podium");
+    el.textContent="";
+    [1,0,2].forEach(function(i){
+      var a=top[i],d,c,who,b;
+      if(!a)return;
+      d=document.createElement("div");who=document.createElement("span");b=document.createElement("div");
+      d.className="pod p"+(i+1)+(a.me?" me":"");
+      if(a.me)c=portrait(chosen,null,String(i+1));
+      else if(a.o.eagle){c=mk(50,36);c.getContext("2d").drawImage(eagleSprites()[1],0,0);c.className="bird"}
+      else c=portrait(a.o.ci,KITS[a.o.ki],String(i+1));
+      who.className="who";who.textContent=a.me?"You":a.o.eagle?"The Eagle":"Runner";
+      b.className="block";b.textContent=i+1;
+      d.appendChild(c);d.appendChild(who);d.appendChild(b);el.appendChild(d);
+    });
+  }
+  function showPodium(){
+    if(st.mode!=="done"||wrap.classList.contains("outro"))return;
+    clearTimeout(doneTimer);
+    elResult.hidden=true;wrap.classList.remove("kb");wrap.classList.add("outro");
+    quiet(finishMusic);play(endMusic,true);
+    wrap.scrollIntoView({block:"start"});
+    try{$("again").focus({preventScroll:true})}catch(e){}
   }
   function reset(focus){
     clearTimeout(doneTimer);
@@ -1401,9 +1555,9 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   // The lap choice: one button each for 1, 2 and 3 laps, with how much typing each one is.
   var lapsEl=$("lapbtns"), lapBtns=[], WORDS=["One lap","Two laps","Three laps"];
   [1,2,3].forEach(function(n){
-    var b=document.createElement("button"),letters=Math.round(buildRoute(n)/STRIDE/10)*10;
+    var b=document.createElement("button"),letters=Math.round(buildRoute(n)/STRIDE/BOOST/10)*10;
     b.type="button";
-    b.innerHTML="<b>"+n+"</b><span>"+(n===1?"lap":"laps")+"</span><small>"+(n===3?"the full 5K, ":"")+"about "+letters+" letters</small>";
+    b.innerHTML="<b>"+n+"</b><span>"+(n===1?"lap":"laps")+"</span><small>"+(n===3?"the full 5k, ":"")+"about "+letters+" letters</small>";
     b.addEventListener("click",function(){
       try{localStorage.setItem("eagleLaps",String(n))}catch(e){}
       buildRoute(n);showLapChoice();begin();
@@ -1412,7 +1566,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   });
   function showLapChoice(){
     lapBtns.forEach(function(x,j){x.setAttribute("aria-pressed",j===LAPS-1?"true":"false")});
-    $("note").textContent=WORDS[LAPS-1]+" of the neighborhood, then the finish in front of the school. "+(TOUCH?"Just type the letters and spaces. Capitals, numbers and punctuation fill themselves in.":"Capital letters and spaces count.");
+    $("note").textContent=WORDS[LAPS-1]+" of the neighborhood, then the finish in front of the school. "+(TOUCH?"Capital letters do not count here. Numbers, punctuation and spaces do.":"Capital letters and spaces count.");
   }
   buildRoute((function(){var n=3;try{n=Math.min(3,Math.max(1,parseInt(localStorage.getItem("eagleLaps"),10)||3))}catch(e){}return n})());
   showLapChoice();
@@ -1421,7 +1575,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     if(i<0||!d) return;
     e.preventDefault();lapBtns[(i+d+3)%3].focus();
   });
-  function showPicker(){wrap.classList.add("intro");titleEl.classList.remove("laps");titleEl.classList.add("pick");runnerBtns[chosen].focus();music()}
+  function showPicker(){wrap.classList.remove("outro");wrap.classList.add("intro");titleEl.classList.remove("laps");titleEl.classList.add("pick");runnerBtns[chosen].focus();music()}
   function showLaps(){titleEl.classList.remove("pick");titleEl.classList.add("laps");lapBtns[LAPS-1].focus()}
   function begin(){
     if(!wrap.classList.contains("intro")) return;
@@ -1431,10 +1585,10 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   $("change").addEventListener("click",showPicker);
   if(TOUCH) $("startHint").textContent="Tap to start";
   if(PREVIEW) wrap.classList.remove("intro");
-  $("snd1").addEventListener("click",toggleSound);$("snd2").addEventListener("click",toggleSound);
+  $("snd1").addEventListener("click",toggleSound);$("snd2").addEventListener("click",toggleSound);$("snd3").addEventListener("click",toggleSound);
   showSound();music();
-  // The title music cannot start until the first click, tap or key press. This starts it then.
-  ["pointerdown","keydown"].forEach(function(ev){document.addEventListener(ev,function(){unlock();if(wrap.classList.contains("intro"))music()},true)});
+  // Every tap, click and key press also makes sure the right music is playing, in case the browser refused to start it on its own.
+  ["pointerdown","touchend","click","keydown"].forEach(function(ev){document.addEventListener(ev,function(){music();unlock()},true)});
 
   document.addEventListener("keydown",function(e){
     if(e.ctrlKey||e.metaKey||e.altKey) return;
@@ -1456,7 +1610,9 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     for(var i=0;i<add.length;i++) type(add[i]);
   });
   $("restart").addEventListener("click",function(){reset(true)});
-  $("again").addEventListener("click",function(){reset(true)});
+  $("again").addEventListener("click",function(){wrap.classList.remove("outro");resize();reset(true)});
+  $("change2").addEventListener("click",showPicker);
+  elResult.addEventListener("click",showPodium); // a tap on the place skips ahead to the podium
   stage.addEventListener("click",function(e){if(e.target===cv){try{box.focus({preventScroll:true})}catch(err){box.focus()}}});
 
   function resize(){ // the picture is about 200 pixels tall, and each of its pixels fills a whole number of screen pixels

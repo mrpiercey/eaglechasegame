@@ -10,6 +10,8 @@ A typing game for the Eagle Chase 5K. The faster you type, the faster the runner
 - `titlescreenmusic1.webm` plays on the title screen and the runner picker.
 - `ding.webm` and `startbeep.webm` are the countdown sounds.
 - `runningmuiscgame.webm` plays on a loop during the race.
+- `raceendingmusic.webm` plays when you cross the finish line, while your place is shown. This file is not in the folder yet. Until it is, your place shows for 4 seconds with no music.
+- `endingmusic.webm` plays on the podium screen.
 - `startracesoundeffect.webm` is not used by the game yet.
 - `street-photos.js` is the old list of Street View photos. The game no longer uses it.
 
@@ -34,6 +36,11 @@ The race bib shows three lines at a time. The line you are typing is bright, the
 Browsers do not let a page play sound until you click, tap or press a key, so the title music starts on your first one.
 The Sound button turns all sound off or back on.
 
+While you race, the top left of the street shows the faces of the first three racers, and yours below them if you are further back.
+The top right shows a small map of the course. Your runner's face moves around it, the other runners are small dots, and the Eagle is a white dot.
+
+When you cross the finish line, your place comes up over the street while the finish music plays. Then the podium screen shows the first three finishers, your place if you missed the podium, a link to sign up for the real race, and a Race again button.
+
 You race 19 other runners and one Eagle. The other runners type between about 15 and 47 words per minute.
 The Eagle is always the fastest. Its pace is picked fresh each race, somewhere between 50 and 80 words per minute.
 The scoreboard shows your place, and the little eagle above the progress bar shows how far the Eagle has gone.
@@ -42,12 +49,13 @@ The scoreboard shows your place, and the little eagle above the progress bar sho
 
 The game works in the browser on phones and iPads.
 
-- You only type the letters and spaces, and capital letters do not matter. Numbers and punctuation fill themselves in.
+- Capital letters do not count: either case is accepted. Numbers, punctuation and spaces still have to be typed.
+- Each letter carries the runner 1.6 times as far as on a computer (`BOOST` in `index.html`), so a race takes fewer letters and the Eagle can be caught when typing with thumbs.
 - When the on-screen keyboard is up, the page shows only the scoreboard, the street, the speed meter and the words, sized to fit the room above the keyboard.
 - When you finish, the keyboard goes away so the results have room.
 - Each sound has a `.webm` file and an `.m4a` copy. Older iPhones and iPads cannot play WebM sound, so they use the `.m4a` copies.
 
-On a computer nothing changes: capital letters, numbers and punctuation all count.
+On a computer, capital letters count as well.
 
 ## The course
 
