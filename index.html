@@ -66,9 +66,9 @@ body{background:var(--green);color:var(--ink);font-family:var(--body);font-size:
 .title.pick,.title.laps,.title.hs{justify-content:center}
 .title.pick .runpick,.title.laps .lappick,.title.hs .hspick{display:block}
 .title.pick .tlogo,.title.pick h1,.title.pick .tstart,.title.laps .tlogo,.title.laps h1,.title.laps .tstart,.title.hs .tlogo,.title.hs h1,.title.hs .tstart{display:none}
-.title .hsb{font-size:clamp(.85rem,2.1vw,1.05rem);padding:.55em 1.1em;box-shadow:0 0 0 3px var(--tan)}
+.title .tbtns{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 14px}
 
-/* High scores: three rows of choices (device, laps, what to rank by), then the top 50 */
+/* Leaderboard: two rows of choices (laps, what to rank by), then the top 50 */
 .hspick{max-width:640px}
 .hsrow{display:flex;gap:6px;margin-bottom:6px}
 .hsrow button{flex:1;margin:0;padding:8px 4px;font-size:.85rem;background:var(--track);color:var(--ink);border:3px solid transparent;border-radius:6px;box-shadow:none;letter-spacing:.02em}
@@ -250,9 +250,11 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     <button type="button" class="snd" id="snd1">Sound on</button>
     <div class="tstart">
       <p class="thow">Type the words on the race bib. The faster you type, the faster you run.</p>
-      <button type="button" id="start">Start the race</button>
+      <div class="tbtns">
+        <button type="button" id="start">Start the race</button>
+        <button type="button" id="hsBtn">Leaderboard</button>
+      </div>
       <p class="blink" id="startHint">or press Enter</p>
-      <button type="button" class="hsb" id="hsBtn">High scores</button>
     </div>
     <div class="picker runpick">
       <h2>Choose your runner</h2>
@@ -263,7 +265,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
       <div class="lapbtns" id="lapbtns" role="group" aria-label="Number of laps"></div>
     </div>
     <div class="picker hspick" id="hspick">
-      <h2>High scores</h2>
+      <h2>Leaderboard</h2>
       <div class="hsrow" id="hsLaps" role="group" aria-label="Number of laps"></div>
       <div class="hsrow" id="hsStat" role="group" aria-label="Ranked by"></div>
       <div class="hslist">
@@ -289,7 +291,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
       <form class="hsform" id="hsForm" novalidate>
         <label for="ini">Your initials</label>
         <input id="ini" type="text" maxlength="2" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" aria-label="First and last initial, two letters">
-        <button type="submit" id="iniGo">Add to high scores</button>
+        <button type="submit" id="iniGo">Add to the leaderboard</button>
         <p class="hsmsg" id="hsMsg"></p>
       </form>
       <a class="fcta" href="https://eaglechase5k.com" target="_blank" rel="noopener">Sign up for the REAL Eagle Chase 5K <span>at eaglechase5k.com</span></a>
@@ -1505,7 +1507,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   }
   function finish(){
     st.mode="done";st.e=Math.max(st.e,200);music();
-    st.run={laps:LAPS,time:Math.round(st.t*100)/100,wpm:wpm(),err:st.miss,saved:false}; // what goes on the high score board, if the player adds it
+    st.run={laps:LAPS,time:Math.round(st.t*100)/100,wpm:wpm(),err:st.miss,saved:false}; // what goes on the leaderboard, if the player adds it
     if(TOUCH)setTimeout(function(){box.blur()},600); // put the keyboard away so the results have room
     $("sTime").textContent=fmtTime(st.t);$("sWpm").textContent=wpm();
     elHint.textContent="You crossed the finish line!";
@@ -1637,7 +1639,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   // Every tap, click and key press also makes sure the right music is playing, in case the browser refused to start it on its own.
   ["pointerdown","touchend","click","keydown"].forEach(function(ev){document.addEventListener(ev,function(){music();unlock()},true)});
 
-  /* ---------- high scores ----------
+  /* ---------- leaderboard ----------
      The scores live in a Firebase database (free plan). Runs are stored by how they were played: computer or mobile,
      times 1, 2 or 3 laps. Anyone can read them and a finished race can be added, but nothing can be changed or removed.
      The database checks every run it is sent (two capital letters, sane numbers).
@@ -1707,9 +1709,9 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
         tr.innerHTML="<td>"+(i+1)+"</td><td>"+r.ini+"</td><td class=\"dev\">"+r.dev+"</td><td>"+hsValue(r,hs.stat)+"</td>";
         hsBody.appendChild(tr);
       });
-    },function(){if(seq===hs.seq)hsNote.textContent="The high score board could not be reached. Check the internet connection and try again."});
+    },function(){if(seq===hs.seq)hsNote.textContent="The leaderboard could not be reached. Check the internet connection and try again."});
   }
-  function showScores(laps,stat){ // the high scores screen, on the title background
+  function showScores(laps,stat){ // the leaderboard screen, on the title background
     if(laps)hs.laps=laps;if(stat)hs.stat=stat;
     wrap.classList.remove("outro");wrap.classList.add("intro");titleEl.classList.remove("pick");titleEl.classList.remove("laps");titleEl.classList.add("hs");
     showBoard();music();
@@ -1736,7 +1738,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
           var at=-1;boards[i].forEach(function(r,j){if(r.id===id)at=j+1});
           if(at>0)parts.push("#"+at+" for "+STATS[k].label.toLowerCase());
         });
-        hsMsg.innerHTML="<b>"+ini+" is on the "+run.laps+"-lap board!</b>"+(parts.length?parts.join(" · "):"Not in the top 50 this time. Race again!")+" <button type=\"button\" id=\"hsSee\">See the board</button>";
+        hsMsg.innerHTML="<b>"+ini+" is on the "+run.laps+"-lap leaderboard!</b>"+(parts.length?parts.join(" · "):"Not in the top 50 this time. Race again!")+" <button type=\"button\" id=\"hsSee\">See the leaderboard</button>";
         $("hsSee").addEventListener("click",function(){showScores(run.laps,"time")});
       });
     }).catch(function(err){

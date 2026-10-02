@@ -45,9 +45,9 @@ You race 19 other runners and one Eagle. The other runners type between about 15
 The Eagle is always the fastest. Its pace is picked fresh each race, somewhere between 50 and 80 words per minute.
 The scoreboard shows your place, and the little eagle above the progress bar shows how far the Eagle has gone.
 
-## High scores
+## Leaderboard
 
-The title screen has a High scores button, and after a race the podium screen asks for two initials (first and last) to put the run on the board.
+The title screen has a Leaderboard button, next to Start the race, and after a race the podium screen asks for two initials (first and last) to put the run on the board.
 Only the initials are stored, with the time, the typing speed and the number of errors.
 
 There is one board for each lap count, 1, 2 or 3. Computer and mobile runs are on the same board, and each row says COMPUTER or MOBILE next to the initials. The game decides which one on its own, the same way it decides whether to use touch mode.
