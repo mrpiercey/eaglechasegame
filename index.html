@@ -81,6 +81,7 @@ body{background:var(--green);color:var(--ink);font-family:var(--body);font-size:
 .hst td:first-child,.hst th:first-child{width:3.2ch;text-align:right;color:var(--muted)}
 .hst td:last-child,.hst th:last-child{text-align:right}
 .hst td small{font-family:var(--body);font-size:.8rem;color:var(--muted)}
+.hst td.dev{font-family:var(--label);font-size:1rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
 .hst tr.me td{background:#FFF7DF}
 .hst tr.top td:first-child{color:var(--gold)}
 .hsnote{margin:0;padding:14px 10px;text-align:center;color:var(--muted)}
@@ -263,11 +264,10 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     </div>
     <div class="picker hspick" id="hspick">
       <h2>High scores</h2>
-      <div class="hsrow" id="hsDev" role="group" aria-label="Played on"></div>
       <div class="hsrow" id="hsLaps" role="group" aria-label="Number of laps"></div>
       <div class="hsrow" id="hsStat" role="group" aria-label="Ranked by"></div>
       <div class="hslist">
-        <table class="hst"><thead><tr><th>#</th><th>Runner</th><th id="hsCol">Time</th></tr></thead><tbody id="hsBody"></tbody></table>
+        <table class="hst"><thead><tr><th>#</th><th>Runner</th><th>Played on</th><th id="hsCol">Time</th></tr></thead><tbody id="hsBody"></tbody></table>
         <p class="hsnote" id="hsNote"></p>
       </div>
       <div class="frow"><button type="button" id="hsBack">Back</button></div>
@@ -1638,30 +1638,39 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   ["pointerdown","touchend","click","keydown"].forEach(function(ev){document.addEventListener(ev,function(){music();unlock()},true)});
 
   /* ---------- high scores ----------
-     The scores live in a Firebase database (free plan). There is one board for each way to play:
-     computer or phone, times 1, 2 or 3 laps. A board can be read by anyone and a finished race can be added to it,
-     but nothing on it can be changed or removed. The database checks every run it is sent (two capital letters, sane numbers).
-     Each board is ranked three ways: fastest time, fastest typing, and fewest errors (ties go to the faster time). */
+     The scores live in a Firebase database (free plan). Runs are stored by how they were played: computer or mobile,
+     times 1, 2 or 3 laps. Anyone can read them and a finished race can be added, but nothing can be changed or removed.
+     The database checks every run it is sent (two capital letters, sane numbers).
+     The player sees one board per lap count, computer and mobile runs together, with the device next to each name.
+     It is ranked three ways: fastest time, fastest typing, and fewest errors (ties go to the faster time). */
   var FB="https://firestore.googleapis.com/v1/projects/eaglechase/databases/(default)/documents", FBKEY="AIzaSyB9fPTbdLeT997BUazordojwABpCD-H9jI";
-  var DEV=TOUCH?"mobile":"computer", DEVS=[["computer","Computer"],["mobile","Phone & tablet"]];
+  var DEV=TOUCH?"mobile":"computer", DEVS=["computer","mobile"];
   var STATS={time:{field:"time",dir:"ASCENDING",label:"Fastest time",col:"Time"},wpm:{field:"wpm",dir:"DESCENDING",label:"Fastest typing",col:"Typing"},err:{field:"errKey",dir:"ASCENDING",label:"Fewest errors",col:"Errors"}};
-  var hs={dev:DEV,laps:LAPS,stat:"time",seq:0,lastId:""};
+  var hs={laps:LAPS,stat:"time",seq:0,lastId:""};
   function fbCall(path,body){
     return fetch(FB+path+"?key="+FBKEY,{method:body?"POST":"GET",headers:{"content-type":"application/json"},body:body?JSON.stringify(body):undefined})
       .then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error((j.error&&j.error.message)||("HTTP "+r.status));return j})});
   }
   function fbNum(v){return v?Number(v.doubleValue!==undefined?v.doubleValue:v.integerValue):0}
-  function loadBoard(dev,laps,stat){ // the top 50 of one board, best first
+  function loadRuns(dev,laps,stat){ // the top 50 runs of one device and lap count, best first
     var s=STATS[stat];
     return fbCall("/boards/"+dev+"_"+laps+":runQuery",{structuredQuery:{from:[{collectionId:"runs"}],orderBy:[{field:{fieldPath:s.field},direction:s.dir}],limit:50}})
       .then(function(rows){
         var out=[];
         (rows||[]).forEach(function(r){
           var d=r.document, f=d&&d.fields; if(!f) return;
-          out.push({id:d.name.slice(d.name.lastIndexOf("/")+1),ini:f["in"]?f["in"].stringValue:"??",time:fbNum(f.time),wpm:fbNum(f.wpm),err:fbNum(f.err)});
+          out.push({id:d.name.slice(d.name.lastIndexOf("/")+1),ini:f["in"]?f["in"].stringValue:"??",dev:dev,time:fbNum(f.time),wpm:fbNum(f.wpm),err:fbNum(f.err)});
         });
         return out;
       });
+  }
+  function loadBoard(laps,stat){ // computer and mobile runs together: the top 50 of a lap count, best first
+    var s=STATS[stat];
+    return Promise.all(DEVS.map(function(dev){return loadRuns(dev,laps,stat)})).then(function(lists){
+      var all=lists[0].concat(lists[1]);
+      all.sort(function(a,b){var d=a[s.field==="errKey"?"err":s.field]-b[s.field==="errKey"?"err":s.field];if(s.dir==="DESCENDING")d=-d;return d||a.time-b.time});
+      return all.slice(0,50);
+    });
   }
   function saveRun(ini,run){ // adds one finished race to its board, and gives back its id
     var id=Date.now().toString(36)+Math.random().toString(36).slice(2,8), name=FB.slice(FB.indexOf("projects/"))+"/boards/"+DEV+"_"+run.laps+"/runs/"+id;
@@ -1673,7 +1682,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     if(stat==="err") return row.err+(row.err===1?" error":" errors")+" <small>"+fmtTime(row.time)+"</small>";
     return fmtTime(row.time);
   }
-  var hsRows={dev:$("hsDev"),laps:$("hsLaps"),stat:$("hsStat")}, hsBody=$("hsBody"), hsNote=$("hsNote");
+  var hsRows={laps:$("hsLaps"),stat:$("hsStat")}, hsBody=$("hsBody"), hsNote=$("hsNote");
   function hsChoice(row,key,items){ // a row of buttons; one is pressed
     items.forEach(function(it){
       var b=document.createElement("button");
@@ -1682,7 +1691,6 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
       row.appendChild(b);
     });
   }
-  hsChoice(hsRows.dev,"dev",DEVS);
   hsChoice(hsRows.laps,"laps",[["1","1 lap"],["2","2 laps"],["3","3 laps"]]);
   hsChoice(hsRows.stat,"stat",Object.keys(STATS).map(function(k){return [k,STATS[k].label]}));
   function showBoard(){ // fills the table for the current choices
@@ -1690,27 +1698,27 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     Object.keys(hsRows).forEach(function(k){Array.prototype.forEach.call(hsRows[k].children,function(b){b.setAttribute("aria-pressed",b.dataset.v===String(hs[k])?"true":"false")})});
     $("hsCol").textContent=STATS[hs.stat].col;
     hsBody.textContent="";hsNote.textContent="Loading…";
-    loadBoard(hs.dev,hs.laps,hs.stat).then(function(rows){
+    loadBoard(hs.laps,hs.stat).then(function(rows){
       if(seq!==hs.seq) return; // a newer choice has taken over
       hsNote.textContent=rows.length?"":"Nobody is on this board yet. Be the first!";
       rows.forEach(function(r,i){
         var tr=document.createElement("tr");
         tr.className=(r.id===hs.lastId?"me":"")+(i<3?" top":"");
-        tr.innerHTML="<td>"+(i+1)+"</td><td>"+r.ini+"</td><td>"+hsValue(r,hs.stat)+"</td>";
+        tr.innerHTML="<td>"+(i+1)+"</td><td>"+r.ini+"</td><td class=\"dev\">"+r.dev+"</td><td>"+hsValue(r,hs.stat)+"</td>";
         hsBody.appendChild(tr);
       });
     },function(){if(seq===hs.seq)hsNote.textContent="The high score board could not be reached. Check the internet connection and try again."});
   }
-  function showScores(dev,laps,stat){ // the high scores screen, on the title background
-    if(dev)hs.dev=dev;if(laps)hs.laps=laps;if(stat)hs.stat=stat;
+  function showScores(laps,stat){ // the high scores screen, on the title background
+    if(laps)hs.laps=laps;if(stat)hs.stat=stat;
     wrap.classList.remove("outro");wrap.classList.add("intro");titleEl.classList.remove("pick");titleEl.classList.remove("laps");titleEl.classList.add("hs");
     showBoard();music();
     try{$("hsBack").focus({preventScroll:true})}catch(e){}
   }
   function hideScores(){titleEl.classList.remove("hs");try{$("start").focus({preventScroll:true})}catch(e){}}
-  $("hsBtn").addEventListener("click",function(){showScores(DEV,LAPS)});
+  $("hsBtn").addEventListener("click",function(){showScores(LAPS)});
   $("hsBack").addEventListener("click",hideScores);
-  if(location.hash==="#scores") showScores(DEV,LAPS); // game.eaglechase5k.com/#scores opens straight to the boards
+  if(location.hash==="#scores") showScores(LAPS); // game.eaglechase5k.com/#scores opens straight to the boards
   // After a race: two initials, then the run goes on the board and the player hears where it landed.
   var hsForm=$("hsForm"), iniBox=$("ini"), iniGo=$("iniGo"), hsMsg=$("hsMsg");
   function resetHsForm(){hsForm.hidden=false;iniBox.value="";iniBox.disabled=false;iniGo.disabled=false;hsMsg.textContent=""}
@@ -1722,14 +1730,14 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     iniBox.value=ini;iniBox.disabled=true;iniGo.disabled=true;hsMsg.textContent="Saving…";run.saved=true;
     saveRun(ini,run).then(function(id){
       hs.lastId=id;
-      return Promise.all(Object.keys(STATS).map(function(k){return loadBoard(DEV,run.laps,k)})).then(function(boards){
-        var parts=[],best=0;
+      return Promise.all(Object.keys(STATS).map(function(k){return loadBoard(run.laps,k)})).then(function(boards){
+        var parts=[];
         Object.keys(STATS).forEach(function(k,i){
           var at=-1;boards[i].forEach(function(r,j){if(r.id===id)at=j+1});
-          if(at>0){parts.push("#"+at+" for "+STATS[k].label.toLowerCase());if(!best)best=1}
+          if(at>0)parts.push("#"+at+" for "+STATS[k].label.toLowerCase());
         });
-        hsMsg.innerHTML="<b>"+ini+" is on the "+(DEV==="mobile"?"phone & tablet":"computer")+" "+run.laps+"-lap board!</b>"+(parts.length?parts.join(" · "):"Not in the top 50 this time. Race again!")+" <button type=\"button\" id=\"hsSee\">See the board</button>";
-        $("hsSee").addEventListener("click",function(){showScores(DEV,run.laps,"time")});
+        hsMsg.innerHTML="<b>"+ini+" is on the "+run.laps+"-lap board!</b>"+(parts.length?parts.join(" · "):"Not in the top 50 this time. Race again!")+" <button type=\"button\" id=\"hsSee\">See the board</button>";
+        $("hsSee").addEventListener("click",function(){showScores(run.laps,"time")});
       });
     }).catch(function(err){
       run.saved=false;iniBox.disabled=false;iniGo.disabled=false;

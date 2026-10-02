@@ -50,8 +50,9 @@ The scoreboard shows your place, and the little eagle above the progress bar sho
 The title screen has a High scores button, and after a race the podium screen asks for two initials (first and last) to put the run on the board.
 Only the initials are stored, with the time, the typing speed and the number of errors.
 
-There is a separate board for every way to play: computer or phone and tablet, times 1, 2 or 3 laps. The game decides computer or phone on its own, the same way it decides whether to use touch mode.
+There is one board for each lap count, 1, 2 or 3. Computer and mobile runs are on the same board, and each row says COMPUTER or MOBILE next to the initials. The game decides which one on its own, the same way it decides whether to use touch mode.
 Each board can be ranked three ways: fastest time, fastest typing (words per minute), or fewest errors, with ties broken by the faster time. Each ranking shows the top 50.
+(In the database the computer and mobile runs are kept apart, under `boards/computer_1`, `boards/mobile_1` and so on. The game reads both and puts them together.)
 Every finished race that gets initials goes on its board, whether or not it makes the top 50.
 
 The scores live in a Firebase database (project `eaglechase`, on the free plan) at https://console.firebase.google.com/project/eaglechase/firestore.
