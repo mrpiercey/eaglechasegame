@@ -36,14 +36,33 @@ body{background:var(--green);color:var(--ink);font-family:var(--body);font-size:
   calc(var(--o)*.38) calc(var(--o)*.92) var(--tan),calc(var(--o)*-.38) calc(var(--o)*.92) var(--tan),
   calc(var(--o)*.38) calc(var(--o)*-.92) var(--tan),calc(var(--o)*-.38) calc(var(--o)*-.92) var(--tan)}
 
-.top{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 22px;align-items:center}
-.logo{display:block;width:clamp(104px,25vw,260px);height:auto}
-.eyebrow{margin:0 0 2px;font-family:var(--label);font-size:1.2rem;line-height:1;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+/* Title screen: the school picture, with the game's name over it like the poster headline */
+.title{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:14px;aspect-ratio:3/2;padding:clamp(12px,3.2vw,30px) 16px clamp(16px,4vw,38px);background:#7FA8DC url(title.jpg) center/cover no-repeat;text-align:center;overflow:hidden}
+.title .tlogo{display:block;width:clamp(120px,24vw,250px);height:auto;filter:drop-shadow(0 2px 0 #FFFFFF) drop-shadow(0 -2px 0 #FFFFFF) drop-shadow(2px 0 0 #FFFFFF) drop-shadow(-2px 0 0 #FFFFFF)}
+.title h1{--o:.075em;font-size:clamp(1.9rem,8.4vw,5.3rem);line-height:1.06;color:var(--green);text-shadow:calc(var(--o)*1.00) calc(var(--o)*0.00) var(--tan),calc(var(--o)*0.92) calc(var(--o)*0.38) var(--tan),calc(var(--o)*0.71) calc(var(--o)*0.71) var(--tan),calc(var(--o)*0.38) calc(var(--o)*0.92) var(--tan),calc(var(--o)*0.00) calc(var(--o)*1.00) var(--tan),calc(var(--o)*-0.38) calc(var(--o)*0.92) var(--tan),calc(var(--o)*-0.71) calc(var(--o)*0.71) var(--tan),calc(var(--o)*-0.92) calc(var(--o)*0.38) var(--tan),calc(var(--o)*-1.00) calc(var(--o)*0.00) var(--tan),calc(var(--o)*-0.92) calc(var(--o)*-0.38) var(--tan),calc(var(--o)*-0.71) calc(var(--o)*-0.71) var(--tan),calc(var(--o)*-0.38) calc(var(--o)*-0.92) var(--tan),calc(var(--o)*-0.00) calc(var(--o)*-1.00) var(--tan),calc(var(--o)*0.38) calc(var(--o)*-0.92) var(--tan),calc(var(--o)*0.71) calc(var(--o)*-0.71) var(--tan),calc(var(--o)*0.92) calc(var(--o)*-0.38) var(--tan),calc(var(--o)*1.90) calc(var(--o)*0.00) var(--green-deep),calc(var(--o)*1.76) calc(var(--o)*0.73) var(--green-deep),calc(var(--o)*1.34) calc(var(--o)*1.34) var(--green-deep),calc(var(--o)*0.73) calc(var(--o)*1.76) var(--green-deep),calc(var(--o)*0.00) calc(var(--o)*1.90) var(--green-deep),calc(var(--o)*-0.73) calc(var(--o)*1.76) var(--green-deep),calc(var(--o)*-1.34) calc(var(--o)*1.34) var(--green-deep),calc(var(--o)*-1.76) calc(var(--o)*0.73) var(--green-deep),calc(var(--o)*-1.90) calc(var(--o)*0.00) var(--green-deep),calc(var(--o)*-1.76) calc(var(--o)*-0.73) var(--green-deep),calc(var(--o)*-1.34) calc(var(--o)*-1.34) var(--green-deep),calc(var(--o)*-0.73) calc(var(--o)*-1.76) var(--green-deep),calc(var(--o)*-0.00) calc(var(--o)*-1.90) var(--green-deep),calc(var(--o)*0.73) calc(var(--o)*-1.76) var(--green-deep),calc(var(--o)*1.34) calc(var(--o)*-1.34) var(--green-deep),calc(var(--o)*1.76) calc(var(--o)*-0.73) var(--green-deep),0 calc(var(--o)*3.2) 0 var(--green-deep)}
+.title h1 .tag{font-size:.6em;margin-top:.5em;padding:.08em .5em;box-shadow:0 0 0 .1em var(--tan),0 0 0 .2em var(--green-deep)}
+.title .tstart{display:flex;flex-direction:column;align-items:center;gap:10px}
+.title button{font-size:clamp(1rem,3vw,1.5rem);padding:.7em 1.4em;box-shadow:0 0 0 4px var(--tan),0 0 0 7px var(--green-deep)}
+.title .blink{margin:0;font-family:var(--label);font-size:clamp(1.1rem,2.6vw,1.5rem);line-height:1;letter-spacing:.08em;text-transform:uppercase;color:#FFFFFF;background:var(--green-deep);padding:.25em .6em .2em}
+.title .snd{position:absolute;top:10px;right:10px;margin:0;font-size:.75rem;padding:.55em .9em;box-shadow:0 0 0 3px var(--tan)}
+.title .thow{margin:0;max-width:34ch;font-weight:700;font-size:clamp(.95rem,2.2vw,1.2rem);line-height:1.3;color:var(--ink);background:var(--paper);border-radius:6px;box-shadow:0 0 0 3px var(--tan);padding:.45em .8em}
+.picker{display:none;margin:auto;width:100%;max-width:760px;background:var(--paper);border-radius:6px;box-shadow:0 0 0 5px var(--tan),0 0 0 8px var(--green-deep);padding:16px 18px 18px}
+.picker h2{margin:0 0 12px;font-family:var(--display);font-weight:400;font-size:clamp(1.2rem,4.2vw,1.9rem);line-height:1.1;text-transform:uppercase}
+.runners{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.runners button{display:grid;place-items:center;margin:0;padding:8px 2px 6px;background:var(--track);border:3px solid transparent;border-radius:6px;box-shadow:none}
+.runners button:hover,.runners button:focus-visible{background:#FFFFFF;border-color:var(--green)}
+.runners button[aria-pressed="true"]{background:#FFF7DF;border-color:var(--gold)}
+.runners canvas{display:block;width:108px;height:186px;image-rendering:crisp-edges;image-rendering:pixelated}
+.title.pick{justify-content:center}
+.title.pick .picker{display:block}
+.title.pick .tlogo,.title.pick h1,.title.pick .tstart{display:none}
+.wrap.intro > :not(.title){display:none}
+.wrap:not(.intro) > .title{display:none}
+
 h1{margin:0;font-family:var(--display);font-weight:400;font-size:clamp(1.3rem,5.3vw,3.1rem);line-height:1.08;text-transform:uppercase;text-wrap:balance}
 h1 .tag{display:inline-block;background:var(--green);color:var(--tan);text-shadow:none;padding:.04em .32em;font-size:.72em;vertical-align:.1em}
-.how{grid-column:1/-1;margin:2px 0 0;color:var(--muted);max-width:60ch}
-
-.board{display:grid;grid-template-columns:auto auto auto minmax(0,1fr);gap:10px 26px;align-items:end}
+.board{display:grid;grid-template-columns:auto auto auto auto auto minmax(0,1fr);gap:10px 26px;align-items:end}
+.mini{display:block;height:44px;width:auto;align-self:center}
 .stat{display:flex;flex-direction:column;gap:2px}
 .stat .k{font-family:var(--label);font-size:1.1rem;line-height:1;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .stat .v{font-family:var(--display);font-size:1.75rem;line-height:1;font-variant-numeric:tabular-nums;min-width:3.7ch}
@@ -52,11 +71,12 @@ h1 .tag{display:inline-block;background:var(--green);color:var(--tan);text-shado
 .course{display:flex;flex-direction:column;gap:5px;min-width:0;padding-bottom:3px}
 .course .names{display:flex;justify-content:space-between;gap:8px;font-family:var(--label);font-size:1.1rem;line-height:1;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
 .course .names b{color:var(--ink);font-weight:400}
-.rail{position:relative;height:10px;border-radius:5px;background:var(--track)}
+.rail{position:relative;margin-top:9px;height:10px;border-radius:5px;background:var(--track)}
 .rail .fill{position:absolute;inset:0 auto 0 0;width:0;border-radius:5px;background:var(--green)}
+.rail .egl{position:absolute;left:0;bottom:100%;width:30px;height:auto;max-width:none;margin:0 0 1px -15px}
 .rail .dot{position:absolute;top:50%;left:0;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;background:var(--gold);border:3px solid var(--green)}
 
-.stage{position:relative;aspect-ratio:16/7;max-width:100%;border-radius:6px;overflow:hidden;border:4px solid var(--green);background:#8EC3E8}
+.stage{position:relative;aspect-ratio:16/7;max-width:100%;max-height:calc(100vh - 330px);max-height:calc(100svh - 330px);min-height:190px;border-radius:6px;overflow:hidden;border:4px solid var(--green);background:#8EC3E8}
 .stage canvas{display:block;image-rendering:crisp-edges;image-rendering:pixelated}
 .result{position:absolute;inset:0;display:grid;place-items:center;padding:12px;overflow:auto;background:var(--scrim)}
 .card{background:var(--paper);color:var(--ink);border-radius:6px;box-shadow:0 0 0 5px var(--tan);padding:16px 20px;max-width:460px;width:100%;display:flex;flex-direction:column;gap:10px;text-align:left}
@@ -95,14 +115,19 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
 
 @media (max-width:640px){
   body{padding:8px}
+  .title{aspect-ratio:auto;min-height:calc(100vh - 16px);min-height:calc(100svh - 16px)}
+  .picker{padding:12px 10px 14px}
+  .runners{gap:6px}
+  .runners canvas{width:54px;height:93px}
   .band{padding:12px 14px}
-  .top{gap:6px 12px}
-  .board{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px 12px}
-  .stat .v{font-size:1.25rem}
-  .stat small{font-size:1rem}
+  .board{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px 8px}
+  .mini{display:none}
+  .stat .v{font-size:1.05rem;min-width:0}
+  #sTime{min-width:0}
+  .stat small{font-size:.9rem}
   .course{grid-column:1/-1}
   .course .names{font-size:1rem}
-  .stage{aspect-ratio:5/4}
+  .stage{aspect-ratio:5/4;max-height:calc(100vh - 340px);max-height:calc(100svh - 340px)}
   .bibhead,.phrase,.bibfoot{padding-inline:32px}
   .bibhead{font-size:.72rem;letter-spacing:.02em;white-space:nowrap}
   .phrase{min-height:calc(4.14em + 24px)}
@@ -117,6 +142,8 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   .row{gap:6px 12px}
 }
 @media (prefers-reduced-motion:no-preference){
+  .title .blink{animation:blink 1.1s steps(1) infinite}
+  @keyframes blink{50%{opacity:0}}
   .bib.oops{animation:shake .16s linear}
   @keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
 }
@@ -124,24 +151,31 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
 </head>
 <body>
 
-<main class="wrap">
-  <header class="band top">
-    <img class="logo" src="eagles.png" width="720" height="310" alt="Two green eagles in flight, the Ashland Elementary logo">
-    <div>
-      <p class="eyebrow">Test lap, side view</p>
-      <h1 class="ol">The Ashland Eagle Chase 5K <span class="tag">The Game</span></h1>
+<main class="wrap intro">
+  <section class="title" id="title" aria-label="Title screen">
+    <img class="tlogo" src="eagles.png" width="720" height="310" alt="">
+    <h1>The Ashland<br>Eagle Chase 5K<br><span class="tag">The Game</span></h1>
+    <button type="button" class="snd" id="snd1">Sound on</button>
+    <div class="tstart">
+      <p class="thow">Type the words on the race bib. The faster you type, the faster you run.</p>
+      <button type="button" id="start">Start the race</button>
+      <p class="blink" id="startHint">or press Enter</p>
     </div>
-    <p class="how">Type the words on the race bib. The faster you type, the faster you run the Eagle Chase course.</p>
-  </header>
-
+    <div class="picker">
+      <h2>Choose your runner</h2>
+      <div class="runners" id="runners" role="group" aria-label="Runners"></div>
+    </div>
+  </section>
   <div class="band">
     <section class="board" aria-label="Scoreboard">
+      <img class="mini" src="eagles.png" width="720" height="310" alt="Ashland Eagles">
       <div class="stat"><span class="k">Time</span><span class="v" id="sTime">0:00.0</span></div>
       <div class="stat"><span class="k">Speed</span><span class="v"><span id="sSpeed">0.0</span><small> mph</small></span></div>
       <div class="stat"><span class="k">Typing</span><span class="v"><span id="sWpm">0</span><small> wpm</small></span></div>
+      <div class="stat"><span class="k">Place</span><span class="v"><span id="sPlace">1</span><small> of 21</small></span></div>
       <div class="course">
         <div class="names"><b id="nameA">Start</b><span id="nameB">Lap 1 of 3</span><b id="nameC">Finish</b></div>
-        <div class="rail"><div class="fill" id="fill"></div><div class="dot" id="dot"></div></div>
+        <div class="rail"><div class="fill" id="fill"></div><img class="egl" id="egl" src="eagles.png" width="720" height="310" alt="The Eagle" title="The Eagle"><div class="dot" id="dot"></div></div>
       </div>
     </section>
 
@@ -153,9 +187,10 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
           <dl>
             <div><dt>Time</dt><dd id="rTime">0:00.0</dd></div>
             <div><dt>Typing</dt><dd id="rWpm">0 wpm</dd></div>
-            <div><dt>Top speed</dt><dd id="rTop">0 mph</dd></div>
+            <div><dt>Place</dt><dd id="rPlace">1st</dd></div>
             <div><dt>Accuracy</dt><dd id="rAcc">100%</dd></div>
           </dl>
+          <p id="rEagle"></p>
           <div class="row">
             <button type="button" id="again">Run it again</button>
             <p>Sign up for the real race at <a href="https://eaglechase5k.com" target="_blank" rel="noopener">eaglechase5k.com</a></p>
@@ -170,12 +205,14 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
       <i class="pin tl"></i><i class="pin tr"></i><i class="pin bl"></i><i class="pin br"></i>
       <div class="bibhead"><span>Eagle Chase 5K</span><span>Sat, Nov 7</span></div>
       <p class="phrase" id="phrase"></p>
-      <p class="bibfoot"><span id="hint">Type the first letter to start running.</span><span id="count">Phrase 1 of 7</span></p>
+      <p class="bibfoot"><span id="hint">Type the first letter to start running.</span><span id="count">Phrase 1</span></p>
       <input id="typebox" type="text" inputmode="text" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" aria-label="Type the phrase here">
     </section>
 
     <footer class="foot">
       <button type="button" id="restart">Start over</button>
+      <button type="button" id="change">Change runner</button>
+      <button type="button" class="snd" id="snd2">Sound on</button>
       <p id="note">Three laps of the neighborhood, then the finish in front of the school. Capital letters and spaces count.</p>
     </footer>
   </div>
@@ -189,14 +226,33 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
 <script>
 (function(){
   "use strict";
+  // Things to type. Every race puts them in a new random order.
   var PHRASES=[
-    "sign up for the eagle chase",
-    "The Eagle Chase 5K is on November 7th",
-    "Support our 4th and 5th Graders",
-    "eaglechase5k.com",
-    "Find two people to sign up",
-    "Every runner helps pay for our field trips",
-    "We want 300 runners this year"
+    "The Eagle Chase 5K is on November 7th","The race starts at 9:00 in the morning","Sign up at eaglechase5k.com","Walkers are welcome",
+    "Meet us at Ashland Elementary School","All proceeds help our field trips","Support our 4th and 5th graders","Every runner helps pay for our field trips",
+    "We want 300 runners this year","Find two people to sign up","Saturday, November 7 at 9:00AM","Our field trips are about STEM",
+    "Our field trips are about the arts","Field trips help us think about future careers","We take a field trip every month","Two big adventures end the school year",
+    "Field trips should be affordable for every family","Run three laps through the neighborhood","The race starts on Cramer Ave","Turn right onto Mentelle Park",
+    "Run down Mentelle Park and back","Turn left onto Richmond Ave","Run back up Aurora Ave","Turn left onto North Ashland Ave",
+    "The finish line is in front of the school","Finish in the bus lane","A 5K is 3.1 miles","Three laps make a 5K",
+    "Ashland Eagles wear green and gold","Go Eagles!","Chase the Eagle","Can you catch the Eagle?",
+    "The Eagle is fast but you can beat it","Bring your family to the race","Bring your friends to the race","Ask your neighbors to sign up",
+    "Tell your teacher about the race","Run it, jog it, or walk it","Every step helps our school","Lace up your running shoes",
+    "Eagles fly together","Run like an Eagle","Type fast to run fast","Keep your fingers moving",
+    "Keep your feet moving","One lap down, two to go","Two laps down, one to go","Last lap, give it all you have",
+    "The 2026 Ashland Eagle Chase","eaglechase5k.com","Register today at eaglechase5k.com","sign up for the eagle chase",
+    "See you at the starting line","See you at the finish line","Cheer for every runner","Wave to the neighbors on Cramer Ave",
+    "Look for the big trees on Mentelle Park","Aurora Ave is the long stretch","Richmond Ave is one short block","Run past the houses on Aurora Ave",
+    "Fourth graders love field trips","Fifth graders love field trips","Thank you for helping our school","Thank you for running with us",
+    "Runners and walkers are both welcome","Start slow and finish strong","Pace yourself for three laps","Breathe in, breathe out, keep going",
+    "Stretch before you run","Drink water before the race","Smile when you cross the finish line","Ashland Elementary is our school",
+    "We are the Ashland Eagles","Green and gold all the way","We want every student to go on every trip","Learning happens outside the classroom too",
+    "Science, technology, engineering, and math","The arts are part of our field trips","What do you want to be when you grow up?","Saturday morning in the neighborhood",
+    "November is a great month to run","Mark your calendar for November 7","Set your alarm for race day","The race is on a Saturday",
+    "Be at the start by 9:00","Three laps, one finish line","Down Cramer, around Mentelle, back on Aurora","Left turn, left turn, left turn",
+    "Run around the median on Mentelle Park","The school bus lane is the finish","Sprint to the finish","High five at the finish line",
+    "Every lap counts","Every runner counts","Help us reach 300 runners","Share eaglechase5k.com with a friend",
+    "More runners means more help for field trips","Proceeds benefit 4th and 5th grade field trips","The Eagle Chase is at Ashland Elementary","Ready, set, Eagle Chase!"
   ];
 
   /* ---------- the race course, measured from the race map ---------- */
@@ -204,6 +260,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   var PXM=8;      // pixels of street for every meter of the real course
   var STRIDE=50;  // pixels the runner covers for each letter typed. A smaller number means more typing per lap.
   // One lap, in running order. m = length in meters. The runner turns at the last crossing of each leg.
+  // left = the runner heads back north on this leg, so he runs to the left on screen.
   // exit = which way that turn takes the runner on screen: down toward the bottom, or up behind the houses.
   // Mentelle Park (median) is run down one side for m meters, around the median, and back up the other side.
   // cross = the streets met along the way, in meters from the start of the leg.
@@ -222,16 +279,18 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     {name:"Cramer Ave",m:106,turn:"left",exit:"up",
       cross:[{at:0,name:"Mentelle Park",near:1,gate:1},{at:106,name:"Richmond Ave",far:1,near:1}],
       lots:["A blue charcoal white","C white charcoal red","A gray charcoal wood","picket 46","B slate brown white","A cream brown green"]},
-    {name:"Richmond Ave",m:101,turn:"left",exit:"up",
+    {name:"Richmond Ave",m:101,left:1,turn:"left",exit:"down",
       cross:[{at:0,name:"Cramer Ave",far:1,near:1},{at:101,name:"Aurora Ave",far:1,near:1}],
       lots:["fence 54","G white charcoal","wall 44","F tanbrick brown wood","G gray brown","fence 60","hedge 40","A blue charcoal white"]},
-    {name:"Aurora Ave",m:357,turn:"left",exit:"up",
+    {name:"Aurora Ave",m:357,left:1,turn:"left",exit:"down",
       cross:[{at:0,name:"Richmond Ave",far:1,near:1},{at:89,name:"Memory Ln",near:1},{at:179,name:"Hanover Ct",near:1},{at:213,name:"N Hanover Ave",far:1},{at:269,name:"Given Ave",near:1},{at:357,name:"N Ashland Ave",far:1,near:1}],
       lots:["A slate charcoal white","B yellow brown red","A brick charcoal white","hedge 36","A cream brown green","B gray charcoal red","F brick brown white","A white charcoal red","B sage brown wood","A blue charcoal white","E tanbrick charcoal wood","A gray brown red","B cream charcoal green"]},
     {name:"N Ashland Ave",m:102,post:68,turn:"left",exit:"up",school:1,
       cross:[{at:0,name:"Aurora Ave",far:1,near:1},{at:102,name:"Cramer Ave",far:1,near:1,light:1}],
       lots:["fence 50","G white charcoal","G sage brown","F darkbrick charcoal white","A gray charcoal red","B cream brown green"]}
   ];
+
+  LEGS.forEach(function(leg){leg.dir=leg.left?-1:1;leg.cross.forEach(function(c){c.x=leg.dir*c.at*PXM})}); // where each crossing sits along its street
 
   // Every correct letter is worth the same distance. Typing faster packs those pushes closer together, so the runner moves faster.
   var PX_PER_CHAR=100, DECAY=1.4, KICK=PX_PER_CHAR*DECAY, PX_PER_MPH=41.6;
@@ -249,8 +308,8 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   function hash(i){var s=Math.sin(i*127.1+11.7)*43758.5453;return s-Math.floor(s)}
   function mk(w,h){var c=document.createElement("canvas");c.width=w;c.height=h;return c}
 
-  // Rounding a corner takes some running too: out along the side street, then in to the new street.
-  var TURN_OUT=60, TURN_IN=60, GAP_RUN=40;
+  // Rounding a corner takes some running too: out along the side street. Then the view cuts to him running down the new street.
+  var TURN_OUT=60, GAP_RUN=40;
   // The lap list, laid end to end: one entry for every leg of every lap.
   var route=[], totalPx=0;
   (function(){
@@ -259,28 +318,27 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
       leg=LEGS[li];lastLeg=lap===LAPS&&li===LEGS.length-1;
       loop=leg.median?leg.m*PXM:0; // an out-and-back leg starts and ends at the same corner
       x0=loop?0:lap===1&&li===0?-(leg.pre||0)*PXM:0;
-      x1=loop?0:(leg.m+(lastLeg?leg.post||0:0))*PXM;
-      len=loop?loop*2+GAP_RUN:x1-x0;out=loop?24:TURN_OUT;
-      route.push({li:li,lap:lap,x0:x0,x1:x1,loop:loop,d0:totalPx,d1:totalPx+len,turn:lastLeg?null:leg.turn,exit:leg.exit,out:out,onto:LEGS[(li+1)%LEGS.length].name,straight:lastLeg?leg.m*PXM:0});
-      totalPx+=len+(lastLeg?0:out+TURN_IN);
+      x1=loop?0:leg.dir*(leg.m+(lastLeg?leg.post||0:0))*PXM;
+      len=loop?loop*2+GAP_RUN:Math.abs(x1-x0);out=loop?24:TURN_OUT;
+      route.push({li:li,lap:lap,x0:x0,x1:x1,dir:leg.dir,loop:loop,d0:totalPx,d1:totalPx+len,turn:lastLeg?null:leg.turn,exit:leg.exit,out:out,onto:LEGS[(li+1)%LEGS.length].name,straight:lastLeg?leg.m*PXM:0});
+      totalPx+=len+(lastLeg?0:out);
     }
   })();
   var course=Math.round(totalPx/ART);
-  // Where the runner is. bend 0 = running along a street, 1 = leaving it at the corner, 2 = arriving on the next street,
-  // 3 = crossing the median to turn around. face = which way he runs on screen. lane 1 = the far side of the median.
+  // Where the runner is. bend 0 = running along a street, 1 = leaving it at the corner, 3 = crossing the median to turn around.
+  // face = which way he runs on screen. lane 1 = the far side of the median.
   function where(d){
     var i,s,l;
     for(i=0;i<route.length;i++){
       s=route[i];
       if(d<s.d1||!s.turn){
         l=d-s.d0;
-        if(!s.loop)return {si:i,bend:0,x:s.x0+l,face:1,lane:0};
+        if(!s.loop)return {si:i,bend:0,x:s.x0+s.dir*l,face:s.dir,lane:0};
         if(l<s.loop)return {si:i,bend:0,x:l,face:1,lane:0,toGap:s.loop-l};
         if(l<s.loop+GAP_RUN)return {si:i,bend:3,p:(l-s.loop)/GAP_RUN,x:s.loop};
         return {si:i,bend:0,x:s.loop-(l-s.loop-GAP_RUN),face:-1,lane:1};
       }
       if(d<s.d1+s.out)return {si:i,bend:1,p:(d-s.d1)/s.out,x:s.x1,exit:s.exit,lane:s.loop?1:0};
-      if(d<s.d1+s.out+TURN_IN)return {si:i+1,bend:2,p:(d-s.d1-s.out)/TURN_IN,x:route[i+1].x0,exit:s.exit};
     }
   }
 
@@ -594,14 +652,14 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   }
 
   /* ---------- each leg of the lap is built once, the first time the runner gets there ---------- */
-  function inCross(leg,a,b){return leg.cross.some(function(c){return !c.gap&&a<c.at*PXM+HWID+12&&b>c.at*PXM-HWID-12})}
-  function pastEnd(leg,x){return leg.cross.some(function(c){return c.dead&&(c.dead>0?x>c.at*PXM+HWID:x<c.at*PXM-HWID)})}
+  function inCross(leg,a,b){return leg.cross.some(function(c){return !c.gap&&a<c.x+HWID+12&&b>c.x-HWID-12})}
+  function pastEnd(leg,x){return leg.cross.some(function(c){return c.dead&&(c.dead>0?x>c.x+HWID:x<c.x-HWID)})}
   function buildLeg(li){
     var leg=LEGS[li];
     if(leg.l)return leg;
-    var r=rngMaker(20261107+li*7919),X0=-(leg.pre||0)*PXM-420,X1=(leg.m+(leg.post||0))*PXM+900,blocks=[],x,w,k,sx0;
+    var r=rngMaker(20261107+li*7919),X0=leg.dir>0?-(leg.pre||0)*PXM-420:-leg.m*PXM-900,X1=leg.dir>0?(leg.m+(leg.post||0))*PXM+900:420,blocks=[],x,w,k,sx0;
     leg.l=[];leg.trees=[];leg.cars=[];leg.yard=[];leg.near=[];leg.extra=[];
-    leg.cross.forEach(function(c){if(c.far)blocks.push([c.at*PXM-HWID-10,c.at*PXM+HWID+10])});
+    leg.cross.forEach(function(c){if(c.far)blocks.push([c.x-HWID-10,c.x+HWID+10])});
     if(leg.school){ // the school fills the far side of the last stretch, with the finish line at its front doors
       sx0=(leg.m+leg.post)*PXM-215;
       blocks.push([leg.m*PXM-HWID-10,sx0+SCHOOL.w+140]);
@@ -625,10 +683,10 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
         x=dir>0?a+lot.w+gap:a-gap;
       }
     }
-    fill(leg.lots,4,1);fill(leg.back||leg.lots.slice().reverse(),-4,-1);
+    fill(leg.lots,4*leg.dir,leg.dir);fill(leg.back||leg.lots.slice().reverse(),-4*leg.dir,-leg.dir);
     if(leg.median){ // big old trees down the middle of Mentelle Park
       for(x=X0;x<X1;x+=64+Math.floor(r()*50)){
-        if(pastEnd(leg,x)||leg.cross.some(function(c){return Math.abs(x-c.at*PXM)<(c.gap?24:HWID+18)}))continue;
+        if(pastEnd(leg,x)||leg.cross.some(function(c){return Math.abs(x-c.x)<(c.gap?24:HWID+18)}))continue;
         leg.trees.push({x:x,big:1,s:tree(9+Math.floor(r()*2),Math.floor(r()*5),10)});
       }
     }
@@ -672,7 +730,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     for(wx=cl;wx<cl+W;wx++){t=hash(wx*1.7+seg.li);if(t>0.9)R(g,LEAF[Math.floor(t*997)%LEAF.length],wx-cl,t>0.95?yS+1+Math.floor(hash(wx)*4):yN-2-Math.floor(hash(wx)*4),2,1)}
     // side streets
     for(i=0;i<leg.cross.length;i++){
-      c=leg.cross[i];sx=c.at*PXM-cl;
+      c=leg.cross[i];sx=c.x-cl;
       if(sx<-140||sx>W+140)continue;
       if(c.gap){R(g,ROAD,sx-11,yB+27,22,22);R(g,CURB,sx-12,yB+29,1,18);R(g,CURB,sx+11,yB+29,1,18);continue}
       if(c.far){
@@ -715,7 +773,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     for(i=0;i<leg.cars.length;i++){sx=leg.cars[i].x-cl;if(sx>W||sx<-46)continue;g.drawImage(leg.cars[i].c,sx,yS-8)}
     // street signs and the traffic light
     for(i=0;i<leg.cross.length;i++){
-      c=leg.cross[i];sx=c.at*PXM-cl;
+      c=leg.cross[i];sx=c.x-cl;
       if(!c.name||sx<-160||sx>W+160)continue;
       x=sx+HWID+(c.light?13:4);t=textW(c.name);y=leg.median?yB+4:yS-8;
       R(g,"#8A8F98",x,y-36,1,36);R(g,OUT,x-2,y-43,t+6,9);R(g,SIGN,x-1,y-42,t+4,7);text(g,c.name,x+1,y-41,"#FFFFFF",1);
@@ -755,16 +813,16 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
       sx=seg.loop-cl-36;
       if(sx>-20&&sx<W+20){y=yB+44;R(g,WOOD,sx+7,y-6,1,6);R(g,OUT,sx-1,y-20,17,15);R(g,TAN,sx,y-19,15,13);bits(g,ARROW.uturn,sx+3,y-17,GREEN,1)}
     }else if(seg.turn){ // cones block the way straight on, and an arrow board points the turn
-      sx=seg.x1-cl+HWID+10;
+      sx=seg.x1-cl+seg.dir*(HWID+10)-(seg.dir<0?5:0);
       if(sx>-10&&sx<W+10)for(k=0;k<5;k++)cone(g,sx+(k%2),yS+10+k*10);
-      sx=seg.x1-cl-HWID-26;
+      sx=seg.x1-cl-seg.dir*(HWID+26)-(seg.dir<0?15:0);
       if(sx>-20&&sx<W+20){y=seg.exit==="down"?yN+8:yS-5;R(g,WOOD,sx+7,y-6,1,6);R(g,OUT,sx-1,y-20,17,15);R(g,TAN,sx,y-19,15,13);bits(g,ARROW[seg.turn],sx+3,y-17,GREEN,1)}
     }
   }
 
   /* ---------- the runner ---------- */
   var RS=64, RK=0.46, rc=mk(RS,RS), rg=rc.getContext("2d",{willReadFrequently:true}), sc=mk(RS,RS), sg=sc.getContext("2d");
-  function runner(g,p,s,t){
+  function runner(g,p,s,t,ch,kit){
     var TH=24,SH=25,TO=36,UA=16,FA=15,PI=Math.PI;
     var A=0.05+0.9*Math.pow(s,0.75), K=0.1+1.55*s, lean=0.04+0.24*s;
     function limb(x1,y1,x2,y2,w,c){g.strokeStyle=c;g.lineWidth=w;g.lineCap="round";g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke()}
@@ -784,7 +842,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
       var ex=sx+UA*Math.sin(ua), ey=sy+3+UA*Math.cos(ua);
       return {ex:ex,ey:ey,hx:ex+FA*Math.sin(fa),hy:ey+FA*Math.cos(fa)};
     });
-    var SKIN="#C98B62",SKIN2="#A9714D",SHIRT=GREEN,SHIRT2="#123630",SHORT=GOLD,SHORT2="#B08A2C",SHOE="#FFFFFF",SHOE2="#D5D2C8";
+    var SKIN=ch.skin,SKIN2=ch.skin2,HAIR=ch.hair,hs=ch.style,SHIRT=kit[0],SHIRT2=kit[1],SHORT=kit[2],SHORT2=kit[3],SHOE="#FFFFFF",SHOE2="#D5D2C8";
     function leg(l,skin,shorts,shoe){
       limb(hx,hy,hx+l.kx,hy+l.ky,8.5,skin);limb(hx+l.kx,hy+l.ky,hx+l.fx,hy+l.fy,7.5,skin);
       limb(hx,hy,hx+l.kx*0.62,hy+l.ky*0.62,12,shorts);
@@ -799,20 +857,31 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     g.save();g.translate((hx+sx)/2,(hy-3+sy)/2);g.rotate(lean);g.fillStyle="#FFFFFF";g.fillRect(-3,-8,11,12);g.restore();
     leg(legs[0],SKIN,SHORT,SHOE);
     var nx=sx+17*Math.sin(lean*0.8), ny=sy-17*Math.cos(lean*0.8);
+    var bx=nx+12*Math.cos(PI*1.06), by=ny+12*Math.sin(PI*1.06), fx=nx+12*Math.cos(PI*1.8), fy=ny+12*Math.sin(PI*1.8);
+    var fl=Math.sin(t*13)*3*(0.3+s), tl=9+16*s;
+    // hair that hangs behind the head goes on first
+    if(hs==="long")limb(nx-6,ny-2,nx-12-5*s,ny+17+fl*0.5,10,HAIR);
+    if(hs==="bob")limb(nx-6,ny-3,nx-8-2*s,ny+8,10,HAIR);
+    if(hs==="puffs"){g.fillStyle=HAIR;circle(nx-9,ny-9,7);circle(nx+2,ny-13,5.5)}
+    if(hs==="curly"){g.fillStyle=HAIR;circle(nx-8,ny-7,7);circle(nx-1,ny-11,6.5);circle(nx-10,ny+1,5.5)}
     limb(sx,sy-4,nx,ny,7,SKIN);
     g.fillStyle=SKIN;circle(nx,ny,11.5);
-    g.fillStyle="#2B1D17";g.beginPath();g.arc(nx,ny,12.2,PI*0.78,PI*1.84);g.closePath();g.fill();
-    var bx=nx+12*Math.cos(PI*1.06), by=ny+12*Math.sin(PI*1.06), fx=nx+12*Math.cos(PI*1.8), fy=ny+12*Math.sin(PI*1.8);
-    limb(bx,by,fx,fy,4,GOLD);
-    var fl=Math.sin(t*13)*3*(0.3+s), tl=9+16*s;
-    limb(bx,by,bx-tl,by+2+fl-5*s,3,GOLD);limb(bx,by,bx-tl*0.8,by+6-fl*0.7-3*s,3,GOLD);
+    g.fillStyle=HAIR;g.beginPath();g.arc(nx,ny,12.2,PI*0.78,PI*1.84);g.closePath();g.fill();
+    if(hs==="hightop"){g.save();g.translate(nx-1,ny-11);g.rotate(lean*0.8);g.fillStyle=HAIR;g.fillRect(-9,-8,17,9);g.restore()}
+    if(hs==="cap"){g.fillStyle=ch.cap;g.beginPath();g.arc(nx,ny,12.8,PI*1.03,PI*1.9);g.closePath();g.fill();limb(fx,fy,fx+9,fy+3,3.4,ch.cap)}
+    if(hs==="pony")limb(bx,by,bx-10-9*s,by+7+fl-5*s,5.5,HAIR);
+    if(hs==="braid")limb(bx,by+2,bx-7-10*s,by+20+fl-10*s,4.5,HAIR);
+    if(ch.band){
+      limb(bx,by,fx,fy,4,ch.band);
+      limb(bx,by,bx-tl,by+2+fl-5*s,3,ch.band);limb(bx,by,bx-tl*0.8,by+6-fl*0.7-3*s,3,ch.band);
+    }
     g.fillStyle="#1D1410";g.fillRect(nx+5,ny-3,1/RK,1/RK);
     arm(arms[0],SKIN,SHIRT);
   }
-  function drawRunner(x,y,p,s,t,flip){ // drawn small, then given hard edges and a dark outline like a game sprite
+  function drawRunner(x,y,p,s,t,flip,ch,kit){ // drawn small, then given hard edges and a dark outline like a game sprite
     var im,d,i;
     rg.setTransform(1,0,0,1,0,0);rg.clearRect(0,0,RS,RS);
-    rg.setTransform(RK,0,0,RK,26,57);runner(rg,p,s,t);rg.setTransform(1,0,0,1,0,0);
+    rg.setTransform(RK,0,0,RK,26,57);runner(rg,p,s,t,ch,kit);rg.setTransform(1,0,0,1,0,0);
     im=rg.getImageData(0,0,RS,RS);d=im.data;
     for(i=3;i<d.length;i+=4)d[i]=d[i]>120?255:0;
     rg.putImageData(im,0,0);
@@ -823,42 +892,159 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     ctx.drawImage(rc,-26,-57);ctx.restore();
   }
 
-  var turnSpr={front:[],back:[]};
-  ["front","back"].forEach(function(view){
-    var SKIN="#C98B62",SKIN2="#A9714D",HAIR="#2B1D17",back=view==="back",f;
-    for(f=0;f<4;f++)(function(f){
-      var body=sprite(26,50,function(r){
-        var bob=f%2?0:1,arm=f===0?-3:f===2?2:0,legL=f===0?0:f===2?-5:-2,legR=f===2?0:f===0?-5:-2;
-        r(SKIN,8,32+bob,4,11+legL-bob);r("#FFFFFF",7,43+legL,5,3);r("#D5D2C8",7,45+legL,5,1);
-        r(SKIN2,14,32+bob,4,11+legR-bob);r("#FFFFFF",14,43+legR,5,3);r("#D5D2C8",14,45+legR,5,1);
-        r(GOLD,7,26+bob,12,7);r("#B08A2C",12,29+bob,2,4);
-        r(GREEN,6,13+bob,14,14);r("#123630",6,25+bob,14,2);
-        if(!back){r("#FFFFFF",10,17+bob,6,6);r(GREEN,11,19+bob,4,1)}
-        r(GREEN,3,14+bob,3,6);r(SKIN,3,20+bob,3,7+arm);
-        r(GREEN,20,14+bob,3,6);r(SKIN2,20,20+bob,3,7-arm);
-        r(SKIN,11,11+bob,4,2);
-        if(back){r(HAIR,8,1+bob,10,10);r(GOLD,8,4+bob,10,2);r(GOLD,17,6+bob,2,5);r(GOLD,19,7+bob,1,3)}
-        else{r(SKIN,8,2+bob,10,9);r(SKIN,7,6+bob,1,3);r(SKIN,18,6+bob,1,3);r(HAIR,8,1+bob,10,3);r(GOLD,8,4+bob,10,2);r("#1D1410",10,7+bob,1,2);r("#1D1410",15,7+bob,1,2);r(SKIN2,12,10+bob,2,1)}
-      });
-      var c=mk(26,50),k=c.getContext("2d"),sil=mk(26,50),sk=sil.getContext("2d");
-      sk.drawImage(body,0,0);sk.globalCompositeOperation="source-in";sk.fillStyle=OUT;sk.fillRect(0,0,26,50);
-      k.drawImage(sil,-1,0);k.drawImage(sil,1,0);k.drawImage(sil,0,-1);k.drawImage(sil,0,1);k.drawImage(body,0,0);
-      turnSpr[view].push(c);
-    })(f);
-  });
+  // Shirts and shorts for the rest of the field. Your own runner wears the outfit shown in the picker.
+  var KITS=[["#C5312A","#9A241F","#22242A","#15161A"],["#2F5DA8","#234680","#F1EFEA","#CFCCC3"],["#7A4FA3","#5E3B80","#22242A","#15161A"],["#E8862A","#C06A1C","#2C3E66","#1F2C4A"],
+    ["#F1EFEA","#CFCCC3","#2F5DA8","#234680"],["#2A9D8F","#1F776C","#F1EFEA","#CFCCC3"],["#D95B8C","#B3446F","#3A3A42","#2A2A31"],["#E3C23A","#BFA02A","#22242A","#15161A"],
+    ["#8A8F98","#6B7078","#C5312A","#9A241F"],["#27375E","#1B2744","#E3C23A","#BFA02A"]];
+  function outlined(body){ // a dark one-pixel outline around a sprite
+    var w=body.width,h=body.height,c=mk(w,h),k=c.getContext("2d"),sil=mk(w,h),sk=sil.getContext("2d");
+    sk.drawImage(body,0,0);sk.globalCompositeOperation="source-in";sk.fillStyle=OUT;sk.fillRect(0,0,w,h);
+    k.drawImage(sil,-1,0);k.drawImage(sil,1,0);k.drawImage(sil,0,-1);k.drawImage(sil,0,1);k.drawImage(body,0,0);
+    return c;
+  }
+  // The Eagle: it flies the course. Three wing positions make the flap.
+  var eagleFrames=null;
+  function eagleSprites(){
+    return eagleFrames||(eagleFrames=[0,1,2].map(function(f){
+      return outlined(sprite(50,36,function(r){
+        var j,hw;
+        r(GREEN,4,19,9,3);r("#123630",2,20,4,2);r(GREEN,6,17,7,2);                       // tail
+        for(j=-5;j<=5;j++){hw=Math.round(Math.sqrt(1-j*j/30)*13);r(j>2?"#123630":GREEN,24-hw,20+j,hw*2,1)}
+        disc(r,38,17,4,"#FFFFFF");r("#FFFFFF",33,17,5,5);r("#E9E4D6",33,21,8,1);          // white head and neck
+        r(GOLD,42,16,4,2);r("#B08A2C",44,18,2,1);r("#1D1410",39,16,1,1);                  // beak and eye
+        r(GOLD,22,26,3,1);r(GOLD,27,26,3,1);
+        if(f===0)for(j=0;j<15;j++)r(j%4===3?"#2A6257":GREEN,16-Math.round(j*0.35),16-j,14-Math.round(j*0.7),1);
+        else if(f===1){for(j=0;j<5;j++)r(j===4?"#123630":GREEN,7+j*2,15+j,23-j*2,1);r("#2A6257",11,16,15,1)}
+        else for(j=0;j<13;j++)r(j%4===3?"#2A6257":GREEN,16-Math.round(j*0.35),22+j,13-Math.round(j*0.75),1);
+      }));
+    }));
+  }
+  function drawEagle(x,y,face,k){
+    var fr=eagleSprites()[[0,1,2,1][Math.floor(st.clock*9)%4]],w=Math.round(50*k),h=Math.round(36*k),i,e;
+    for(i=-1;i<=1;i++){e=Math.round((i?7:10)*k);R(ctx,ROAD2,x-e,y+1+i,e*2,1)}
+    ctx.imageSmoothingEnabled=false;ctx.save();ctx.translate(x,y-Math.round(38*k)+Math.round(Math.sin(st.clock*5)*2));if(face<0)ctx.scale(-1,1);
+    ctx.drawImage(fr,-(w>>1),-h,w,h);ctx.restore();
+  }
+  // The runners to choose from: skin and its shade, hair color and style, their own shirt and shorts (kit), shoes, and extras.
+  var CHARS=[
+    {skin:"#C98B62",skin2:"#A9714D",hair:"#2B1D17",style:"short",band:GOLD,kit:[GREEN,"#123630",GOLD,"#B08A2C"],shoe:"#F4F1E8"},
+    {skin:"#F6D2B0",skin2:"#DDB08C",hair:"#F0CC5E",style:"pony",tie:"#E0508A",kit:["#E0508A","#B83C6E","#2C3E66","#1F2C4A"],shoe:"#F4F1E8"},
+    {skin:"#F3CDAA",skin2:"#DBAE88",hair:"#E2BD52",style:"spiky",kit:["#2F6FD0","#2356A6","#F1EFEA","#CFCCC3"],shoe:"#E8862A"},
+    {skin:"#EFC4A0",skin2:"#D6A47E",hair:"#4A2E1F",style:"long",glasses:1,kit:["#7A4FA3","#5E3B80","#22242A","#15161A"],shoe:"#F4F1E8"},
+    {skin:"#F0C8A4",skin2:"#D8A983",hair:"#2E2019",style:"cap",cap:"#C5312A",kit:["#C5312A","#9A241F","#22242A","#15161A"],shoe:"#F4F1E8"},
+    {skin:"#7A4B2E",skin2:"#643B22",hair:"#1E1410",style:"puffs",tie:GOLD,kit:["#E3C23A","#BFA02A","#7A4FA3","#5E3B80"],shoe:"#F4F1E8"},
+    {skin:"#5E3A24",skin2:"#4C2D1B",hair:"#17100C",style:"hightop",kit:["#E8862A","#C06A1C","#27375E","#1B2744"],shoe:"#C5312A"},
+    {skin:"#EBC39A",skin2:"#D1A57C",hair:"#16130F",style:"bob",kit:["#2A9D8F","#1F776C","#F1EFEA","#CFCCC3"],shoe:"#E0508A"},
+    {skin:"#B97C52",skin2:"#9C6441",hair:"#1D1511",style:"braid",tie:"#2F6FD0",kit:["#F1EFEA","#CFCCC3","#2F5DA8","#234680"],shoe:"#2F6FD0"},
+    {skin:"#D6A27A",skin2:"#BC875F",hair:"#5A3320",style:"curly",glasses:1,kit:["#27375E","#1B2744",GOLD,"#B08A2C"],shoe:"#F4F1E8"}
+  ];
+  function darker(hex){var n=parseInt(hex.slice(1),16),f=function(v){return Math.round(v*0.72)};return "#"+(16777216+(f(n>>16)<<16)+(f(n>>8&255)<<8)+f(n&255)).toString(16).slice(1)}
+  function portrait(ci){ // a bigger, more detailed picture of each runner for the picker
+    var ch=CHARS[ci],S=ch.skin,S2=ch.skin2,H=ch.hair,H2=darker(H),k=ch.kit,st=ch.style,D="#1D1410";
+    return outlined(sprite(36,62,function(r,c2){
+      var i,n=String(ci+1);
+      // hair that falls behind the head
+      if(st==="long"){r(H,8,7,20,19);r(H2,8,24,20,2)}
+      if(st==="bob")r(H,9,6,18,14);
+      if(st==="puffs"){disc(r,9,6,5,H);disc(r,26,6,5,H);disc(r,8,5,2,H2);disc(r,27,5,2,H2)}
+      if(st==="pony"){disc(r,28,9,4,H);r(H,27,11,5,10);r(H2,30,13,2,8);r(H,28,21,3,2)}
+      if(st==="curly")[[11,6],[15,3],[20,3],[25,6],[9,11],[27,11],[10,15],[26,15]].forEach(function(p){disc(r,p[0],p[1],4,H)});
+      // head and neck
+      r(S,12,6,12,13);r(S,11,7,14,11);r(S,10,11,1,3);r(S,25,11,1,3);r(S2,12,18,12,1);
+      r(S,16,19,4,2);r(S2,16,20,4,1);
+      // shirt, arms, race number
+      r(k[0],9,21,18,17);r(k[1],9,36,18,2);r(k[1],25,21,2,17);
+      r(k[0],6,21,3,7);r(k[0],27,21,3,7);r(k[1],6,27,3,1);r(k[1],27,27,3,1);
+      r(S,6,28,3,8);r(S,27,28,3,8);r(S2,6,35,3,1);r(S2,27,35,3,1);
+      r("#FFFFFF",13,25,10,8);r("#D6D2C6",13,32,10,1);text(c2,n,18-(textW(n)>>1),26,"#22242A",1);
+      // shorts, legs, socks, shoes
+      r(k[2],10,38,16,8);r(k[3],17,41,2,5);r(k[3],10,45,16,1);
+      r(S,11,46,5,8);r(S,20,46,5,8);r(S2,15,46,1,8);r(S2,24,46,1,8);
+      r("#FFFFFF",11,53,5,2);r("#FFFFFF",20,53,5,2);
+      r(ch.shoe,10,55,7,4);r(ch.shoe,19,55,7,4);r(darker(ch.shoe),10,58,7,1);r(darker(ch.shoe),19,58,7,1);
+      // face
+      r(D,14,11,2,3);r(D,20,11,2,3);r("#FFFFFF",14,11,1,1);r("#FFFFFF",20,11,1,1);
+      r(H2,13,9,3,1);r(H2,20,9,3,1);r(S2,17,14,2,1);
+      r("#8A2F2F",16,16,4,1);r("#8A2F2F",15,15,1,1);r("#8A2F2F",20,15,1,1);
+      if(ch.glasses){r(D,12,10,5,1);r(D,12,14,5,1);r(D,12,10,1,5);r(D,16,10,1,5);r(D,19,10,5,1);r(D,19,14,5,1);r(D,19,10,1,5);r(D,23,10,1,5);r(D,17,12,2,1)}
+      // hair in front
+      if(st==="hightop"){r(H,12,0,12,7);r(H,11,5,14,3);r(H2,12,0,12,1);r(H2,11,7,1,2);r(H2,24,7,1,2)}
+      else if(st==="spiky"){r(H,11,5,14,3);for(i=0;i<5;i++)r(H,11+i*3,2+(i%2),2,4);r(H2,11,7,14,1)}
+      else if(st==="curly"){r(H,11,4,14,4);[[12,4],[16,3],[20,3],[24,4]].forEach(function(p){disc(r,p[0],p[1],2,H2)})}
+      else if(st==="cap"){r(H,11,8,2,3);r(H,23,8,2,3);r(ch.cap,12,2,12,1);r(ch.cap,11,3,14,5);r(darker(ch.cap),11,7,14,1);r(ch.cap,9,8,18,2);r(darker(ch.cap),9,9,18,1);r("#FFFFFF",17,4,2,2)}
+      else{r(H,12,4,12,1);r(H,11,5,14,3);r(H2,12,4,12,1)}
+      if(st==="short"){r(H,11,8,3,1);r(H,22,8,3,1)}
+      if(st==="pony"){r(H,11,8,7,1);r(H,11,9,3,1);r(ch.tie,26,8,2,4)}
+      if(st==="long"){r(H,10,7,2,13);r(H,24,7,2,13);r(H,11,8,5,1);r(H,20,8,5,1)}
+      if(st==="bob"){r(H,11,8,14,2);r(H,10,7,2,11);r(H,24,7,2,11);r(H2,11,9,14,1)}
+      if(st==="puffs"){r(ch.tie,12,6,2,2);r(ch.tie,22,6,2,2);r(H,11,8,2,1);r(H,23,8,2,1)}
+      if(st==="braid"){r(H,11,8,4,1);for(i=0;i<7;i++)r(i%2?H2:H,24+(i>0?1:0),9+i*3,3,3);r(ch.tie,25,30,3,2)}
+      if(ch.band){r(ch.band,11,7,14,2);r(ch.band,25,8,2,2);r(ch.band,26,10,2,4);r(darker(ch.band),11,8,14,1)}
+    }));
+  }
+  var chosen=0;
+  try{chosen=Math.min(CHARS.length-1,Math.max(0,parseInt(localStorage.getItem("eagleRunner"),10)||0))}catch(e){}
+  // Each runner as seen from the front and from the back, for rounding corners and for the picker.
+  var turnCache={};
+  function turnSprites(ci,ki){
+    var key=ci+"|"+ki,kit=ki<0?CHARS[ci].kit:KITS[ki];
+    if(turnCache[key])return turnCache[key];
+    var ch=CHARS[ci],SKIN=ch.skin,SKIN2=ch.skin2,HAIR=ch.hair,st=ch.style,out={front:[],back:[]};
+    ["front","back"].forEach(function(view){
+      var back=view==="back",f;
+      for(f=0;f<4;f++)(function(f){
+        var body=sprite(26,50,function(r){
+          var bob=f%2?0:1,arm=f===0?-3:f===2?2:0,legL=f===0?0:f===2?-5:-2,legR=f===2?0:f===0?-5:-2,y=bob;
+          r(SKIN,8,32+bob,4,11+legL-bob);r("#FFFFFF",7,43+legL,5,3);r("#D5D2C8",7,45+legL,5,1);
+          r(SKIN2,14,32+bob,4,11+legR-bob);r("#FFFFFF",14,43+legR,5,3);r("#D5D2C8",14,45+legR,5,1);
+          r(kit[2],7,26+bob,12,7);r(kit[3],12,29+bob,2,4);
+          r(kit[0],6,13+bob,14,14);r(kit[1],6,25+bob,14,2);
+          if(!back){r("#FFFFFF",10,17+bob,6,6);r("#3A3A42",11,19+bob,4,1)}
+          r(kit[0],3,14+bob,3,6);r(SKIN,3,20+bob,3,7+arm);
+          r(kit[0],20,14+bob,3,6);r(SKIN2,20,20+bob,3,7-arm);
+          r(SKIN,11,11+y,4,2);r(SKIN,8,2+y,10,9);
+          if(back){
+            if(st==="long")r(HAIR,7,1+y,12,15);
+            else if(st==="curly")r(HAIR,6,0+y,14,11);
+            else if(st==="hightop")r(HAIR,8,0,10,7+y);
+            else if(st==="cap"){r(HAIR,8,4+y,10,5);r(ch.cap,8,1+y,10,4)}
+            else if(st==="bob")r(HAIR,7,1+y,12,11);
+            else if(st==="fade")r(HAIR,8,1+y,10,5);
+            else r(HAIR,8,1+y,10,9);
+            if(st==="pony"){r(HAIR,12,8+y,3,9);r(ch.tie||GOLD,12,9+y,3,1)}
+            if(st==="braid"){r(HAIR,12,8+y,2,15);r(ch.tie||GOLD,12,22+y,2,1)}
+            if(st==="puffs"){disc(r,8,2+y,3,HAIR);disc(r,17,2+y,3,HAIR)}
+            if(ch.band){r(ch.band,8,4+y,10,2);r(ch.band,17,6+y,2,5);r(ch.band,19,7+y,1,3)}
+          }else{
+            r(SKIN,7,6+y,1,3);r(SKIN,18,6+y,1,3);
+            if(st==="hightop")r(HAIR,8,0,10,4+y);
+            else if(st==="curly"){r(HAIR,7,0+y,12,4);r(HAIR,6,3+y,2,5);r(HAIR,18,3+y,2,5)}
+            else if(st==="cap"){r(ch.cap,8,1+y,10,3);r(ch.cap,7,4+y,12,1)}
+            else r(HAIR,8,1+y,10,3);
+            if(st==="long"){r(HAIR,6,2+y,2,13);r(HAIR,18,2+y,2,13)}
+            if(st==="bob"){r(HAIR,6,2+y,2,9);r(HAIR,18,2+y,2,9)}
+            if(st==="pony")r(HAIR,18,3+y,2,7);
+            if(st==="braid")r(HAIR,18,3+y,2,13);
+            if(st==="puffs"){disc(r,7,2+y,3,HAIR);disc(r,18,2+y,3,HAIR)}
+            if(ch.band)r(ch.band,8,4+y,10,2);
+            r("#1D1410",10,7+y,1,2);r("#1D1410",15,7+y,1,2);r(SKIN2,12,10+y,2,1);
+          }
+        });
+        var c=outlined(body);
+        out[view].push(c);
+      })(f);
+    });
+    return turnCache[key]=out;
+  }
   function bendPose(w){ // where the runner is while rounding a corner: how far down the screen, how big, and which side we see
     var gyN=yS+37,gyF=yB+22,t=w.p,from;
     if(w.bend===3)return {y:Math.round(gyN+t*(gyF-gyN)),k:1,view:"back"};            // through the gap in the median
-    if(w.bend===1){
-      from=w.lane?gyF:gyN;
-      if(w.exit==="down")return {y:Math.round(from+t*(H+64-from)),k:1+t*0.3,view:"front"};
-      return {y:Math.round(from+t*(yB+10-from)),k:1-t*(w.lane?0.15:0.4),view:"back"};
-    }
-    if(w.exit==="down")return {y:Math.round(yB+10+t*(gyN-yB-10)),k:0.6+t*0.4,view:"front"};   // went off the bottom, so he arrives from the top
-    return {y:Math.round(H+64+t*(gyN-H-64)),k:1.3-t*0.3,view:"back"};                          // went off the top, so he arrives from the bottom
+    from=w.lane?gyF:gyN;
+    if(w.exit==="down")return {y:Math.round(from+t*(H+64-from)),k:1+t*0.3,view:"front"};
+    return {y:Math.round(from+t*(yB+10-from)),k:1-t*(w.lane?0.15:0.4),view:"back"};
   }
-  function drawBendRunner(x,pose,phase){
-    var TAU=Math.PI*2,f=turnSpr[pose.view][Math.floor((((phase%TAU)+TAU)%TAU)/(TAU/4))%4],w=Math.round(26*pose.k),h=Math.round(50*pose.k),e,i;
+  function drawBendRunner(x,pose,phase,ci,ki){
+    var TAU=Math.PI*2,f=turnSprites(ci,ki)[pose.view][Math.floor((((phase%TAU)+TAU)%TAU)/(TAU/4))%4],w=Math.round(26*pose.k),h=Math.round(50*pose.k),e,i;
     for(i=-2;i<=2;i++){e=Math.round(Math.sqrt(1-i*i/7)*8*pose.k);R(ctx,ROAD2,x-e,pose.y+i,e*2,1)}
     ctx.imageSmoothingEnabled=false;
     ctx.drawImage(f,x-(w>>1),pose.y+2-h,w,h);
@@ -875,20 +1061,49 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     for(i=0;i<lines.length;i++)text(ctx,lines[i],x+(arrow?13*k:0)+3*k,y+2*k+i*6*k,i?TAN:"#FFFFFF",k);
   }
   var TURNWORD={left:"LEFT ON ",right:"RIGHT ON ",uturn:"U-TURN ON "};
-  function draw(){
-    var dA=st.dist*ART, w=where(dA), seg=route[w.si], leg=LEGS[seg.li], cx=W>>1, gy=w.lane?yB+22:yS+37, i, p, e, x, behind=leg.median&&w.bend===0&&w.lane;
-    scene(ctx,w.si,w.x,dA);
-    if(leg.median&&!behind)medianTrees(ctx,w.si,w.x);
-    if(w.bend)drawBendRunner(cx,bendPose(w),st.p);
+  function laneY(o,leg,lane){return leg.median?(lane?yB+21+Math.round(o*6):yS+37+Math.round(o*9)):yS+33+Math.round(o*14)} // each racer keeps to a line across the street
+  function drawRacer(r){
+    var i,e,p,y=r.y,k=r.pose?r.pose.k:1,top;
+    if(r.eagle){drawEagle(r.x,y,r.w.bend?1:r.w.face,k);return}
+    if(r.w.bend)drawBendRunner(r.x,{y:y,k:k,view:r.pose.view},r.p,r.ci,r.ki);
     else{
-      for(i=0;i<st.dust.length;i++){p=st.dust[i];R(ctx,p.life>0.5?"#D9D4C6":"#A9A69C",cx+w.face*Math.round((p.x-st.dist)*ART),gy-1-Math.round((1-p.life)*4),p.life>0.5?2:3,p.life>0.5?2:3)}
-      for(i=-3;i<=3;i++){e=Math.round(Math.sqrt(1-i*i/14)*11);R(ctx,ROAD2,cx+w.face-e,gy+2+i,e*2,1)}
-      drawRunner(cx,gy+3,st.p,Math.min(1,st.v/520),st.clock,w.face<0);
+      if(r.me)for(i=0;i<st.dust.length;i++){p=st.dust[i];R(ctx,p.life>0.5?"#D9D4C6":"#A9A69C",r.x+r.w.face*Math.round((p.x-st.dist)*ART),y-1-Math.round((1-p.life)*4),p.life>0.5?2:3,p.life>0.5?2:3)}
+      for(i=-3;i<=3;i++){e=Math.round(Math.sqrt(1-i*i/14)*11);R(ctx,ROAD2,r.x+r.w.face-e,y+2+i,e*2,1)}
+      drawRunner(r.x,y+3,r.p,r.s,st.clock,r.w.face<0,CHARS[r.ci],r.ki<0?CHARS[r.ci].kit:KITS[r.ki]);
     }
-    if(behind)medianTrees(ctx,w.si,w.x);
+    if(r.me){ // a little arrow over your own runner
+      top=y-Math.round(46*k)-5+(Math.floor(st.clock*3)%2);
+      R(ctx,OUT,r.x-5,top-1,11,3);R(ctx,OUT,r.x-3,top+2,7,2);R(ctx,OUT,r.x-1,top+4,3,2);
+      R(ctx,TAN,r.x-4,top,9,2);R(ctx,TAN,r.x-2,top+2,5,2);R(ctx,TAN,r.x,top+4,1,1);
+    }
+  }
+  function draw(){
+    var dA=st.dist*ART, w=where(dA), seg=route[w.si], leg=LEGS[seg.li], cx=W>>1, i, p, x, o, wo, sx, r, who=[], trees=!leg.median;
+    scene(ctx,w.si,w.x,dA);
+    // everyone on this stretch of street, you included
+    who.push({me:1,w:w,x:cx,o:0.3,p:st.p,s:Math.min(1,st.v/520),ci:chosen,ki:-1});
+    for(i=0;i<st.field.length;i++){
+      o=st.field[i];wo=where(o.d*ART);
+      if(route[wo.si].li!==seg.li)continue;
+      sx=cx+Math.round(wo.x-w.x)+(wo.bend?Math.round(o.o*9):0);
+      if(sx<-40||sx>W+40)continue;
+      who.push({w:wo,x:sx,o:o.o,p:o.p,s:Math.min(1,o.v/520),ci:o.ci,ki:o.ki,eagle:o.eagle});
+    }
+    for(i=0;i<who.length;i++){
+      r=who[i];
+      if(r.w.bend){r.pose=bendPose(r.w);r.y=r.pose.y+Math.round(r.o*3)}else r.y=laneY(r.o,leg,r.w.lane);
+      r.back=leg.median&&!r.w.bend&&r.w.lane?1:0; // on the far lane, behind the median trees
+    }
+    who.sort(function(a,b){return (b.back-a.back)||(a.y-b.y)||((a.me||0)-(b.me||0))});
+    for(i=0;i<who.length;i++){
+      if(!trees&&!who[i].back){medianTrees(ctx,w.si,w.x);trees=true}
+      drawRacer(who[i]);
+    }
+    if(!trees)medianTrees(ctx,w.si,w.x);
     for(i=0;i<st.confetti.length;i++){p=st.confetti[i];R(ctx,p.c,Math.round(p.x),Math.round(p.y),Math.sin(p.rot)>0?3:2,Math.sin(p.rot)>0?2:3)}
 
     if(st.mode==="done")return;
+    if(st.mode==="count"){callout([st.cdn?String(4-st.cdn):"GET READY"]);return}
     x=seg.x0+dA-seg.d0;
     if(w.bend===1)callout([TURNWORD[seg.turn]+seg.onto],seg.turn);
     else if(w.bend===3||w.toGap<18*PXM)callout(["TURN AROUND ON "+leg.name],"uturn");
@@ -899,12 +1114,15 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
 
   function fmtTime(t){var m=Math.floor(t/60),s=t-m*60;return m+":"+(s<10?"0":"")+s.toFixed(1)}
   function wpm(){return st.t>0.5?Math.round(st.ok/5/(st.t/60)):0}
+  function place(){var n=1,i;for(i=0;i<st.field.length;i++)if(st.field[i].d>st.dist)n++;return n}
+  function nth(n){var t=n%100;return n+(t>10&&t<14?"th":["th","st","nd","rd","th","th","th","th","th","th"][n%10])}
   function showLeg(){var seg=route[st.seg];$("nameB").textContent="Lap "+seg.lap+" of "+LAPS+" · "+LEGS[seg.li].name}
 
   function step(now){
-    var dt=Math.min(0.05,(now-last)/1000||0), si, prev;last=now;
+    var dt=Math.min(0.05,(now-last)/1000||0), si, prev, i, o;last=now;
     st.clock+=dt;
-    if(st.mode!=="ready"){
+    if(st.mode==="count")countdown(dt);
+    if(st.mode!=="count"){
       st.e*=Math.exp(-DECAY*dt);if(st.e<1)st.e=0;
       st.v+=(st.e-st.v)*(1-Math.exp(-7*dt));if(st.v<1&&st.e===0)st.v=0;
       st.dist+=st.v*dt;
@@ -912,6 +1130,13 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     if(st.mode==="run"){
       st.t+=dt;if(st.v>st.top)st.top=st.v;
       if(st.dist>=course) finish();
+    }
+    if(st.mode!=="count")for(i=0;i<st.field.length;i++){ // the rest of the field runs at its own steady pace
+      o=st.field[i];
+      o.v+=(o.pace*5/60*PX_PER_CHAR*(o.eagle?1:1+0.08*Math.sin(st.clock*0.4+o.wob))-o.v)*(1-Math.exp(-1.5*dt));
+      o.d+=o.v*dt;
+      o.p+=(o.v/(110+130*Math.min(1,o.v/520)))*Math.PI*2*dt;
+      if(o.eagle&&!st.eagleT&&o.d>=course)st.eagleT=st.t;
     }
     si=where(st.dist*ART).si;
     if(si!==st.seg){ // the runner has gone around a corner and is arriving on the next street
@@ -926,9 +1151,9 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     var s=Math.min(1,st.v/520), before=Math.sin(st.p);
     st.p+=(st.v/(110+130*s))*Math.PI*2*dt;
     if(!RM&&s>0.3&&before*Math.sin(st.p)<0&&!where(st.dist*ART).bend) st.dust.push({x:st.dist-14,life:1});
-    for(var i=st.dust.length-1;i>=0;i--){st.dust[i].life-=dt*2.6;if(st.dust[i].life<=0)st.dust.splice(i,1)}
+    for(i=st.dust.length-1;i>=0;i--){st.dust[i].life-=dt*2.6;if(st.dust[i].life<=0)st.dust.splice(i,1)}
     for(i=st.confetti.length-1;i>=0;i--){var c=st.confetti[i];c.vy+=120*dt;c.x+=c.vx*dt;c.y+=c.vy*dt;c.rot+=c.vr*dt;if(c.y>H+10)st.confetti.splice(i,1)}
-    draw();
+    if(!wrap.classList.contains("intro")) draw();
     hudT+=dt;
     if(st.mode==="run") $("sTime").textContent=fmtTime(st.t);
     if(hudT>0.12){
@@ -937,6 +1162,8 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
       if(st.mode==="run") $("sWpm").textContent=wpm();
       var pct=Math.min(100,st.dist/course*100);
       $("fill").style.width=pct+"%";$("dot").style.left=pct+"%";
+      $("egl").style.left=Math.max(0,Math.min(100,st.field[st.field.length-1].d/course*100))+"%";
+      $("sPlace").textContent=st.mode==="done"?st.place:place();
       if(st.mode==="run"){
         var slow=st.v<45&&st.t>1.5;
         if(slow!==st.slow){st.slow=slow;elHint.textContent=slow?"Keep typing! Your runner is slowing down.":"Nice pace. Keep those fingers moving."}
@@ -945,18 +1172,53 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     requestAnimationFrame(step);
   }
 
+  /* ---------- sound ---------- */
+  var soundOn=true;
+  try{soundOn=localStorage.getItem("eagleSound")!=="off"}catch(e){}
+  function audio(src,loop,vol){var a=new Audio(src);a.loop=loop;a.volume=vol;a.preload="auto";return a}
+  var titleMusic=audio("titlescreenmusic1.webm",true,0.5), raceMusic=audio("runningmuiscgame.webm",true,0.45), ding=audio("ding.webm",false,0.9), startBeep=audio("startbeep.webm",false,0.9);
+  function play(a,fromStart){ // browsers only allow sound after the first click or key press, so a refused play is not an error
+    if(!soundOn) return;
+    try{if(fromStart)a.currentTime=0;var p=a.play();if(p&&p.catch)p.catch(function(){})}catch(e){}
+  }
+  function quiet(a){try{a.pause()}catch(e){}}
+  function music(){ // title music on the title and picker screens, running music while the race is on
+    var intro=wrap.classList.contains("intro");
+    if(soundOn&&intro)play(titleMusic);else quiet(titleMusic);
+    if(soundOn&&!intro&&st&&st.mode==="run")play(raceMusic);else quiet(raceMusic);
+  }
+  function showSound(){$("snd1").textContent=$("snd2").textContent=soundOn?"Sound on":"Sound off"}
+  function toggleSound(){soundOn=!soundOn;try{localStorage.setItem("eagleSound",soundOn?"on":"off")}catch(e){}showSound();music()}
+  // The start: wait 2 seconds, three dings a quarter second apart, then the start beep. The race begins on the beep.
+  var DING_GAP=0.25;
+  function countdown(dt){
+    var len=isFinite(ding.duration)&&ding.duration>0?ding.duration:0.54, t0=2, n;
+    st.cd+=dt;
+    n=st.cd<t0?0:Math.min(4,1+Math.floor((st.cd-t0)/(len+DING_GAP)));
+    while(st.cdn<n){
+      st.cdn++;
+      if(st.cdn<4)play(ding,true);
+      else{
+        play(startBeep,true);
+        st.mode="run";st.note=1;st.noteLines=["GO!"];st.noteArrow=null;
+        elHint.textContent="Go! Type the words.";
+        try{raceMusic.currentTime=0}catch(e){}
+        music();
+      }
+    }
+  }
+
   /* ---------- typing ---------- */
   function renderPhrase(){
-    var ph=PHRASES[st.pi%PHRASES.length], frag=document.createDocumentFragment();
+    var ph=PHRASES[st.order[st.pi%PHRASES.length]], frag=document.createDocumentFragment();
     for(var i=0;i<ph.length;i++){var sp=document.createElement("span");sp.textContent=ph[i];sp.className=i<st.ci?"d":i===st.ci?"c":"t";frag.appendChild(sp)}
     elPhrase.textContent="";elPhrase.appendChild(frag);
-    elCount.textContent="Phrase "+(st.pi%PHRASES.length+1)+" of "+PHRASES.length;
+    elCount.textContent="Phrase "+(st.pi+1);
   }
   function type(ch){
-    if(st.mode==="done") return;
-    var ph=PHRASES[st.pi%PHRASES.length];
+    if(st.mode!=="run") return;
+    var ph=PHRASES[st.order[st.pi%PHRASES.length]];
     if(ch===ph[st.ci]){
-      if(st.mode==="ready"){st.mode="run";elHint.textContent="Nice pace. Keep those fingers moving."}
       st.ok++;st.e+=KICK;st.ci++;
       if(st.ci>=ph.length){st.pi++;st.ci=0}
       renderPhrase();
@@ -967,7 +1229,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     }
   }
   function finish(){
-    st.mode="done";st.e=Math.max(st.e,330);
+    st.mode="done";st.e=Math.max(st.e,330);music();
     $("sTime").textContent=fmtTime(st.t);$("sWpm").textContent=wpm();
     elHint.textContent="You crossed the finish line!";
     if(!RM){
@@ -977,24 +1239,75 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     var total=st.ok+st.miss;
     $("rTime").textContent=fmtTime(st.t);
     $("rWpm").textContent=wpm()+" wpm";
-    $("rTop").textContent=(st.top/PX_PER_MPH).toFixed(1)+" mph";
+    st.place=place();
+    $("rPlace").textContent=nth(st.place)+" of "+(st.field.length+1);
+    $("sPlace").textContent=st.place;
+    var ew=Math.round(st.eaglePace);
+    $("rEagle").textContent=st.eagleT?"The Eagle got there "+(st.t-st.eagleT).toFixed(1)+" seconds ahead of you. It flew at "+ew+" words per minute this race.":"You beat the Eagle! It flew at "+ew+" words per minute this race.";
     $("rAcc").textContent=(total?Math.round(st.ok/total*100):100)+"%";
     clearTimeout(doneTimer);doneTimer=setTimeout(function(){if(st.mode==="done")elResult.hidden=false},1300);
   }
   function reset(focus){
     clearTimeout(doneTimer);
-    st={mode:"ready",dist:Math.min(course-1,PREVIEW*PXM/ART),v:0,e:0,p:0,t:0,clock:0,pi:0,ci:0,ok:0,miss:0,top:0,slow:false,dust:[],confetti:[],seg:0,note:0};
+    st={mode:PREVIEW?"run":"count",cd:0,cdn:0,order:[],dist:Math.min(course-1,PREVIEW*PXM/ART),v:0,e:0,p:0,t:0,clock:0,pi:0,ci:0,ok:0,miss:0,top:0,slow:false,dust:[],confetti:[],seg:0,note:0};
     st.seg=where(st.dist*ART).si;
+    // The rest of the field: 19 other runners from slowest to fastest, all slower than the Eagle,
+    // and one Eagle that flies at a pace picked fresh each race, between 50 and 80 words per minute.
+    var lanes=[],i,j,t;
+    for(i=0;i<19;i++)lanes.push(i);
+    for(i=18;i>0;i--){j=Math.floor(Math.random()*(i+1));t=lanes[i];lanes[i]=lanes[j];lanes[j]=t}
+    st.field=[];st.eagleT=0;st.place=0;st.eaglePace=50+Math.random()*30;
+    for(i=0;i<19;i++)st.field.push({ci:Math.floor(Math.random()*CHARS.length),ki:i%KITS.length,pace:15+31*i/18+Math.random()*2-1,v:0,d:-(10+i*8+Math.random()*6)/ART,o:-1+2*lanes[i]/18,p:Math.random()*6,wob:Math.random()*6});
+    st.field.push({eagle:1,pace:st.eaglePace,v:0,d:-26/ART,o:0.95,p:0,wob:0});
     elResult.hidden=true;box.value="";prevVal="";
     $("sTime").textContent="0:00.0";$("sSpeed").textContent="0.0";$("sWpm").textContent="0";
-    $("fill").style.width="0%";$("dot").style.left="0%";
-    elHint.textContent=COARSE?"Tap this bib, then type to start running.":"Type the first letter to start running.";
+    $("fill").style.width="0%";$("dot").style.left="0%";$("egl").style.left="0%";$("sPlace").textContent="1";
+    for(i=0;i<PHRASES.length;i++)st.order.push(i);
+    for(i=PHRASES.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));t=st.order[i];st.order[i]=st.order[j];st.order[j]=t}
+    elHint.textContent=COARSE?"Get ready. Tap this bib so you can type.":"Get ready. The race starts on the beep.";
+    music();
     showLeg();renderPhrase();
     if(focus){try{box.focus({preventScroll:true})}catch(e){box.focus()}}
   }
 
+  // The title screen shows first, then the runner picker. Choosing a runner starts the game.
+  var wrap=document.querySelector(".wrap"), titleEl=$("title"), runnersEl=$("runners"), runnerBtns=[];
+  CHARS.forEach(function(ch,i){
+    var b=document.createElement("button"),c=portrait(i);
+    b.type="button";b.setAttribute("aria-label","Runner "+(i+1));b.setAttribute("aria-pressed",i===chosen?"true":"false");
+    b.appendChild(c);
+    b.addEventListener("click",function(){
+      chosen=i;try{localStorage.setItem("eagleRunner",String(i))}catch(e){}
+      runnerBtns.forEach(function(x,j){x.setAttribute("aria-pressed",j===i?"true":"false")});
+      begin();
+    });
+    runnersEl.appendChild(b);runnerBtns.push(b);
+  });
+  runnersEl.addEventListener("keydown",function(e){ // arrow keys move between runners
+    var i=runnerBtns.indexOf(document.activeElement),n=runnerBtns.length,d={ArrowRight:1,ArrowLeft:-1,ArrowDown:5,ArrowUp:-5}[e.key];
+    if(i<0||!d) return;
+    e.preventDefault();runnerBtns[(i+d+n)%n].focus();
+  });
+  function showPicker(){wrap.classList.add("intro");titleEl.classList.add("pick");runnerBtns[chosen].focus();music()}
+  function begin(){
+    if(!wrap.classList.contains("intro")) return;
+    wrap.classList.remove("intro");titleEl.classList.remove("pick");resize();reset(true);
+  }
+  $("start").addEventListener("click",showPicker);
+  $("change").addEventListener("click",showPicker);
+  if(COARSE) $("startHint").textContent="Tap to start";
+  if(PREVIEW) wrap.classList.remove("intro");
+  $("snd1").addEventListener("click",toggleSound);$("snd2").addEventListener("click",toggleSound);
+  showSound();music();
+  // The title music cannot start until the first click, tap or key press. This starts it then.
+  ["pointerdown","keydown"].forEach(function(ev){document.addEventListener(ev,function(){if(wrap.classList.contains("intro"))music()},true)});
+
   document.addEventListener("keydown",function(e){
     if(e.ctrlKey||e.metaKey||e.altKey) return;
+    if(wrap.classList.contains("intro")){
+      if(!titleEl.classList.contains("pick")&&e.target.tagName!=="BUTTON"&&(e.key==="Enter"||(e.key&&e.key.length===1))){e.preventDefault();showPicker()}
+      return;
+    }
     var tag=e.target&&e.target.tagName;
     if(tag==="BUTTON"||tag==="A") return;
     if(e.key&&e.key.length===1){e.preventDefault();type(e.key)}
