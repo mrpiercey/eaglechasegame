@@ -19,10 +19,17 @@ The game's colors and lettering are copied from the Eagle Chase race posters.
 
 1. The title screen shows the school and the game's name. Press Start, or any key.
 2. Choose one of ten runners. The game remembers your choice for next time.
-3. Wait for the start. After 2 seconds there are three dings, a quarter second apart, then the start beep. The race begins on the beep.
-4. Type the words on the race bib. The faster you type, the faster you run.
+3. Choose 1, 2 or 3 laps. Three laps is the full 5K, about 820 letters of typing. One lap is about 290. The title music keeps playing on this screen.
+4. Wait for the start. After 2 seconds there are three dings, with a full second between them, then the start beep. The race begins on the beep.
+5. Type the words on the race bib. The faster you type, the faster you run.
 
-There are 100 phrases to type. Each race puts them in a new random order. The list is `PHRASES` at the top of the script in `index.html`.
+The speed meter on the race bib shows how fast you are going. Every correct letter pushes it up, so faster typing holds it higher.
+Its color runs from blue when you are slow, through green and yellow, to red when you are flying.
+If you stop typing, the meter drains over a few seconds, and your runner keeps moving until it is empty.
+Two settings near the top of the script in `index.html` tune it: `DECAY` is how quickly it drains, and `METER_FULL` is the speed that fills it.
+
+What you type is one long, chatty passage about the race. It always opens with the same paragraph (`OPENING`). The other paragraphs (`STORY`) are each a reason to sign up, and they follow in a new order each race. Both are at the top of the script in `index.html`.
+The race bib shows three lines at a time. The line you are typing is bright, the lines under it are dim, and they slide up as you reach them.
 
 Browsers do not let a page play sound until you click, tap or press a key, so the title music starts on your first one.
 The Sound button turns all sound off or back on.
@@ -31,21 +38,37 @@ You race 19 other runners and one Eagle. The other runners type between about 15
 The Eagle is always the fastest. Its pace is picked fresh each race, somewhere between 50 and 80 words per minute.
 The scoreboard shows your place, and the little eagle above the progress bar shows how far the Eagle has gone.
 
+## Phones and tablets
+
+The game works in the browser on phones and iPads.
+
+- You only type the letters and spaces, and capital letters do not matter. Numbers and punctuation fill themselves in.
+- When the on-screen keyboard is up, the page shows only the scoreboard, the street, the speed meter and the words, sized to fit the room above the keyboard.
+- When you finish, the keyboard goes away so the results have room.
+- Each sound has a `.webm` file and an `.m4a` copy. Older iPhones and iPads cannot play WebM sound, so they use the `.m4a` copies.
+
+On a computer nothing changes: capital letters, numbers and punctuation all count.
+
 ## The course
 
 The street is drawn like a 16-bit video game. It follows the real race map:
 
 1. Start on Cramer Ave by the school.
-2. Turn right onto Mentelle Park and run 350 meters down the near side, about three quarters of the way. Cross through the gap in the median and run back up the other side.
+2. Turn right onto Mentelle Park and run 350 meters down the far lane, about three quarters of the way. Cross through the gap in the median and run back up the near lane.
 3. Turn right onto Cramer Ave, then left onto Richmond Ave.
 4. Turn left onto Aurora Ave, then left onto N Ashland Ave.
 5. Turn left onto Cramer Ave to start the next lap.
 
-After three laps, the runner goes straight across Cramer Ave and finishes in front of the school.
+After the last lap, the runner goes straight across Cramer Ave and finishes in front of the school.
 
 Every street is the right length compared to the others, so the turns come up where they do in the real race.
-At each corner the runner turns and runs off down the side street. The view then cuts to him already running down the next street.
-He runs to the right when he is heading away from the school (Cramer Ave, down Mentelle Park, N Ashland Ave) and to the left when he is heading back (up Mentelle Park, Richmond Ave, Aurora Ave).
+The screen follows the race map, with the map's left on the screen's left:
+
+- Cramer Ave and Richmond Ave are run to the right.
+- Mentelle Park is run to the left going out and to the right coming back.
+- Aurora Ave and N Ashland Ave are run to the left, so the finish at the school is a run to the left.
+- At a corner the runner goes off toward the top or the bottom of the screen, whichever way the next street heads on the map. The view then cuts to him already running down that street.
+- The other runners come around each corner onto your street from the opposite edge of the screen.
 Mentelle Park is drawn as one view with both lanes, so you can see the runner go down one side and come back on the other.
 The whole course adds up to about 4,990 meters, which is a 5K.
 
@@ -59,7 +82,7 @@ The course is the `LEGS` list near the top of the script in `index.html`. Each l
 
 Three numbers above the list change the whole race:
 
-- `LAPS` is how many times the runner goes around.
+- `LAPS` is how many times the runner goes around. The player's choice on the lap screen sets it for each race.
 - `STRIDE` is how far one letter carries the runner. A smaller number means more typing. At 50, the full race is about 820 letters.
 - `PXM` is how many pixels of street stand for one meter.
 

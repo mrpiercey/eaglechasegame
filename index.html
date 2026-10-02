@@ -4,7 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1B4A42">
-<style>html{color-scheme:light}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Eagle Chase">
+<style>html{color-scheme:light;-webkit-text-size-adjust:100%;text-size-adjust:100%}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>Eagle Chase 5K The Game</title>
 <link rel="icon" href="eagles.png">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=League+Gothic&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@500;700&display=swap">
@@ -53,9 +56,16 @@ body{background:var(--green);color:var(--ink);font-family:var(--body);font-size:
 .runners button:hover,.runners button:focus-visible{background:#FFFFFF;border-color:var(--green)}
 .runners button[aria-pressed="true"]{background:#FFF7DF;border-color:var(--gold)}
 .runners canvas{display:block;width:108px;height:186px;image-rendering:crisp-edges;image-rendering:pixelated}
-.title.pick{justify-content:center}
-.title.pick .picker{display:block}
-.title.pick .tlogo,.title.pick h1,.title.pick .tstart{display:none}
+.lapbtns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.lapbtns button{display:flex;flex-direction:column;align-items:center;gap:4px;margin:0;padding:14px 8px 12px;background:var(--track);color:var(--ink);border:3px solid transparent;border-radius:6px;box-shadow:none;letter-spacing:0}
+.lapbtns button:hover,.lapbtns button:focus-visible{background:#FFFFFF;border-color:var(--green)}
+.lapbtns button[aria-pressed="true"]{background:#FFF7DF;border-color:var(--gold)}
+.lapbtns b{font-size:clamp(2.2rem,8vw,3.6rem);line-height:1;font-weight:400}
+.lapbtns span{font-size:clamp(.9rem,2.6vw,1.2rem)}
+.lapbtns small{font-family:var(--body);font-size:.85rem;font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted)}
+.title.pick,.title.laps{justify-content:center}
+.title.pick .runpick,.title.laps .lappick{display:block}
+.title.pick .tlogo,.title.pick h1,.title.pick .tstart,.title.laps .tlogo,.title.laps h1,.title.laps .tstart{display:none}
 .wrap.intro > :not(.title){display:none}
 .wrap:not(.intro) > .title{display:none}
 
@@ -76,7 +86,7 @@ h1 .tag{display:inline-block;background:var(--green);color:var(--tan);text-shado
 .rail .egl{position:absolute;left:0;bottom:100%;width:30px;height:auto;max-width:none;margin:0 0 1px -15px}
 .rail .dot{position:absolute;top:50%;left:0;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;background:var(--gold);border:3px solid var(--green)}
 
-.stage{position:relative;aspect-ratio:16/7;max-width:100%;max-height:calc(100vh - 330px);max-height:calc(100svh - 330px);min-height:190px;border-radius:6px;overflow:hidden;border:4px solid var(--green);background:#8EC3E8}
+.stage{position:relative;aspect-ratio:16/7;max-width:100%;max-height:calc(100vh - 356px);max-height:calc(100svh - 356px);min-height:190px;border-radius:6px;overflow:hidden;border:4px solid var(--green);background:#8EC3E8}
 .stage canvas{display:block;image-rendering:crisp-edges;image-rendering:pixelated}
 .result{position:absolute;inset:0;display:grid;place-items:center;padding:12px;overflow:auto;background:var(--scrim)}
 .card{background:var(--paper);color:var(--ink);border-radius:6px;box-shadow:0 0 0 5px var(--tan);padding:16px 20px;max-width:460px;width:100%;display:flex;flex-direction:column;gap:10px;text-align:left}
@@ -93,18 +103,29 @@ h1 .tag{display:inline-block;background:var(--green);color:var(--tan);text-shado
 .bibhead{display:flex;justify-content:space-between;gap:12px;background:var(--green);color:var(--tan);font-family:var(--display);font-size:.95rem;letter-spacing:.04em;text-transform:uppercase;padding:6px 40px}
 .pin{position:absolute;width:13px;height:13px;border-radius:50%;background:var(--paper);border:2px solid var(--green)}
 .pin.tl{top:9px;left:12px}.pin.tr{top:9px;right:12px}.pin.bl{bottom:10px;left:12px}.pin.br{bottom:10px;right:12px}
-.phrase{margin:0;padding:16px 40px 8px;font-family:var(--mono);font-weight:700;font-size:clamp(1.2rem,4.6vw,2.2rem);line-height:1.38;white-space:break-spaces;overflow-wrap:anywhere;min-height:calc(2.76em + 24px)}
+.meter{display:flex;align-items:center;gap:10px;padding:12px 40px 0}
+.meter .mk,.meter .mword{font-family:var(--label);font-size:1.15rem;line-height:1;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.meter .mword{min-width:6.2ch;text-align:right;color:var(--ink)}
+.mtrack{position:relative;flex:1;min-width:0;height:18px;border:2px solid var(--green);border-radius:4px;background:var(--track);overflow:hidden}
+.mfill{width:0;height:100%;background:hsl(210 78% 46%)}
+.mtrack::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 calc(10% - 2px),var(--paper) calc(10% - 2px) 10%)}
+.phrase{position:relative;margin:10px 0 6px;padding:0 40px;font-family:var(--mono);font-weight:700;font-size:clamp(1.05rem,3.3vw,1.7rem);line-height:1.4;height:4.2em;overflow:hidden}
+.lines{transform:translateY(-1.4em)}
+.ln{white-space:pre;height:1.4em}
+.ln.next{color:var(--muted);opacity:.62}
+.ln.later{color:var(--muted);opacity:.36}
+.ln.was{color:var(--typed);opacity:.5}
 .phrase .d{color:var(--typed)}
 .phrase .t{color:var(--ink)}
 .phrase .c{background:var(--green);color:#FFFFFF;border-radius:4px}
 .bib.oops .phrase .c{background:var(--miss);color:var(--on-miss)}
 .bibfoot{margin:0;padding:0 40px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 16px;color:var(--muted);font-size:.95rem}
-.bibfoot span:last-child{font-family:var(--label);font-size:1.1rem;letter-spacing:.08em;text-transform:uppercase}
 #typebox{position:absolute;inset:0;width:100%;height:100%;opacity:0;border:0;padding:0;font-size:16px;cursor:text}
 
 .foot{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;color:var(--muted);font-size:.92rem}
 .foot p{margin:0;flex:1 1 260px;min-width:0}
 button{font-family:var(--display);font-size:.9rem;letter-spacing:.04em;text-transform:uppercase;background:var(--green);color:#FFFFFF;border:0;border-radius:6px;box-shadow:0 0 0 3px var(--tan);padding:10px 18px;margin:3px;cursor:pointer}
+button,.bib,.stage{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 button:hover{background:var(--green-deep)}
 button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
 
@@ -113,10 +134,24 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
 .reg a:hover{text-decoration:underline;text-decoration-thickness:.08em;text-underline-offset:.14em}
 .reg p{margin:0;font-family:var(--label);font-size:clamp(1.15rem,3.4vw,1.6rem);line-height:1.15;letter-spacing:.05em;text-transform:uppercase;text-wrap:balance}
 
+.wrap.kb .reg,.wrap.kb .foot,.wrap.kb .bibhead,.wrap.kb .bibfoot,.wrap.kb .pin,.wrap.kb .names,.wrap.kb .mini{display:none}
+.wrap.kb .band{padding:6px 8px;gap:6px}
+.wrap.kb .band + .band{border-top-width:3px}
+.wrap.kb .rail{margin-top:12px}
+.wrap.kb .board{grid-template-columns:auto auto auto auto minmax(0,1fr)}
+.wrap.kb .stage{aspect-ratio:auto;height:calc(var(--vvh,100vh) - 258px);max-height:none;min-height:96px;border-width:3px}
+.wrap.kb .bib{border-width:3px;padding-bottom:6px}
+.wrap.kb .meter{padding:8px 14px 0}
+.wrap.kb .phrase{margin:6px 0 2px;padding:0 14px}
 @media (max-width:640px){
   body{padding:8px}
+  .wrap.kb .board{grid-template-columns:repeat(4,minmax(0,1fr));gap:4px 8px}
+  .wrap.kb .stage{height:calc(var(--vvh,100vh) - 218px)}
   .title{aspect-ratio:auto;min-height:calc(100vh - 16px);min-height:calc(100svh - 16px)}
   .picker{padding:12px 10px 14px}
+  .lapbtns{gap:6px}
+  .lapbtns button{padding:10px 4px}
+  .lapbtns small{font-size:.75rem}
   .runners{gap:6px}
   .runners canvas{width:54px;height:93px}
   .band{padding:12px 14px}
@@ -127,10 +162,11 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   .stat small{font-size:.9rem}
   .course{grid-column:1/-1}
   .course .names{font-size:1rem}
-  .stage{aspect-ratio:5/4;max-height:calc(100vh - 340px);max-height:calc(100svh - 340px)}
-  .bibhead,.phrase,.bibfoot{padding-inline:32px}
+  .stage{aspect-ratio:5/4;max-height:calc(100vh - 366px);max-height:calc(100svh - 366px)}
+  .bibhead,.phrase,.bibfoot,.meter{padding-inline:32px}
+  .meter{gap:8px}
+  .meter .mk,.meter .mword{font-size:1rem}
   .bibhead{font-size:.72rem;letter-spacing:.02em;white-space:nowrap}
-  .phrase{min-height:calc(4.14em + 24px)}
   .result{padding:10px}
   .card{padding:10px 12px;gap:6px;box-shadow:0 0 0 4px var(--tan)}
   .card h2{font-size:1rem}
@@ -161,9 +197,13 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
       <button type="button" id="start">Start the race</button>
       <p class="blink" id="startHint">or press Enter</p>
     </div>
-    <div class="picker">
+    <div class="picker runpick">
       <h2>Choose your runner</h2>
       <div class="runners" id="runners" role="group" aria-label="Runners"></div>
+    </div>
+    <div class="picker lappick">
+      <h2>How many laps?</h2>
+      <div class="lapbtns" id="lapbtns" role="group" aria-label="Number of laps"></div>
     </div>
   </section>
   <div class="band">
@@ -204,14 +244,19 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     <section class="bib" id="bib" aria-label="Race bib. Type the phrase shown here.">
       <i class="pin tl"></i><i class="pin tr"></i><i class="pin bl"></i><i class="pin br"></i>
       <div class="bibhead"><span>Eagle Chase 5K</span><span>Sat, Nov 7</span></div>
-      <p class="phrase" id="phrase"></p>
-      <p class="bibfoot"><span id="hint">Type the first letter to start running.</span><span id="count">Phrase 1</span></p>
+      <div class="meter" id="meter" role="meter" aria-label="Speed meter" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <span class="mk">Speed</span>
+        <div class="mtrack"><div class="mfill" id="mfill"></div></div>
+        <span class="mword" id="mword">Stopped</span>
+      </div>
+      <div class="phrase" id="phrase"><div class="lines" id="lines"></div></div>
+      <p class="bibfoot"><span id="hint">Get ready. The race starts on the beep.</span></p>
       <input id="typebox" type="text" inputmode="text" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" aria-label="Type the phrase here">
     </section>
 
     <footer class="foot">
       <button type="button" id="restart">Start over</button>
-      <button type="button" id="change">Change runner</button>
+      <button type="button" id="change">Change runner or laps</button>
       <button type="button" class="snd" id="snd2">Sound on</button>
       <p id="note">Three laps of the neighborhood, then the finish in front of the school. Capital letters and spaces count.</p>
     </footer>
@@ -226,43 +271,35 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
 <script>
 (function(){
   "use strict";
-  // Things to type. Every race puts them in a new random order.
-  var PHRASES=[
-    "The Eagle Chase 5K is on November 7th","The race starts at 9:00 in the morning","Sign up at eaglechase5k.com","Walkers are welcome",
-    "Meet us at Ashland Elementary School","All proceeds help our field trips","Support our 4th and 5th graders","Every runner helps pay for our field trips",
-    "We want 300 runners this year","Find two people to sign up","Saturday, November 7 at 9:00AM","Our field trips are about STEM",
-    "Our field trips are about the arts","Field trips help us think about future careers","We take a field trip every month","Two big adventures end the school year",
-    "Field trips should be affordable for every family","Run three laps through the neighborhood","The race starts on Cramer Ave","Turn right onto Mentelle Park",
-    "Run down Mentelle Park and back","Turn left onto Richmond Ave","Run back up Aurora Ave","Turn left onto North Ashland Ave",
-    "The finish line is in front of the school","Finish in the bus lane","A 5K is 3.1 miles","Three laps make a 5K",
-    "Ashland Eagles wear green and gold","Go Eagles!","Chase the Eagle","Can you catch the Eagle?",
-    "The Eagle is fast but you can beat it","Bring your family to the race","Bring your friends to the race","Ask your neighbors to sign up",
-    "Tell your teacher about the race","Run it, jog it, or walk it","Every step helps our school","Lace up your running shoes",
-    "Eagles fly together","Run like an Eagle","Type fast to run fast","Keep your fingers moving",
-    "Keep your feet moving","One lap down, two to go","Two laps down, one to go","Last lap, give it all you have",
-    "The 2026 Ashland Eagle Chase","eaglechase5k.com","Register today at eaglechase5k.com","sign up for the eagle chase",
-    "See you at the starting line","See you at the finish line","Cheer for every runner","Wave to the neighbors on Cramer Ave",
-    "Look for the big trees on Mentelle Park","Aurora Ave is the long stretch","Richmond Ave is one short block","Run past the houses on Aurora Ave",
-    "Fourth graders love field trips","Fifth graders love field trips","Thank you for helping our school","Thank you for running with us",
-    "Runners and walkers are both welcome","Start slow and finish strong","Pace yourself for three laps","Breathe in, breathe out, keep going",
-    "Stretch before you run","Drink water before the race","Smile when you cross the finish line","Ashland Elementary is our school",
-    "We are the Ashland Eagles","Green and gold all the way","We want every student to go on every trip","Learning happens outside the classroom too",
-    "Science, technology, engineering, and math","The arts are part of our field trips","What do you want to be when you grow up?","Saturday morning in the neighborhood",
-    "November is a great month to run","Mark your calendar for November 7","Set your alarm for race day","The race is on a Saturday",
-    "Be at the start by 9:00","Three laps, one finish line","Down Cramer, around Mentelle, back on Aurora","Left turn, left turn, left turn",
-    "Run around the median on Mentelle Park","The school bus lane is the finish","Sprint to the finish","High five at the finish line",
-    "Every lap counts","Every runner counts","Help us reach 300 runners","Share eaglechase5k.com with a friend",
-    "More runners means more help for field trips","Proceeds benefit 4th and 5th grade field trips","The Eagle Chase is at Ashland Elementary","Ready, set, Eagle Chase!"
+  // What you type: one long, chatty passage. OPENING always comes first. The other paragraphs, each a reason to sign up, follow in a new order each race.
+  var OPENING="Hey, did you know that on Saturday, November 7th at 9:00am there's a 5K race at Ashland Elementary School? It's true! It's called the Eagle Chase 5K and you can sign up at eaglechase5k.com. Seriously, after you are done playing this game, you should go to eaglechase5k.com and sign up.";
+  var STORY=[
+    "Here's the biggest reason to sign up. All of the money raised by the Eagle Chase helps pay for field trips for Ashland's 4th and 5th graders. When you run, you are helping send a kid on a field trip. That's a pretty good reason to get out of bed on a Saturday.",
+    "Need another reason? Those 4th and 5th graders take a field trip every month. The trips are about STEM, the arts, and the careers they might have someday. When you sign up, you help them see things they can't see from a classroom.",
+    "Here's a reason that matters to a lot of families. Field trips cost money, and the Eagle Chase helps keep them affordable for every family. When you sign up, you help keep the cost down for everyone.",
+    "There are also two big adventures at the end of the school year. The 4th and 5th graders look forward to them all year long. The Eagle Chase helps pay for those too, so signing up helps make them happen.",
+    "Think you're not a runner? Sign up anyway. Walkers are welcome at the Eagle Chase. You can run it, jog it, or walk it with your family, and it counts just the same.",
+    "Sign up because it's close to home. The race starts and ends at Ashland Elementary School, and the course is three laps through the neighborhood. You might even run right past your own house.",
+    "Sign up because we need you. We want 300 runners this year, and every single one counts. Then find two more people and get them to sign up too. Ask your mom, your dad, your neighbor, or your best friend.",
+    "Sign up because it's good for you. A 5K is 3.1 miles, and you get to do it outside with your friends on a Saturday morning. That beats sitting on the couch.",
+    "Sign up because you care about Ashland. Our colors are green and gold, and this race is one of the ways we show up for our school. Come be part of it.",
+    "You've typed this far, so you clearly don't give up. That's exactly what it takes to finish a 5K. Sign up at eaglechase5k.com and prove it on race day.",
+    "Signing up is easy. Just go to eaglechase5k.com. The race is Saturday, November 7th at 9:00 in the morning at Ashland Elementary School. We'll see you at the starting line!"
   ];
+  function newText(first){ // the opening (only at the start of a race), then the rest shuffled
+    var order=STORY.slice(),i,j,t;
+    for(i=order.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));t=order[i];order[i]=order[j];order[j]=t}
+    return (first?[OPENING]:[]).concat(order).join(" ")+" ";
+  }
 
   /* ---------- the race course, measured from the race map ---------- */
-  var LAPS=3;     // times around the neighborhood before the finish
+  var LAPS=3;     // times around the neighborhood before the finish. The player picks 1, 2 or 3 before each race.
   var PXM=8;      // pixels of street for every meter of the real course
   var STRIDE=50;  // pixels the runner covers for each letter typed. A smaller number means more typing per lap.
   // One lap, in running order. m = length in meters. The runner turns at the last crossing of each leg.
-  // left = the runner heads back north on this leg, so he runs to the left on screen.
-  // exit = which way that turn takes the runner on screen: down toward the bottom, or up behind the houses.
-  // Mentelle Park (median) is run down one side for m meters, around the median, and back up the other side.
+  // The screen follows the race map: a street that heads left on the map is run to the left (left:1),
+  // and at a corner the runner goes off toward the top or bottom of the screen, whichever way the next street heads on the map (exit).
+  // Mentelle Park (median) is run down the far lane for m meters, through a gap in the median, and back up the near lane.
   // cross = the streets met along the way, in meters from the start of the leg.
   //   far = the side street runs off behind the houses, near = it runs toward the bottom of the screen.
   // lots = the buildings along the far side, in order: style, wall, roof, door.
@@ -273,36 +310,41 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
       cross:[{at:0,name:"N Ashland Ave",far:1,near:1,light:1},{at:146,name:"N Hanover Ave",far:1,near:1},{at:253,name:"Mentelle Park",near:1,gate:1}],
       back:["D brick charcoal white","D brick charcoal white","B tanbrick brown white","A gray charcoal red","C brick brown white","A cream charcoal green"],
       lots:["F brick brown white","A blue charcoal white","A gray charcoal red","B sage brown wood","A cream brown red","B tanbrick charcoal green","C white charcoal red","A slate charcoal wood","B yellow brown white","E brick charcoal wood","A gray brown red","C brick charcoal white","B cream charcoal green","A white charcoal red"]},
-    {name:"Mentelle Park",m:350,median:1,turn:"right",exit:"up",
-      cross:[{at:0,name:"Cramer Ave",far:1,near:1,dead:-1},{at:35,gap:1},{at:136,gap:1},{at:245,gap:1},{at:350,gap:1}],
+    {name:"Mentelle Park",m:350,median:1,left:1,turn:"right",exit:"down",
+      cross:[{at:0,name:"Cramer Ave",far:1,near:1,dead:1},{at:35,gap:1},{at:136,gap:1},{at:245,gap:1},{at:350,gap:1}],
       lots:["C brick charcoal white","C gray charcoal red","E stone brown wood","C cream brown green","D brick charcoal white","C sage charcoal wood","C white charcoal red","E brick charcoal wood","C white charcoal green","C brick brown white","C slate charcoal red","E stone charcoal wood","C tanbrick brown white","C cream charcoal red","D darkbrick charcoal white"]},
     {name:"Cramer Ave",m:106,turn:"left",exit:"up",
       cross:[{at:0,name:"Mentelle Park",near:1,gate:1},{at:106,name:"Richmond Ave",far:1,near:1}],
       lots:["A blue charcoal white","C white charcoal red","A gray charcoal wood","picket 46","B slate brown white","A cream brown green"]},
-    {name:"Richmond Ave",m:101,left:1,turn:"left",exit:"down",
+    {name:"Richmond Ave",m:101,turn:"left",exit:"up",
       cross:[{at:0,name:"Cramer Ave",far:1,near:1},{at:101,name:"Aurora Ave",far:1,near:1}],
       lots:["fence 54","G white charcoal","wall 44","F tanbrick brown wood","G gray brown","fence 60","hedge 40","A blue charcoal white"]},
     {name:"Aurora Ave",m:357,left:1,turn:"left",exit:"down",
-      cross:[{at:0,name:"Richmond Ave",far:1,near:1},{at:89,name:"Memory Ln",near:1},{at:179,name:"Hanover Ct",near:1},{at:213,name:"N Hanover Ave",far:1},{at:269,name:"Given Ave",near:1},{at:357,name:"N Ashland Ave",far:1,near:1}],
+      cross:[{at:0,name:"Richmond Ave",far:1,near:1},{at:89,name:"Memory Ln",far:1},{at:179,name:"Hanover Ct",far:1},{at:213,name:"N Hanover Ave",near:1},{at:269,name:"Given Ave",far:1},{at:357,name:"N Ashland Ave",far:1,near:1}],
       lots:["A slate charcoal white","B yellow brown red","A brick charcoal white","hedge 36","A cream brown green","B gray charcoal red","F brick brown white","A white charcoal red","B sage brown wood","A blue charcoal white","E tanbrick charcoal wood","A gray brown red","B cream charcoal green"]},
-    {name:"N Ashland Ave",m:102,post:68,turn:"left",exit:"up",school:1,
+    {name:"N Ashland Ave",m:102,post:68,left:1,turn:"left",exit:"down",school:1,
       cross:[{at:0,name:"Aurora Ave",far:1,near:1},{at:102,name:"Cramer Ave",far:1,near:1,light:1}],
       lots:["fence 50","G white charcoal","G sage brown","F darkbrick charcoal white","A gray charcoal red","B cream brown green"]}
   ];
 
   LEGS.forEach(function(leg){leg.dir=leg.left?-1:1;leg.cross.forEach(function(c){c.x=leg.dir*c.at*PXM})}); // where each crossing sits along its street
 
-  // Every correct letter is worth the same distance. Typing faster packs those pushes closer together, so the runner moves faster.
-  var PX_PER_CHAR=100, DECAY=1.4, KICK=PX_PER_CHAR*DECAY, PX_PER_MPH=41.6;
+  // The speed meter. Every correct letter pushes it up by the same amount, so typing faster holds it higher.
+  // It drains on its own (DECAY is how quickly), and the runner keeps moving for as long as there is anything in it.
+  // METER_FULL is the speed that fills it, about 62 words per minute. Every letter is still worth the same distance overall.
+  var PX_PER_CHAR=100, DECAY=0.65, KICK=PX_PER_CHAR*DECAY, PX_PER_MPH=41.6, METER_FULL=520;
   var ART=STRIDE/PX_PER_CHAR; // screen pixels per unit of running distance
   var RM=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var COARSE=window.matchMedia&&window.matchMedia("(pointer: coarse)").matches;
+  // Phones and tablets, including iPads that say they are Macs. On these you only type the letters and spaces, in either case.
+  var TOUCH=COARSE||/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)||(navigator.maxTouchPoints>1&&/Macintosh/.test(navigator.userAgent));
+  var EASY=/[a-z ]/i; // what still has to be typed on a phone or tablet. Capitals, numbers and punctuation fill themselves in.
   var PREVIEW=parseFloat((location.hash.match(/at=([\d.]+)/)||[])[1])||0; // add #at=900 to the address to look at a spot 900 meters in
 
   var $=function(id){return document.getElementById(id)};
   var stage=$("stage"), cv=$("street"), ctx=cv.getContext("2d"), bib=$("bib"), box=$("typebox");
-  var elPhrase=$("phrase"), elHint=$("hint"), elCount=$("count"), elResult=$("result");
-  var st, last=0, hudT=0, prevVal="", oopsTimer=0, doneTimer=0;
+  var elPhrase=$("phrase"), elLines=$("lines"), elHint=$("hint"), elResult=$("result");
+  var st, last=0, hudT=0, prevVal="", oopsTimer=0, doneTimer=0, meterAt=-1;
 
   function rngMaker(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
   function hash(i){var s=Math.sin(i*127.1+11.7)*43758.5453;return s-Math.floor(s)}
@@ -311,20 +353,24 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   // Rounding a corner takes some running too: out along the side street. Then the view cuts to him running down the new street.
   var TURN_OUT=60, GAP_RUN=40;
   // The lap list, laid end to end: one entry for every leg of every lap.
-  var route=[], totalPx=0;
-  (function(){
+  var route=[], totalPx=0, course=0;
+  function buildRoute(laps){
     var lap,li,leg,x0,x1,lastLeg,loop,len,out;
+    LAPS=laps;route=[];totalPx=0;
     for(lap=1;lap<=LAPS;lap++) for(li=0;li<LEGS.length;li++){
       leg=LEGS[li];lastLeg=lap===LAPS&&li===LEGS.length-1;
       loop=leg.median?leg.m*PXM:0; // an out-and-back leg starts and ends at the same corner
       x0=loop?0:lap===1&&li===0?-(leg.pre||0)*PXM:0;
       x1=loop?0:leg.dir*(leg.m+(lastLeg?leg.post||0:0))*PXM;
-      len=loop?loop*2+GAP_RUN:Math.abs(x1-x0);out=loop?24:TURN_OUT;
-      route.push({li:li,lap:lap,x0:x0,x1:x1,dir:leg.dir,loop:loop,d0:totalPx,d1:totalPx+len,turn:lastLeg?null:leg.turn,exit:leg.exit,out:out,onto:LEGS[(li+1)%LEGS.length].name,straight:lastLeg?leg.m*PXM:0});
+      len=loop?loop*2+GAP_RUN:Math.abs(x1-x0);out=TURN_OUT;
+      route.push({li:li,lap:lap,x0:x0,x1:x1,dir:leg.dir,loop:loop,d0:totalPx,d1:totalPx+len,turn:lastLeg?null:leg.turn,exit:leg.exit,out:out,onto:LEGS[(li+1)%LEGS.length].name,straight:lastLeg?leg.m*PXM:0}); // straight = how far along the last leg the runner goes straight over Cramer
       totalPx+=len+(lastLeg?0:out);
     }
-  })();
-  var course=Math.round(totalPx/ART);
+    course=Math.round(totalPx/ART);
+    return totalPx;
+  }
+  try{LAPS=Math.min(3,Math.max(1,parseInt(localStorage.getItem("eagleLaps"),10)||3))}catch(e){}
+  buildRoute(LAPS);
   // Where the runner is. bend 0 = running along a street, 1 = leaving it at the corner, 3 = crossing the median to turn around.
   // face = which way he runs on screen. lane 1 = the far side of the median.
   function where(d){
@@ -334,11 +380,11 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
       if(d<s.d1||!s.turn){
         l=d-s.d0;
         if(!s.loop)return {si:i,bend:0,x:s.x0+s.dir*l,face:s.dir,lane:0};
-        if(l<s.loop)return {si:i,bend:0,x:l,face:1,lane:0,toGap:s.loop-l};
-        if(l<s.loop+GAP_RUN)return {si:i,bend:3,p:(l-s.loop)/GAP_RUN,x:s.loop};
-        return {si:i,bend:0,x:s.loop-(l-s.loop-GAP_RUN),face:-1,lane:1};
+        if(l<s.loop)return {si:i,bend:0,x:s.dir*l,face:s.dir,lane:1,toGap:s.loop-l};                    // out along the far lane
+        if(l<s.loop+GAP_RUN)return {si:i,bend:3,p:(l-s.loop)/GAP_RUN,x:s.dir*s.loop};                    // through the gap
+        return {si:i,bend:0,x:s.dir*(s.loop-(l-s.loop-GAP_RUN)),face:-s.dir,lane:0};                     // back along the near lane
       }
-      if(d<s.d1+s.out)return {si:i,bend:1,p:(d-s.d1)/s.out,x:s.x1,exit:s.exit,lane:s.loop?1:0};
+      if(d<s.d1+s.out)return {si:i,bend:1,p:(d-s.d1)/s.out,x:s.x1,exit:s.exit,lane:0};
     }
   }
 
@@ -657,15 +703,20 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   function buildLeg(li){
     var leg=LEGS[li];
     if(leg.l)return leg;
-    var r=rngMaker(20261107+li*7919),X0=leg.dir>0?-(leg.pre||0)*PXM-420:-leg.m*PXM-900,X1=leg.dir>0?(leg.m+(leg.post||0))*PXM+900:420,blocks=[],x,w,k,sx0;
+    var r=rngMaker(20261107+li*7919),X0=leg.dir>0?-(leg.pre||0)*PXM-420:-(leg.m+(leg.post||0))*PXM-900,X1=leg.dir>0?(leg.m+(leg.post||0))*PXM+900:420,blocks=[],x,w,k,sx0;
     leg.l=[];leg.trees=[];leg.cars=[];leg.yard=[];leg.near=[];leg.extra=[];
     leg.cross.forEach(function(c){if(c.far)blocks.push([c.x-HWID-10,c.x+HWID+10])});
-    if(leg.school){ // the school fills the far side of the last stretch, with the finish line at its front doors
-      sx0=(leg.m+leg.post)*PXM-215;
-      blocks.push([leg.m*PXM-HWID-10,sx0+SCHOOL.w+140]);
+    if(leg.school){ // the school is on the far side of the last stretch, with the finish line at its front doors
+      sx0=leg.dir*(leg.m+leg.post)*PXM-(leg.dir>0?215:185);
+      blocks.push(leg.dir>0?[leg.m*PXM-HWID-10,sx0+SCHOOL.w+140]:[sx0-140,-leg.m*PXM+HWID+10]);
       leg.l.push({x:sx0,w:SCHOOL.w,h:SCHOOL.h,c:school(),door:-1});
-      leg.extra.push({k:"flag",x:sx0-22},{k:"board",x:sx0-110},{k:"bus",x:sx0+SCHOOL.w+8});
-      [leg.m*PXM+HWID+26,sx0-70,sx0-44].forEach(function(tx,i){leg.trees.push({x:tx,s:tree(12+i,i*2%5,18)})});
+      if(leg.dir>0){
+        leg.extra.push({k:"flag",x:sx0-22},{k:"board",x:sx0-110},{k:"bus",x:sx0+SCHOOL.w+8});
+        [leg.m*PXM+HWID+26,sx0-70,sx0-44].forEach(function(tx,i){leg.trees.push({x:tx,s:tree(12+i,i*2%5,18)})});
+      }else{
+        leg.extra.push({k:"flag",x:sx0+SCHOOL.w+20},{k:"board",x:sx0+SCHOOL.w+62},{k:"bus",x:sx0-106});
+        [-leg.m*PXM-HWID-26,sx0+SCHOOL.w+48,sx0+SCHOOL.w+130].forEach(function(tx,i){leg.trees.push({x:tx,s:tree(12+i,i*2%5,18)})});
+      }
     }
     function hit(a,b){for(var i=0;i<blocks.length;i++)if(a<blocks[i][1]&&b>blocks[i][0])return blocks[i];return null}
     function fill(list,x,dir){
@@ -808,9 +859,9 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     if(si===0)banner(g,seg.x0-cl,"START",TAN,GREEN,false);
     if(si===route.length-1)banner(g,seg.x1-cl,"FINISH",GREEN,TAN,true);
     if(seg.loop){ // cones close both lanes past the turnaround gap, and an arrow board points through it
-      sx=seg.loop-cl+16;
+      sx=seg.dir*seg.loop-cl+seg.dir*16-(seg.dir<0?5:0);
       if(sx>-10&&sx<W+10){for(k=0;k<3;k++){cone(g,sx+(k%2),yB+58+k*10);if(k<2)cone(g,sx+(k%2),yB+15+k*10)}}
-      sx=seg.loop-cl-36;
+      sx=seg.dir*seg.loop-cl-seg.dir*36-(seg.dir<0?15:0);
       if(sx>-20&&sx<W+20){y=yB+44;R(g,WOOD,sx+7,y-6,1,6);R(g,OUT,sx-1,y-20,17,15);R(g,TAN,sx,y-19,15,13);bits(g,ARROW.uturn,sx+3,y-17,GREEN,1)}
     }else if(seg.turn){ // cones block the way straight on, and an arrow board points the turn
       sx=seg.x1-cl+seg.dir*(HWID+10)-(seg.dir<0?5:0);
@@ -1038,7 +1089,11 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   }
   function bendPose(w){ // where the runner is while rounding a corner: how far down the screen, how big, and which side we see
     var gyN=yS+37,gyF=yB+22,t=w.p,from;
-    if(w.bend===3)return {y:Math.round(gyN+t*(gyF-gyN)),k:1,view:"back"};            // through the gap in the median
+    if(w.bend===3)return {y:Math.round(gyF+t*(gyN-gyF)),k:1,view:"front"};           // through the gap in the median, toward us
+    if(w.bend===2){                                                                    // someone else coming around the corner onto this street
+      if(w.exit==="down")return {y:Math.round(yB+10+t*(w.to-yB-10)),k:0.6+t*0.4,view:"front"};  // they went off the bottom of the last street, so they come in from the top
+      return {y:Math.round(H+64+t*(w.to-H-64)),k:1.3-t*0.3,view:"back"};
+    }
     from=w.lane?gyF:gyN;
     if(w.exit==="down")return {y:Math.round(from+t*(H+64-from)),k:1+t*0.3,view:"front"};
     return {y:Math.round(from+t*(yB+10-from)),k:1-t*(w.lane?0.15:0.4),view:"back"};
@@ -1084,6 +1139,8 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     who.push({me:1,w:w,x:cx,o:0.3,p:st.p,s:Math.min(1,st.v/520),ci:chosen,ki:-1});
     for(i=0;i<st.field.length;i++){
       o=st.field[i];wo=where(o.d*ART);
+      if(wo.bend===1&&route[wo.si].li!==seg.li&&route[wo.si+1].li===seg.li) // rounding the corner onto this street
+        wo={si:wo.si+1,bend:2,p:wo.p,x:route[wo.si+1].x0,exit:wo.exit,to:laneY(o.o,leg,leg.median?1:0)};
       if(route[wo.si].li!==seg.li)continue;
       sx=cx+Math.round(wo.x-w.x)+(wo.bend?Math.round(o.o*9):0);
       if(sx<-40||sx>W+40)continue;
@@ -1109,7 +1166,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     else if(w.bend===3||w.toGap<18*PXM)callout(["TURN AROUND ON "+leg.name],"uturn");
     else if(st.note>0)callout(st.noteLines,st.noteArrow);
     else if(seg.turn&&seg.d1-dA<18*PXM)callout([TURNWORD[seg.turn]+seg.onto],seg.turn);
-    else if(seg.straight&&x<seg.straight&&seg.straight-x<18*PXM)callout(["STRAIGHT TO THE FINISH"],"straight");
+    else if(seg.straight&&dA-seg.d0<seg.straight&&seg.straight-(dA-seg.d0)<18*PXM)callout(["STRAIGHT TO THE FINISH"],"straight");
   }
 
   function fmtTime(t){var m=Math.floor(t/60),s=t-m*60;return m+":"+(s<10?"0":"")+s.toFixed(1)}
@@ -1120,6 +1177,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
 
   function step(now){
     var dt=Math.min(0.05,(now-last)/1000||0), si, prev, i, o;last=now;
+    if(wrap.classList.contains("intro")){requestAnimationFrame(step);return} // the race waits until the title, runner and lap screens are done
     st.clock+=dt;
     if(st.mode==="count")countdown(dt);
     if(st.mode!=="count"){
@@ -1153,12 +1211,17 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     if(!RM&&s>0.3&&before*Math.sin(st.p)<0&&!where(st.dist*ART).bend) st.dust.push({x:st.dist-14,life:1});
     for(i=st.dust.length-1;i>=0;i--){st.dust[i].life-=dt*2.6;if(st.dust[i].life<=0)st.dust.splice(i,1)}
     for(i=st.confetti.length-1;i>=0;i--){var c=st.confetti[i];c.vy+=120*dt;c.x+=c.vx*dt;c.y+=c.vy*dt;c.rot+=c.vr*dt;if(c.y>H+10)st.confetti.splice(i,1)}
-    if(!wrap.classList.contains("intro")) draw();
+    draw();
+    i=Math.min(1,st.v/METER_FULL); // the meter fills with speed, and its color runs from cool blue (slow) to hot red (fast)
+    if(Math.abs(i-meterAt)>0.003){meterAt=i;$("mfill").style.width=(i*100).toFixed(1)+"%";$("mfill").style.background="hsl("+Math.round(210-210*i)+" 78% 46%)"}
     hudT+=dt;
     if(st.mode==="run") $("sTime").textContent=fmtTime(st.t);
     if(hudT>0.12){
       hudT=0;
       $("sSpeed").textContent=(st.v/PX_PER_MPH).toFixed(1);
+      i=Math.min(1,st.v/METER_FULL);
+      $("mword").textContent=i<=0?"Stopped":i<0.25?"Slow":i<0.5?"Steady":i<0.8?"Fast":"Flying";
+      $("meter").setAttribute("aria-valuenow",Math.round(i*100));
       if(st.mode==="run") $("sWpm").textContent=wpm();
       var pct=Math.min(100,st.dist/course*100);
       $("fill").style.width=pct+"%";$("dot").style.left=pct+"%";
@@ -1175,11 +1238,21 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   /* ---------- sound ---------- */
   var soundOn=true;
   try{soundOn=localStorage.getItem("eagleSound")!=="off"}catch(e){}
-  function audio(src,loop,vol){var a=new Audio(src);a.loop=loop;a.volume=vol;a.preload="auto";return a}
-  var titleMusic=audio("titlescreenmusic1.webm",true,0.5), raceMusic=audio("runningmuiscgame.webm",true,0.45), ding=audio("ding.webm",false,0.9), startBeep=audio("startbeep.webm",false,0.9);
+  // Older iPhones and iPads cannot play WebM sound, so each sound also has an .m4a copy for them.
+  var SND=(function(){var a=document.createElement("audio");return a.canPlayType&&a.canPlayType('audio/webm; codecs="opus"')?".webm":".m4a"})();
+  function audio(name,loop,vol){var a=new Audio(name+SND);a.loop=loop;a.volume=vol;a.preload="auto";return a}
+  var titleMusic=audio("titlescreenmusic1",true,0.5), raceMusic=audio("runningmuiscgame",true,0.45), ding=audio("ding",false,0.9), startBeep=audio("startbeep",false,0.9);
+  var unlocked=false;
+  function unlock(){ // phones only let a sound play once it has been started by a tap, so the first tap quietly starts and stops each one
+    if(unlocked) return;unlocked=true;
+    [raceMusic,ding,startBeep].forEach(function(a){
+      function done(){if(a.warming){a.warming=false;a.pause();a.currentTime=0;a.muted=false}}
+      try{a.warming=true;a.muted=true;var p=a.play();if(p&&p.then)p.then(done,done);else done()}catch(e){a.warming=false;a.muted=false}
+    });
+  }
   function play(a,fromStart){ // browsers only allow sound after the first click or key press, so a refused play is not an error
     if(!soundOn) return;
-    try{if(fromStart)a.currentTime=0;var p=a.play();if(p&&p.catch)p.catch(function(){})}catch(e){}
+    try{a.warming=false;a.muted=false;if(fromStart)a.currentTime=0;var p=a.play();if(p&&p.catch)p.catch(function(){})}catch(e){}
   }
   function quiet(a){try{a.pause()}catch(e){}}
   function music(){ // title music on the title and picker screens, running music while the race is on
@@ -1189,8 +1262,8 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   }
   function showSound(){$("snd1").textContent=$("snd2").textContent=soundOn?"Sound on":"Sound off"}
   function toggleSound(){soundOn=!soundOn;try{localStorage.setItem("eagleSound",soundOn?"on":"off")}catch(e){}showSound();music()}
-  // The start: wait 2 seconds, three dings a quarter second apart, then the start beep. The race begins on the beep.
-  var DING_GAP=0.25;
+  // The start: wait 2 seconds, three dings with a full second between them, then the start beep. The race begins on the beep.
+  var DING_GAP=1;
   function countdown(dt){
     var len=isFinite(ding.duration)&&ding.duration>0?ding.duration:0.54, t0=2, n;
     st.cd+=dt;
@@ -1209,27 +1282,66 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   }
 
   /* ---------- typing ---------- */
-  function renderPhrase(){
-    var ph=PHRASES[st.order[st.pi%PHRASES.length]], frag=document.createDocumentFragment();
-    for(var i=0;i<ph.length;i++){var sp=document.createElement("span");sp.textContent=ph[i];sp.className=i<st.ci?"d":i===st.ci?"c":"t";frag.appendChild(sp)}
-    elPhrase.textContent="";elPhrase.appendChild(frag);
-    elCount.textContent="Phrase "+(st.pi+1);
+  // The passage is broken into lines that fit the race bib. You type the bright line; the lines under it wait their turn and slide up.
+  var meas=document.createElement("span"), curRow=null;
+  meas.textContent="0000000000";meas.style.cssText="position:absolute;visibility:hidden;white-space:pre";elPhrase.appendChild(meas);
+  function layoutText(){
+    var cs=getComputedStyle(elPhrase), w=elPhrase.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight), cw=meas.getBoundingClientRect().width/10;
+    var cols=Math.max(10,Math.floor(w/(cw||12))), t=st.text, i=0, end, brk;
+    if(!w) return;
+    st.lines=[];
+    while(i<t.length){
+      end=Math.min(t.length,i+cols);
+      if(end<t.length){brk=t.lastIndexOf(" ",end-1);if(brk>i)end=brk+1} // break after a space, so the space is typed at the end of its line
+      st.lines.push([i,end]);i=end;
+    }
+    for(st.li=0;st.li<st.lines.length-1&&st.gi>=st.lines[st.li][1];st.li++);
+    renderLines(false);
+  }
+  function fillRow(){ // the line being typed: done letters, the one to type next, and the rest
+    var a=st.lines[st.li], frag=document.createDocumentFragment(), i, sp;
+    for(i=a[0];i<a[1];i++){sp=document.createElement("span");sp.textContent=st.text[i];sp.className=i<st.gi?"d":i===st.gi?"c":"t";frag.appendChild(sp)}
+    curRow.textContent="";curRow.appendChild(frag);
+  }
+  function renderLines(slide){
+    var frag=document.createDocumentFragment(), k, row, a;
+    for(k=st.li-1;k<=st.li+3;k++){
+      row=document.createElement("div");a=st.lines[k];
+      row.className="ln "+(k<st.li?"was":k===st.li?"cur":k===st.li+1?"next":"later");
+      row.textContent=a?st.text.slice(a[0],a[1]):" ";
+      if(k===st.li)curRow=row;
+      frag.appendChild(row);
+    }
+    elLines.textContent="";elLines.appendChild(frag);fillRow();
+    elLines.style.transition="none";
+    if(slide&&!RM){ // start one line down, where these lines just were, then slide up
+      elLines.style.transform="translateY(0)";void elLines.offsetHeight;
+      elLines.style.transition="transform .24s ease-out";
+    }
+    elLines.style.transform="";
   }
   function type(ch){
-    if(st.mode!=="run") return;
-    var ph=PHRASES[st.order[st.pi%PHRASES.length]];
-    if(ch===ph[st.ci]){
-      st.ok++;st.e+=KICK;st.ci++;
-      if(st.ci>=ph.length){st.pi++;st.ci=0}
-      renderPhrase();
+    var want,ok,was;
+    if(st.mode!=="run"||!st.lines.length) return;
+    if(ch==="\u2019"||ch==="\u2018")ch="'"; // phones like to curl apostrophes
+    want=st.text[st.gi];
+    if(TOUCH){if(!EASY.test(ch))return;ok=ch.toLowerCase()===want.toLowerCase()} // capital letters do not matter on a phone or tablet
+    else ok=ch===want;
+    if(ok){
+      st.ok++;st.e+=KICK;st.gi++;was=st.li;
+      if(TOUCH)while(st.gi<st.text.length&&!EASY.test(st.text[st.gi]))st.gi++;  // numbers and punctuation type themselves
+      if(st.gi>=st.text.length){st.text=newText(false);st.gi=0;layoutText();return}  // typed it all: keep going with a fresh order
+      while(st.li<st.lines.length-1&&st.gi>=st.lines[st.li][1])st.li++;
+      if(st.li!==was)renderLines(true);else fillRow();
     }else{
-      if(st.mode==="run"){st.miss++;st.e*=0.88}
+      st.miss++;st.e*=0.88;
       bib.classList.remove("oops");void bib.offsetWidth;bib.classList.add("oops");
       clearTimeout(oopsTimer);oopsTimer=setTimeout(function(){bib.classList.remove("oops")},190);
     }
   }
   function finish(){
-    st.mode="done";st.e=Math.max(st.e,330);music();
+    st.mode="done";st.e=Math.max(st.e,200);music();
+    if(TOUCH)setTimeout(function(){box.blur()},600); // put the keyboard away so the results have room
     $("sTime").textContent=fmtTime(st.t);$("sWpm").textContent=wpm();
     elHint.textContent="You crossed the finish line!";
     if(!RM){
@@ -1249,7 +1361,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   }
   function reset(focus){
     clearTimeout(doneTimer);
-    st={mode:PREVIEW?"run":"count",cd:0,cdn:0,order:[],dist:Math.min(course-1,PREVIEW*PXM/ART),v:0,e:0,p:0,t:0,clock:0,pi:0,ci:0,ok:0,miss:0,top:0,slow:false,dust:[],confetti:[],seg:0,note:0};
+    st={mode:PREVIEW?"run":"count",cd:0,cdn:0,dist:Math.min(course-1,PREVIEW*PXM/ART),v:0,e:0,p:0,t:0,clock:0,text:newText(true),gi:0,li:0,lines:[],ok:0,miss:0,top:0,slow:false,dust:[],confetti:[],seg:0,note:0};
     st.seg=where(st.dist*ART).si;
     // The rest of the field: 19 other runners from slowest to fastest, all slower than the Eagle,
     // and one Eagle that flies at a pace picked fresh each race, between 50 and 80 words per minute.
@@ -1262,12 +1374,10 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     elResult.hidden=true;box.value="";prevVal="";
     $("sTime").textContent="0:00.0";$("sSpeed").textContent="0.0";$("sWpm").textContent="0";
     $("fill").style.width="0%";$("dot").style.left="0%";$("egl").style.left="0%";$("sPlace").textContent="1";
-    for(i=0;i<PHRASES.length;i++)st.order.push(i);
-    for(i=PHRASES.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));t=st.order[i];st.order[i]=st.order[j];st.order[j]=t}
-    elHint.textContent=COARSE?"Get ready. Tap this bib so you can type.":"Get ready. The race starts on the beep.";
+    elHint.textContent=TOUCH?"Get ready. Tap here to bring up the keyboard.":"Get ready. The race starts on the beep.";
     music();
-    showLeg();renderPhrase();
-    if(focus){try{box.focus({preventScroll:true})}catch(e){box.focus()}}
+    showLeg();layoutText();
+    if(focus){try{box.focus({preventScroll:true})}catch(e){box.focus()}setTimeout(fit,0)}
   }
 
   // The title screen shows first, then the runner picker. Choosing a runner starts the game.
@@ -1279,7 +1389,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     b.addEventListener("click",function(){
       chosen=i;try{localStorage.setItem("eagleRunner",String(i))}catch(e){}
       runnerBtns.forEach(function(x,j){x.setAttribute("aria-pressed",j===i?"true":"false")});
-      begin();
+      showLaps();
     });
     runnersEl.appendChild(b);runnerBtns.push(b);
   });
@@ -1288,24 +1398,49 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     if(i<0||!d) return;
     e.preventDefault();runnerBtns[(i+d+n)%n].focus();
   });
-  function showPicker(){wrap.classList.add("intro");titleEl.classList.add("pick");runnerBtns[chosen].focus();music()}
+  // The lap choice: one button each for 1, 2 and 3 laps, with how much typing each one is.
+  var lapsEl=$("lapbtns"), lapBtns=[], WORDS=["One lap","Two laps","Three laps"];
+  [1,2,3].forEach(function(n){
+    var b=document.createElement("button"),letters=Math.round(buildRoute(n)/STRIDE/10)*10;
+    b.type="button";
+    b.innerHTML="<b>"+n+"</b><span>"+(n===1?"lap":"laps")+"</span><small>"+(n===3?"the full 5K, ":"")+"about "+letters+" letters</small>";
+    b.addEventListener("click",function(){
+      try{localStorage.setItem("eagleLaps",String(n))}catch(e){}
+      buildRoute(n);showLapChoice();begin();
+    });
+    lapsEl.appendChild(b);lapBtns.push(b);
+  });
+  function showLapChoice(){
+    lapBtns.forEach(function(x,j){x.setAttribute("aria-pressed",j===LAPS-1?"true":"false")});
+    $("note").textContent=WORDS[LAPS-1]+" of the neighborhood, then the finish in front of the school. "+(TOUCH?"Just type the letters and spaces. Capitals, numbers and punctuation fill themselves in.":"Capital letters and spaces count.");
+  }
+  buildRoute((function(){var n=3;try{n=Math.min(3,Math.max(1,parseInt(localStorage.getItem("eagleLaps"),10)||3))}catch(e){}return n})());
+  showLapChoice();
+  lapsEl.addEventListener("keydown",function(e){ // arrow keys move between the choices
+    var i=lapBtns.indexOf(document.activeElement),d={ArrowRight:1,ArrowDown:1,ArrowLeft:-1,ArrowUp:-1}[e.key];
+    if(i<0||!d) return;
+    e.preventDefault();lapBtns[(i+d+3)%3].focus();
+  });
+  function showPicker(){wrap.classList.add("intro");titleEl.classList.remove("laps");titleEl.classList.add("pick");runnerBtns[chosen].focus();music()}
+  function showLaps(){titleEl.classList.remove("pick");titleEl.classList.add("laps");lapBtns[LAPS-1].focus()}
   function begin(){
     if(!wrap.classList.contains("intro")) return;
-    wrap.classList.remove("intro");titleEl.classList.remove("pick");resize();reset(true);
+    wrap.classList.remove("intro");titleEl.classList.remove("pick");titleEl.classList.remove("laps");resize();reset(true);
   }
   $("start").addEventListener("click",showPicker);
   $("change").addEventListener("click",showPicker);
-  if(COARSE) $("startHint").textContent="Tap to start";
+  if(TOUCH) $("startHint").textContent="Tap to start";
   if(PREVIEW) wrap.classList.remove("intro");
   $("snd1").addEventListener("click",toggleSound);$("snd2").addEventListener("click",toggleSound);
   showSound();music();
   // The title music cannot start until the first click, tap or key press. This starts it then.
-  ["pointerdown","keydown"].forEach(function(ev){document.addEventListener(ev,function(){if(wrap.classList.contains("intro"))music()},true)});
+  ["pointerdown","keydown"].forEach(function(ev){document.addEventListener(ev,function(){unlock();if(wrap.classList.contains("intro"))music()},true)});
 
   document.addEventListener("keydown",function(e){
     if(e.ctrlKey||e.metaKey||e.altKey) return;
     if(wrap.classList.contains("intro")){
-      if(!titleEl.classList.contains("pick")&&e.target.tagName!=="BUTTON"&&(e.key==="Enter"||(e.key&&e.key.length===1))){e.preventDefault();showPicker()}
+      if(titleEl.classList.contains("laps")){if(e.key==="1"||e.key==="2"||e.key==="3"){e.preventDefault();lapBtns[+e.key-1].click()}} // number keys pick the laps
+      else if(!titleEl.classList.contains("pick")&&e.target.tagName!=="BUTTON"&&(e.key==="Enter"||(e.key&&e.key.length===1))){e.preventDefault();showPicker()}
       return;
     }
     var tag=e.target&&e.target.tagName;
@@ -1334,7 +1469,21 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     yN=H-NEAR;yS=yN-ST;yB=yS-FARZ;
     paintSky();
   }
+  var vv=window.visualViewport;
+  function fit(){ // on a phone or tablet, when the keyboard is up, show only the street, the meter and the words in the room above it
+    var kb=TOUCH&&document.activeElement===box&&!wrap.classList.contains("intro");
+    document.documentElement.style.setProperty("--vvh",Math.round(vv?vv.height:window.innerHeight)+"px");
+    if(wrap.classList.contains("kb")!==kb)wrap.classList.toggle("kb",kb);
+    if(kb)wrap.scrollIntoView({block:"start"});
+    resize();if(st)layoutText();
+  }
+  box.addEventListener("focus",function(){fit();setTimeout(fit,350)});
+  box.addEventListener("blur",function(){setTimeout(fit,60)});
+  if(vv)vv.addEventListener("resize",fit);
+  window.addEventListener("orientationchange",function(){setTimeout(fit,300)});
   window.addEventListener("resize",resize);
+  if(window.ResizeObserver) new ResizeObserver(function(){if(st)layoutText()}).observe(elPhrase);
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(function(){if(st)layoutText()});
   if(window.ResizeObserver) new ResizeObserver(resize).observe(stage);
 
   reset(false);resize();
