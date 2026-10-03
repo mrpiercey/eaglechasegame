@@ -20,7 +20,7 @@ The game's colors and lettering are copied from the Eagle Chase race posters.
 ## How a game goes
 
 1. The title screen shows the school and the game's name. Press Start, or any key.
-2. Choose one of ten runners. The game remembers your choice for next time.
+2. Choose one of ten runners: Mateo, Lily, Jake, Sofia, Owen, Zara, Marcus, Mia, Ava or Leo. The game remembers your choice for next time.
 3. Choose 1, 2 or 3 laps. Three laps is the full 5K, about 820 letters of typing. One lap is about 290. The title music keeps playing on this screen.
 4. Wait for the start. After 2 seconds there are three dings, with a full second between them, then the start beep. The race begins on the beep.
 5. Type the words on the race bib. The faster you type, the faster you run.
@@ -42,6 +42,7 @@ The top right shows a small map of the course. Your runner's face moves around i
 When you cross the finish line, your place comes up over the street while the finish music plays. Then the podium screen shows the first three finishers, your place if you missed the podium, a link to sign up for the real race, and a Race again button.
 
 You race 19 other runners and one Eagle. The other runners type between about 15 and 47 words per minute.
+They each have a name (`FIELD_NAMES` in `index.html`, slowest first: Ethan, Nora, Caleb, Isla, Jordan, Priya, Sam, Ruby, Diego, Harper, Eli, Amara, Finn, Chloe, Noah, Grace, Tariq, Ella and Wyatt). Names show on the leader tiles at the top left of the street and on the podium.
 The Eagle is always the fastest. Its pace is picked fresh each race, somewhere between 50 and 80 words per minute.
 The scoreboard shows your place, and the little eagle above the progress bar shows how far the Eagle has gone.
 
@@ -51,7 +52,7 @@ The title screen has a Leaderboard button, next to Start the race, and after a r
 Only the initials are stored, with the time, the typing speed and the number of errors.
 
 There is one board for each lap count, 1, 2 or 3. Computer and mobile runs are on the same board, and each row says COMPUTER or MOBILE next to the initials. The game decides which one on its own, the same way it decides whether to use touch mode.
-Each board can be ranked three ways: fastest time, fastest typing (words per minute), or fewest errors, with ties broken by the faster time. Each ranking shows the top 50.
+The leaderboard is sorted by fastest time and shows the top 50. Each row also shows the typing speed (words per minute) and the number of errors, but those are only shown, not ranked.
 (In the database the computer and mobile runs are kept apart, under `boards/computer_1`, `boards/mobile_1` and so on. The game reads both and puts them together.)
 Every finished race that gets initials goes on its board, whether or not it makes the top 50.
 
