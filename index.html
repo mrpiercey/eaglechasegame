@@ -1347,21 +1347,19 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
       if(st.dist>=course) finish();
     }
     if(st.mode!=="count"){
-      // The field. It is built to stay close to whoever is typing, and to make them work for a win.
-      //  ref is the typist's speed so far this race, counting only the time they were typing (pauses over 2 seconds are left out,
-      //  so stopping does not slow the field down). It starts from a guess of 18 words per minute.
-      //  - The Eagle flies just ahead of the typist for the first five sixths of the race.
+      // The field.
+      //  - The 28 other runners each hold their own steady pace all race, so they spread out along the course:
+      //    the 14 slowest type 6 to 20 words per minute, the 14 fastest 20 to 30.
+      //  - Only the Eagle adjusts to the typist. ref is the typist's speed so far this race, counting only the time they
+      //    were typing (pauses over 2 seconds are left out). It starts from a guess of 18 words per minute.
+      //    The Eagle flies just ahead of the typist for the first five sixths of the race.
       //    In the last sixth it flies at EAGLE_KICK times ref, so the typist has to finish faster than their own average
       //    to pass it. It never gets more than 70 pixels ahead of a typist who is still trying, so it is in reach to the line.
-      //  - The 15 fastest runners pace off ref all race: ten a little slower than the typist, five a little faster.
-      //    A leash keeps them near the typist. Slow down and they come past. Speed up and you pass them.
-      //  - Nobody waits. The Eagle and those 15 never drop under 80% of ref (or 8 words per minute), so a typist who stops is left behind.
-      //  - The 13 slowest runners hold their own pace, 20 words per minute or less.
-      //  - Nobody but the typist may pass the Eagle, so the Eagle always finishes first or second.
-      var eg=st.field[st.field.length-1], WPM=5/60*PX_PER_CHAR, ref=(st.dist+18*WPM*1.5)/(st.act+1.5), low=Math.max(8*WPM,0.8*ref), sp, g, j, f;
+      //    It does not wait: it never drops under 80% of ref (or 8 words per minute), so a typist who stops is left behind.
+      var WPM=5/60*PX_PER_CHAR, ref=(st.dist+18*WPM*1.5)/(st.act+1.5), low=Math.max(8*WPM,0.8*ref), sp, g;
       var home=(st.dist-course*5/6)/(course/6);
       if(home>0&&!st.kick)st.kick=EAGLE_KICK*ref; // set once, as the typist enters the home stretch
-      for(i=st.field.length-1;i>=0;i--){ // the Eagle is last in the list, so it moves first
+      for(i=0;i<st.field.length;i++){
         o=st.field[i];
         if(o.eagle){
           if(st.mode==="done")sp=st.kick||ref;
@@ -1370,21 +1368,8 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
             if(g>70/ART)sp=Math.max(low,Math.min(sp,st.v+1.5*(70/ART-g)));
           }else sp=Math.max(low,st.v+1.5*(st.dist+(45+18*Math.sin(st.clock*0.3)*Math.max(0,Math.min(1,-home-0.3)))/ART-o.d)); // 45 pixels ahead, give or take, and a steady 45 coming up to the home stretch
           o.v+=(sp-o.v)*(1-Math.exp(-3*dt));
-        }else{
-          if(o.top>=0){
-            j=o.top;f=0.86+0.19*j/14;sp=f*ref;
-            if(st.mode==="run"){ // the leash: not too far ahead of the typist, not too far behind
-              g=(o.d-st.dist)*ART;
-              if(g>12+2.2*j)sp-=1.2*(g-12-2.2*j)/ART;
-              else if(g<-(24+11*(14-j)))sp+=1.2*(-(24+11*(14-j))-g)/ART;
-            }
-            sp=Math.max(sp,f*low);
-          }else sp=o.pace*WPM;
-          sp=Math.max(0,sp*(1+0.06*Math.sin(st.clock*0.4+o.wob)));
-          o.v+=(sp-o.v)*(1-Math.exp(-1.5*dt));
-        }
+        }else o.v+=(o.pace*WPM*(1+0.06*Math.sin(st.clock*0.4+o.wob))-o.v)*(1-Math.exp(-1.5*dt));
         o.d+=o.v*dt;
-        if(!o.eagle&&o.d>eg.d-o.gap){o.d=eg.d-o.gap;o.v=Math.min(o.v,eg.v)} // tucked in behind the Eagle
         o.p+=(o.v/(110+130*Math.min(1,o.v/520)))*Math.PI*2*dt;
         if(!o.fin&&o.d>=course){o.fin=st.t||0.001;if(o.eagle)st.eagleT=o.fin}
       }
@@ -1544,8 +1529,8 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     }
     var total=st.ok+st.miss, n=st.field.length+1, all=[{me:1,t:st.t}], eg=st.field[st.field.length-1];
     var ew=Math.round(Math.min(eg.d,course)/Math.max(1,eg.fin||st.t)/(5/60*PX_PER_CHAR)/BOOST); // the Eagle's speed, as typing
-    // The order of finish. Anyone still out on the course is placed by how far they have left to go.
-    st.field.forEach(function(o){all.push({o:o,t:o.fin||st.t+0.001+Math.max(0,course-o.d)/Math.max(1,st.dist/Math.max(1,st.t))})});
+    // The order of finish. Anyone still out on the course is placed by when they will get in at their own pace.
+    st.field.forEach(function(o){all.push({o:o,t:o.fin||st.t+0.001+Math.max(0,course-o.d)/Math.max(1,o.eagle?st.kick||eg.v:o.pace*5/60*PX_PER_CHAR)})});
     all.sort(function(a,b){return a.t-b.t});
     for(i=0;i<all.length;i++)if(all[i].me)st.place=i+1;
     $("sPlace").textContent=st.place;
@@ -1597,18 +1582,16 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     clearTimeout(doneTimer);
     st={mode:PREVIEW?"run":"count",cd:0,cdn:0,dist:Math.min(course-1,PREVIEW*PXM/ART),v:0,e:0,p:0,t:0,clock:0,text:newText(true),gi:0,li:0,lines:[],ok:0,miss:0,top:0,act:0,lastKey:0,slow:false,dust:[],confetti:[],seg:0,note:0};
     st.seg=where(st.dist*ART).si;
-    // The rest of the field: 28 other runners from slowest to fastest, and the Eagle.
-    // The 13 slowest type 6 to 20 words per minute. The 15 fastest pace off the typist (see step).
+    // The rest of the field: 28 other runners from slowest to fastest, each with a steady pace of their own, and the Eagle.
+    // The 14 slowest type 6 to 20 words per minute. The 14 fastest type 20 to 30. Only the Eagle paces off the typist (see step).
     var lanes=[],N=FIELD_NAMES.length,i,j,t;
     for(i=0;i<N;i++)lanes.push(i);
     for(i=N-1;i>0;i--){j=Math.floor(Math.random()*(i+1));t=lanes[i];lanes[i]=lanes[j];lanes[j]=t}
     st.field=[];st.eagleT=0;st.place=0;
     for(i=0;i<N;i++)st.field.push({name:FIELD_NAMES[i],ci:Math.floor(Math.random()*CHARS.length),ki:i%KITS.length,
-      pace:Math.min(20,6+i*14/12+Math.random()*0.8), // words per minute, for the 13 slowest
-      top:i<13?-1:i-13,              // the 15 fastest are 0 to 14, slowest first. Everyone else is -1.
-      gap:(10+(i%7)*4)/ART,          // how far behind the Eagle this runner tucks in, if it catches the Eagle
+      pace:i<14?Math.min(20,6+i*14/13+Math.random()*0.6):Math.min(30,20+(i-14)*10/13+Math.random()*0.6), // words per minute
       v:0,d:-(10+i*144/(N-1)+Math.random()*6)/ART,o:-1+2*lanes[i]/(N-1),p:Math.random()*6,wob:Math.random()*6});
-    st.field.push({name:"The Eagle",eagle:1,v:0,d:2/ART,o:0.95,p:0,wob:0});
+    st.field.push({name:"The Eagle",eagle:1,v:0,d:-26/ART,o:0.95,p:0,wob:0});
     elResult.hidden=true;box.value="";prevVal="";resetHsForm();
     $("sTime").textContent="0:00.0";$("sSpeed").textContent="0.0";$("sWpm").textContent="0";
     $("fill").style.width="0%";$("dot").style.left="0%";$("egl").style.left="0%";$("sPlace").textContent="1";
