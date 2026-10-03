@@ -40,14 +40,16 @@ The top right shows a small map of the course. Your runner's face moves around i
 
 When you cross the finish line, your place comes up over the street while the finish music plays. Then the podium screen shows the first three finishers, your place if you missed the podium, a link to sign up for the real race, and a Race again button.
 
-You race 28 other runners and one Eagle, 30 racers in all. The race is built to stay close to whoever is typing:
+You race 28 other runners and one Eagle, 30 racers in all. The race is built to stay close to whoever is typing, and to make them work for a win. It measures your speed so far in the race, counting only the time you were typing, and paces the field off that.
 
-- The 15 slowest runners hold their own pace, between 6 and 20 words per minute.
-- The 13 fastest runners start at their own pace (22 to 40 words per minute). By halfway through the first lap they pace themselves off your average speed instead, each a little slower or faster than you, and stay within sight of you. Slow down and they pass you. Keep typing and you pass them.
-- The Eagle flies just ahead of you for the first five sixths of the race, however fast or slow you type. In the last sixth it drifts back, so if you keep typing you pass it before the line. If you stop typing in the home stretch (under 60% of your own average speed), it beats you.
+- The 13 slowest runners hold their own pace, between 6 and 20 words per minute.
+- The 15 fastest runners pace themselves off your speed for the whole race: ten a little slower than you, five a little faster, all within sight. Slow down and they pass you. Speed up and you pass them.
+- The Eagle flies about 45 pixels ahead of you for the first five sixths of the race, however fast or slow you type.
+- In the last sixth, the Eagle flies 4% faster than your speed so far. To beat it you have to finish about 5% faster than you typed the rest of the race. It never gets more than 70 pixels ahead while you are still trying, so it stays in reach to the line.
+- Nobody waits for you. The Eagle and the 15 fastest never drop under 80% of your speed, so if you stop typing they leave, and you have to catch up.
 - Nobody but you may pass the Eagle, so the Eagle always finishes first or second.
 
-This all lives in the "field" part of `step` in `index.html`.
+`EAGLE_KICK` near the top of the script in `index.html` sets how hard the Eagle is to beat: 1 is easy, 1.04 is the setting now, 1.1 is very hard. The rest lives in the "field" part of `step`.
 They each have a name (`FIELD_NAMES` in `index.html`, slowest first: Ethan, Nora, Caleb, Isla, Jordan, Priya, Sam, Ruby, Diego, Harper, Eli, Amara, Finn, Chloe, Noah, Grace, Tariq, Ella, Wyatt, Lucas, Maya, Henry, Zoe, Omar, Lucy, Ben, Aria and Jack. Adding a name to that list adds a runner). Names show on the leader tiles at the top left of the street and on the podium.
 The scoreboard shows your place, and the little eagle above the progress bar shows how far the Eagle has gone.
 
