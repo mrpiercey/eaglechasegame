@@ -302,7 +302,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
       <div class="stat"><span class="k">Time</span><span class="v" id="sTime">0:00.0</span></div>
       <div class="stat"><span class="k">Speed</span><span class="v"><span id="sSpeed">0.0</span><small> mph</small></span></div>
       <div class="stat"><span class="k">Typing</span><span class="v"><span id="sWpm">0</span><small> wpm</small></span></div>
-      <div class="stat"><span class="k">Place</span><span class="v"><span id="sPlace">1</span><small> of 21</small></span></div>
+      <div class="stat"><span class="k">Place</span><span class="v"><span id="sPlace">1</span><small> of 30</small></span></div>
       <div class="course">
         <div class="names"><b id="nameA">Start</b><span id="nameB">Lap 1 of 3</span><b id="nameC">Finish</b></div>
         <div class="rail"><div class="fill" id="fill"></div><img class="egl" id="egl" src="eagles.png" width="720" height="310" alt="The Eagle" title="The Eagle"><div class="dot" id="dot"></div></div>
@@ -315,7 +315,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
         <div class="placecard" role="status">
           <p class="pk">You finished</p>
           <p class="pbig ol" id="pBig">1st</p>
-          <p class="pof" id="pOf">out of 21 racers</p>
+          <p class="pof" id="pOf">out of 30 racers</p>
         </div>
       </div>
     </div>
@@ -1550,19 +1550,20 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     wrap.scrollIntoView({block:"start"});
     try{$("again").focus({preventScroll:true})}catch(e){}
   }
-  // The 19 other runners, slowest first. Each one keeps the same name every race.
-  var FIELD_NAMES=["Ethan","Nora","Caleb","Isla","Jordan","Priya","Sam","Ruby","Diego","Harper","Eli","Amara","Finn","Chloe","Noah","Grace","Tariq","Ella","Wyatt"];
+  // The 28 other runners, slowest first. Each one keeps the same name every race. With you and the Eagle that makes 30.
+  var FIELD_NAMES=["Ethan","Nora","Caleb","Isla","Jordan","Priya","Sam","Ruby","Diego","Harper","Eli","Amara","Finn","Chloe","Noah","Grace","Tariq","Ella","Wyatt",
+    "Lucas","Maya","Henry","Zoe","Omar","Lucy","Ben","Aria","Jack"];
   function reset(focus){
     clearTimeout(doneTimer);
     st={mode:PREVIEW?"run":"count",cd:0,cdn:0,dist:Math.min(course-1,PREVIEW*PXM/ART),v:0,e:0,p:0,t:0,clock:0,text:newText(true),gi:0,li:0,lines:[],ok:0,miss:0,top:0,slow:false,dust:[],confetti:[],seg:0,note:0};
     st.seg=where(st.dist*ART).si;
-    // The rest of the field: 19 other runners from slowest to fastest, all slower than the Eagle,
+    // The rest of the field: 28 other runners from slowest to fastest, all slower than the Eagle,
     // and one Eagle that flies at a pace picked fresh each race, between 50 and 80 words per minute.
-    var lanes=[],i,j,t;
-    for(i=0;i<19;i++)lanes.push(i);
-    for(i=18;i>0;i--){j=Math.floor(Math.random()*(i+1));t=lanes[i];lanes[i]=lanes[j];lanes[j]=t}
+    var lanes=[],N=FIELD_NAMES.length,i,j,t;
+    for(i=0;i<N;i++)lanes.push(i);
+    for(i=N-1;i>0;i--){j=Math.floor(Math.random()*(i+1));t=lanes[i];lanes[i]=lanes[j];lanes[j]=t}
     st.field=[];st.eagleT=0;st.place=0;st.eaglePace=50+Math.random()*30;
-    for(i=0;i<19;i++)st.field.push({name:FIELD_NAMES[i],ci:Math.floor(Math.random()*CHARS.length),ki:i%KITS.length,pace:15+31*i/18+Math.random()*2-1,v:0,d:-(10+i*8+Math.random()*6)/ART,o:-1+2*lanes[i]/18,p:Math.random()*6,wob:Math.random()*6});
+    for(i=0;i<N;i++)st.field.push({name:FIELD_NAMES[i],ci:Math.floor(Math.random()*CHARS.length),ki:i%KITS.length,pace:15+31*i/(N-1)+Math.random()*2-1,v:0,d:-(10+i*144/(N-1)+Math.random()*6)/ART,o:-1+2*lanes[i]/(N-1),p:Math.random()*6,wob:Math.random()*6});
     st.field.push({name:"The Eagle",eagle:1,pace:st.eaglePace,v:0,d:-26/ART,o:0.95,p:0,wob:0});
     elResult.hidden=true;box.value="";prevVal="";resetHsForm();
     $("sTime").textContent="0:00.0";$("sSpeed").textContent="0.0";$("sWpm").textContent="0";

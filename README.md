@@ -40,8 +40,8 @@ The top right shows a small map of the course. Your runner's face moves around i
 
 When you cross the finish line, your place comes up over the street while the finish music plays. Then the podium screen shows the first three finishers, your place if you missed the podium, a link to sign up for the real race, and a Race again button.
 
-You race 19 other runners and one Eagle. The other runners type between about 15 and 47 words per minute.
-They each have a name (`FIELD_NAMES` in `index.html`, slowest first: Ethan, Nora, Caleb, Isla, Jordan, Priya, Sam, Ruby, Diego, Harper, Eli, Amara, Finn, Chloe, Noah, Grace, Tariq, Ella and Wyatt). Names show on the leader tiles at the top left of the street and on the podium.
+You race 28 other runners and one Eagle, 30 racers in all. The other runners type between about 15 and 47 words per minute.
+They each have a name (`FIELD_NAMES` in `index.html`, slowest first: Ethan, Nora, Caleb, Isla, Jordan, Priya, Sam, Ruby, Diego, Harper, Eli, Amara, Finn, Chloe, Noah, Grace, Tariq, Ella, Wyatt, Lucas, Maya, Henry, Zoe, Omar, Lucy, Ben, Aria and Jack. Adding a name to that list adds a runner). Names show on the leader tiles at the top left of the street and on the podium.
 The Eagle is always the fastest. Its pace is picked fresh each race, somewhere between 50 and 80 words per minute.
 The scoreboard shows your place, and the little eagle above the progress bar shows how far the Eagle has gone.
 
