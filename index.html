@@ -1311,7 +1311,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
 
     hud();
     if(st.mode==="done")return;
-    if(st.mode==="count"){callout([st.cdn?String(4-st.cdn):"GET READY"]);return}
+    if(st.mode==="count"){callout([["GET READY","READY...","SET...","SET..."][st.cdn]||"SET..."]);return} // first ding READY, then SET, held until the beep says TYPE!
     x=seg.x0+dA-seg.d0;
     if(w.bend===1)callout([TURNWORD[seg.turn]+seg.onto],seg.turn);
     else if(w.bend===3||w.toGap<18*PXM)callout(["TURN AROUND ON "+leg.name],"uturn");
@@ -1425,7 +1425,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
       if(st.cdn<4)play(ding,true);
       else{
         play(startBeep,true);
-        st.mode="run";st.note=1;st.noteLines=["GO!"];st.noteArrow=null;
+        st.mode="run";st.note=1;st.noteLines=["TYPE!"];st.noteArrow=null;
         elHint.textContent="Go! Type the words.";
         try{raceMusic.currentTime=0}catch(e){}
         music();
