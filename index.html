@@ -339,8 +339,6 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     </section>
 
     <footer class="foot">
-      <button type="button" id="restart">Start over</button>
-      <button type="button" id="change">Change runner or laps</button>
       <p id="note">Three laps of the neighborhood, then the finish in front of the school. Capital letters and spaces count.</p>
     </footer>
   </div>
@@ -1629,7 +1627,6 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     wrap.classList.remove("intro");titleEl.classList.remove("pick");titleEl.classList.remove("laps");titleEl.classList.remove("hs");resize();reset(true);
   }
   $("start").addEventListener("click",showPicker);
-  $("change").addEventListener("click",showPicker);
   if(TOUCH) $("startHint").textContent="Tap to start";
   if(PREVIEW) wrap.classList.remove("intro");
   music();
@@ -1754,7 +1751,6 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     if(v.length>48){box.value="";prevVal=""}
     for(var i=0;i<add.length;i++) type(add[i]);
   });
-  $("restart").addEventListener("click",function(){reset(true)});
   $("again").addEventListener("click",function(){wrap.classList.remove("outro");resize();reset(true)});
   $("change2").addEventListener("click",showPicker);
   elResult.addEventListener("click",showPodium); // a tap on the place skips ahead to the podium
