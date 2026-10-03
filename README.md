@@ -22,7 +22,7 @@ The game's colors and lettering are copied from the Eagle Chase race posters.
 1. The title screen shows the school and the game's name. Press Start, or any key.
 2. Choose one of ten runners. They have no names. The game remembers your choice for next time.
 3. Choose 1, 2 or 3 laps. Three laps is the full 5K, about 820 letters of typing. One lap is about 290. The title music keeps playing on this screen.
-4. Wait for the start. After 2 seconds there are three dings, with a full second between them, then the start beep. The street says READY... on the first ding and SET... on the next two, then TYPE! on the beep, when the race begins.
+4. Wait for the start. After 2 seconds there are three dings, with a full second between them, then the start beep. The street shows a big 3..., 2... and 1... on the dings, then a big TYPE! on the beep, when the race begins.
 5. Type the words on the race bib. The faster you type, the faster you run.
 
 The speed meter on the race bib shows how fast you are going. Every correct letter pushes it up, so faster typing holds it higher.

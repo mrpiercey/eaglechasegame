@@ -1265,8 +1265,8 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   }
 
   /* ---------- one frame ---------- */
-  function callout(lines,arrow){
-    var k=2,w=0,i,x,y=5,h;
+  function callout(lines,arrow,big){ // big = a larger scale for the start countdown
+    var k=big||2,w=0,i,x,y=5,h;
     lines.forEach(function(l){w=Math.max(w,textW(l,k))});
     if(w+(arrow?26:0)+12>W-124){k=1;w=0;lines.forEach(function(l){w=Math.max(w,textW(l,k))})} // leave room for the leaders on the left and the map on the right
     w+=(arrow?9*k+4*k:0)+6*k;h=lines.length*6*k+3*k;x=(W-w)>>1;
@@ -1315,11 +1315,11 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
 
     hud();
     if(st.mode==="done")return;
-    if(st.mode==="count"){callout([["GET READY","READY...","SET...","SET..."][st.cdn]||"SET..."]);return} // first ding READY, then SET, held until the beep says TYPE!
+    if(st.mode==="count"){if(st.cdn)callout([["3...","2...","1..."][st.cdn-1]||"1..."],null,5);else callout(["GET READY"]);return} // a big 3, 2, 1 on the dings, then a big TYPE! on the beep
     x=seg.x0+dA-seg.d0;
     if(w.bend===1)callout([TURNWORD[seg.turn]+seg.onto],seg.turn);
     else if(w.bend===3||w.toGap<18*PXM)callout(["TURN AROUND ON "+leg.name],"uturn");
-    else if(st.note>0)callout(st.noteLines,st.noteArrow);
+    else if(st.note>0)callout(st.noteLines,st.noteArrow,st.noteBig);
     else if(seg.turn&&seg.d1-dA<18*PXM)callout([TURNWORD[seg.turn]+seg.onto],seg.turn);
     else if(seg.straight&&dA-seg.d0<seg.straight&&seg.straight-(dA-seg.d0)<18*PXM)callout(["STRAIGHT TO THE FINISH"],"straight");
   }
@@ -1355,7 +1355,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     if(si!==st.seg){ // the runner has gone around a corner and is arriving on the next street
       prev=route[st.seg];
       if(si===st.seg+1&&prev.turn){
-        st.note=1.8;st.noteArrow=prev.turn;st.noteLines=[TURNWORD[prev.turn]+prev.onto];
+        st.note=1.8;st.noteArrow=prev.turn;st.noteLines=[TURNWORD[prev.turn]+prev.onto];st.noteBig=0;
         if(route[si].lap!==prev.lap)st.noteLines.push("LAP "+route[si].lap+" OF "+LAPS);
       }
       st.seg=si;showLeg();
@@ -1429,7 +1429,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
       if(st.cdn<4)play(ding,true);
       else{
         play(startBeep,true);
-        st.mode="run";st.note=1;st.noteLines=["TYPE!"];st.noteArrow=null;
+        st.mode="run";st.note=1;st.noteLines=["TYPE!"];st.noteArrow=null;st.noteBig=5;
         elHint.textContent="Go! Type the words.";
         try{raceMusic.currentTime=0}catch(e){}
         music();
