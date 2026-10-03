@@ -292,8 +292,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
       </form>
       <a class="fcta" href="https://eaglechase5k.com" target="_blank" rel="noopener">Sign up for the REAL Eagle Chase 5K <span>at eaglechase5k.com</span></a>
       <div class="frow">
-        <button type="button" id="again">Race again</button>
-        <button type="button" id="change2">Change runner or laps</button>
+        <button type="button" id="again">Start over</button>
       </div>
     </div>
   </section>
@@ -350,8 +349,8 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   // What you type: one long, chatty passage. OPENING (two paragraphs, in that order) always comes first.
   // The other paragraphs, each a reason to sign up, follow in a new order each race.
   var OPENING=[
-    "Mark your calendar! On Saturday, November 7th at 9:00am, there's a 5k race at Ashland Elementary School. It's called the Eagle Chase 5k, and you can sign up at eaglechase5k.com. Seriously, as soon as you finish playing this game, go to eaglechase5k.com and sign up.",
-    "So what's the Eagle Chase all about? It's a fundraiser for the big field trips at the end of the year for Ashland's 4th and 5th graders. Every dollar we raise goes directly to the students who need it. When you sign up, you are helping a kid go on the trip of the year."
+    "Mark your calendar! On Saturday, November 7th at 9:00am, there's a 5k race at Ashland Elementary School. It's called the Eagle Chase 5k, and you can sign up at eaglechase5k.com.",
+    "So what's the Eagle Chase all about? It's our big fundraiser for the big field trips at the end of the year for Ashland's 4th and 5th graders."
   ];
   var STORY=[
     "So yes, this game you're playing right now is actually a shameless promotion for the Eagle Chase 5k. We're not even going to pretend it isn't. Every word you type is part of our sneaky plan to get you to sign up at eaglechase5k.com.",
@@ -1745,8 +1744,12 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     if(v.length>48){box.value="";prevVal=""}
     for(var i=0;i<add.length;i++) type(add[i]);
   });
-  $("again").addEventListener("click",function(){wrap.classList.remove("outro");resize();reset(true)});
-  $("change2").addEventListener("click",showPicker);
+  $("again").addEventListener("click",function(){ // back to the very first title screen, as if the page had just opened
+    clearTimeout(doneTimer);st.mode="count";
+    wrap.classList.remove("outro","kb");wrap.classList.add("intro");titleEl.classList.remove("pick","laps","hs");
+    music();window.scrollTo(0,0);
+    try{$("start").focus({preventScroll:true})}catch(e){}
+  });
   elResult.addEventListener("click",showPodium); // a tap on the place skips ahead to the podium
   stage.addEventListener("click",function(e){if(e.target===cv){try{box.focus({preventScroll:true})}catch(err){box.focus()}}});
 
