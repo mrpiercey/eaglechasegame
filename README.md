@@ -9,7 +9,7 @@ A typing game for the Eagle Chase 5K. The faster you type, the faster the runner
 - `title.jpg` is the picture of the school behind the title screen.
 - `titlescreenmusic1.webm` plays on the title screen and the runner picker.
 - `ding.webm` and `startbeep.webm` are the countdown sounds.
-- `runningmuiscgame.webm` plays on a loop during the race.
+- `runningmusic.webm` plays on a loop during the race.
 - `finishline.webm` plays when you cross the finish line, while your place is shown. The podium follows when it ends.
 - `endingmusic.webm` plays on the podium screen.
 - `startracesoundeffect.webm` is not used by the game yet.
@@ -20,7 +20,7 @@ The game's colors and lettering are copied from the Eagle Chase race posters.
 ## How a game goes
 
 1. The title screen shows the school and the game's name. Press Start, or any key.
-2. Choose one of ten runners: Mateo, Lily, Jake, Sofia, Owen, Zara, Marcus, Mia, Ava or Leo. The game remembers your choice for next time.
+2. Choose one of ten runners. They have no names. The game remembers your choice for next time.
 3. Choose 1, 2 or 3 laps. Three laps is the full 5K, about 820 letters of typing. One lap is about 290. The title music keeps playing on this screen.
 4. Wait for the start. After 2 seconds there are three dings, with a full second between them, then the start beep. The race begins on the beep.
 5. Type the words on the race bib. The faster you type, the faster you run.
@@ -33,8 +33,7 @@ Two settings near the top of the script in `index.html` tune it: `DECAY` is how 
 What you type is one long, chatty passage about the race. It always opens with the same paragraph (`OPENING`). The other paragraphs (`STORY`) are each a reason to sign up, and they follow in a new order each race. Both are at the top of the script in `index.html`.
 The race bib shows three lines at a time. The line you are typing is bright, the lines under it are dim, and they slide up as you reach them.
 
-Browsers do not let a page play sound until you click, tap or press a key, so the title music starts on your first one.
-The Sound button turns all sound off or back on.
+Browsers do not let a page play sound until you click, tap or press a key, so the title music starts on your first one. There is no sound switch.
 
 While you race, the top left of the street shows the faces of the first three racers, and yours below them if you are further back.
 The top right shows a small map of the course. Your runner's face moves around it, the other runners are small dots, and the Eagle is a white dot.
@@ -50,6 +49,7 @@ The scoreboard shows your place, and the little eagle above the progress bar sho
 
 The title screen has a Leaderboard button, next to Start the race, and after a race the podium screen asks for two initials (first and last) to put the run on the board.
 Only the initials are stored, with the time, the typing speed and the number of errors.
+The initials box only takes letters, two at most, and `FU` is refused by the game and by the database (`BAD_INITIALS` in `index.html` is the list; the database rules have their own copy).
 
 There is one board for each lap count, 1, 2 or 3. Computer and mobile runs are on the same board, and each row says COMPUTER or MOBILE next to the initials. The game decides which one on its own, the same way it decides whether to use touch mode.
 The leaderboard is sorted by fastest time and shows the top 50. Each row also shows the typing speed (words per minute) and the number of errors, but those are only shown, not ranked.

@@ -47,7 +47,6 @@ body{background:var(--green);color:var(--ink);font-family:var(--body);font-size:
 .title .tstart{display:flex;flex-direction:column;align-items:center;gap:10px}
 .title button{font-size:clamp(1rem,3vw,1.5rem);padding:.7em 1.4em;box-shadow:0 0 0 4px var(--tan),0 0 0 7px var(--green-deep)}
 .title .blink{margin:0;font-family:var(--label);font-size:clamp(1.1rem,2.6vw,1.5rem);line-height:1;letter-spacing:.08em;text-transform:uppercase;color:#FFFFFF;background:var(--green-deep);padding:.25em .6em .2em}
-.title .snd{position:absolute;top:10px;right:10px;margin:0;font-size:.75rem;padding:.55em .9em;box-shadow:0 0 0 3px var(--tan)}
 .title .thow{margin:0;max-width:34ch;font-weight:700;font-size:clamp(.95rem,2.2vw,1.2rem);line-height:1.3;color:var(--ink);background:var(--paper);border-radius:6px;box-shadow:0 0 0 3px var(--tan);padding:.45em .8em}
 .picker{display:none;margin:auto;width:100%;max-width:760px;background:var(--paper);border-radius:6px;box-shadow:0 0 0 5px var(--tan),0 0 0 8px var(--green-deep);padding:16px 18px 18px}
 .picker h2{margin:0 0 12px;font-family:var(--display);font-weight:400;font-size:clamp(1.2rem,4.2vw,1.9rem);line-height:1.1;text-transform:uppercase}
@@ -56,7 +55,6 @@ body{background:var(--green);color:var(--ink);font-family:var(--body);font-size:
 .runners button:hover,.runners button:focus-visible{background:#FFFFFF;border-color:var(--green)}
 .runners button[aria-pressed="true"]{background:#FFF7DF;border-color:var(--gold)}
 .runners canvas{display:block;width:108px;height:186px;image-rendering:crisp-edges;image-rendering:pixelated}
-.runners span{margin-top:4px;font-family:var(--label);font-size:1.15rem;line-height:1;letter-spacing:.07em;text-transform:uppercase;color:var(--ink)}
 .lapbtns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
 .lapbtns button{display:flex;flex-direction:column;align-items:center;gap:4px;margin:0;padding:14px 8px 12px;background:var(--track);color:var(--ink);border:3px solid transparent;border-radius:6px;box-shadow:none;letter-spacing:0}
 .lapbtns button:hover,.lapbtns button:focus-visible{background:#FFFFFF;border-color:var(--green)}
@@ -127,7 +125,6 @@ h1 .tag{display:inline-block;background:var(--green);color:var(--tan);text-shado
 
 /* The results screen: the podium over the school picture */
 .finale{position:relative;display:flex;align-items:center;justify-content:center;min-height:min(66.7vw,680px);padding:18px 16px;background:#7FA8DC url(title.jpg) center/cover no-repeat;overflow:hidden}
-.finale .snd{position:absolute;top:10px;right:10px;margin:0;font-size:.75rem;padding:.55em .9em;box-shadow:0 0 0 3px var(--tan)}
 .fcard{display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;max-width:600px;background:var(--paper);border-radius:6px;box-shadow:0 0 0 5px var(--tan),0 0 0 8px var(--green-deep);padding:16px 20px 18px;text-align:center}
 .fcard h2{margin:0;font-family:var(--display);font-weight:400;font-size:clamp(1.2rem,4.2vw,1.9rem);line-height:1.1;text-transform:uppercase}
 .podium{display:flex;align-items:flex-end;justify-content:center;gap:6px;width:100%;max-width:400px}
@@ -213,7 +210,6 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   .lapbtns small{font-size:.75rem}
   .runners{gap:6px}
   .runners canvas{width:54px;height:93px}
-  .runners span{font-size:.85rem;letter-spacing:.03em}
   .hst th,.hst td{padding:4px 5px;font-size:.85rem}
   .hst td.dev{font-size:.85rem}
   .band{padding:12px 14px}
@@ -252,7 +248,6 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   <section class="title" id="title" aria-label="Title screen">
     <img class="tlogo" src="eagles.png" width="720" height="310" alt="">
     <h1>The Ashland<br>Eagle Chase 5K<br><span class="tag">The Game</span></h1>
-    <button type="button" class="snd" id="snd1">Sound on</button>
     <div class="tstart">
       <p class="thow">The Faster You Type... the Faster You Run!</p>
       <div class="tbtns">
@@ -281,7 +276,6 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   </section>
 
   <section class="finale" id="finale" aria-label="Race results">
-    <button type="button" class="snd" id="snd3">Sound on</button>
     <div class="fcard">
       <h2 id="rTitle">The podium</h2>
       <div class="podium" id="podium"></div>
@@ -347,7 +341,6 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     <footer class="foot">
       <button type="button" id="restart">Start over</button>
       <button type="button" id="change">Change runner or laps</button>
-      <button type="button" class="snd" id="snd2">Sound on</button>
       <p id="note">Three laps of the neighborhood, then the finish in front of the school. Capital letters and spaces count.</p>
     </footer>
   </div>
@@ -1067,19 +1060,19 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     ctx.imageSmoothingEnabled=false;ctx.save();ctx.translate(x,y-Math.round(38*k)+Math.round(Math.sin(st.clock*5)*2));if(face<0)ctx.scale(-1,1);
     ctx.drawImage(fr,-(w>>1),-h,w,h);ctx.restore();
   }
-  // The runners to choose from: a name, skin and its shade, hair color and style, their own shirt and shorts (kit), shoes, and extras.
-  // The rest of the field borrow these faces but have names of their own (FIELD_NAMES, below the course).
+  // The runners to choose from: skin and its shade, hair color and style, their own shirt and shorts (kit), shoes, and extras.
+  // They have no names. The rest of the field borrow these faces and have names of their own (FIELD_NAMES, by reset).
   var CHARS=[
-    {name:"Mateo",skin:"#C98B62",skin2:"#A9714D",hair:"#2B1D17",style:"short",band:GOLD,kit:[GREEN,"#123630",GOLD,"#B08A2C"],shoe:"#F4F1E8"},
-    {name:"Lily",skin:"#F6D2B0",skin2:"#DDB08C",hair:"#F0CC5E",style:"pony",tie:"#E0508A",kit:["#E0508A","#B83C6E","#2C3E66","#1F2C4A"],shoe:"#F4F1E8"},
-    {name:"Jake",skin:"#F3CDAA",skin2:"#DBAE88",hair:"#E2BD52",style:"spiky",kit:["#2F6FD0","#2356A6","#F1EFEA","#CFCCC3"],shoe:"#E8862A"},
-    {name:"Sofia",skin:"#EFC4A0",skin2:"#D6A47E",hair:"#4A2E1F",style:"long",glasses:1,kit:["#7A4FA3","#5E3B80","#22242A","#15161A"],shoe:"#F4F1E8"},
-    {name:"Owen",skin:"#F0C8A4",skin2:"#D8A983",hair:"#2E2019",style:"cap",cap:"#C5312A",kit:["#C5312A","#9A241F","#22242A","#15161A"],shoe:"#F4F1E8"},
-    {name:"Zara",skin:"#7A4B2E",skin2:"#643B22",hair:"#1E1410",style:"puffs",tie:GOLD,kit:["#E3C23A","#BFA02A","#7A4FA3","#5E3B80"],shoe:"#F4F1E8"},
-    {name:"Marcus",skin:"#5E3A24",skin2:"#4C2D1B",hair:"#17100C",style:"hightop",kit:["#E8862A","#C06A1C","#27375E","#1B2744"],shoe:"#C5312A"},
-    {name:"Mia",skin:"#EBC39A",skin2:"#D1A57C",hair:"#16130F",style:"bob",kit:["#2A9D8F","#1F776C","#F1EFEA","#CFCCC3"],shoe:"#E0508A"},
-    {name:"Ava",skin:"#B97C52",skin2:"#9C6441",hair:"#1D1511",style:"braid",tie:"#2F6FD0",kit:["#F1EFEA","#CFCCC3","#2F5DA8","#234680"],shoe:"#2F6FD0"},
-    {name:"Leo",skin:"#D6A27A",skin2:"#BC875F",hair:"#5A3320",style:"curly",glasses:1,kit:["#27375E","#1B2744",GOLD,"#B08A2C"],shoe:"#F4F1E8"}
+    {skin:"#C98B62",skin2:"#A9714D",hair:"#2B1D17",style:"short",band:GOLD,kit:[GREEN,"#123630",GOLD,"#B08A2C"],shoe:"#F4F1E8"},
+    {skin:"#F6D2B0",skin2:"#DDB08C",hair:"#F0CC5E",style:"pony",tie:"#E0508A",kit:["#E0508A","#B83C6E","#2C3E66","#1F2C4A"],shoe:"#F4F1E8"},
+    {skin:"#F3CDAA",skin2:"#DBAE88",hair:"#E2BD52",style:"spiky",kit:["#2F6FD0","#2356A6","#F1EFEA","#CFCCC3"],shoe:"#E8862A"},
+    {skin:"#EFC4A0",skin2:"#D6A47E",hair:"#4A2E1F",style:"long",glasses:1,kit:["#7A4FA3","#5E3B80","#22242A","#15161A"],shoe:"#F4F1E8"},
+    {skin:"#F0C8A4",skin2:"#D8A983",hair:"#2E2019",style:"cap",cap:"#C5312A",kit:["#C5312A","#9A241F","#22242A","#15161A"],shoe:"#F4F1E8"},
+    {skin:"#7A4B2E",skin2:"#643B22",hair:"#1E1410",style:"puffs",tie:GOLD,kit:["#E3C23A","#BFA02A","#7A4FA3","#5E3B80"],shoe:"#F4F1E8"},
+    {skin:"#5E3A24",skin2:"#4C2D1B",hair:"#17100C",style:"hightop",kit:["#E8862A","#C06A1C","#27375E","#1B2744"],shoe:"#C5312A"},
+    {skin:"#EBC39A",skin2:"#D1A57C",hair:"#16130F",style:"bob",kit:["#2A9D8F","#1F776C","#F1EFEA","#CFCCC3"],shoe:"#E0508A"},
+    {skin:"#B97C52",skin2:"#9C6441",hair:"#1D1511",style:"braid",tie:"#2F6FD0",kit:["#F1EFEA","#CFCCC3","#2F5DA8","#234680"],shoe:"#2F6FD0"},
+    {skin:"#D6A27A",skin2:"#BC875F",hair:"#5A3320",style:"curly",glasses:1,kit:["#27375E","#1B2744",GOLD,"#B08A2C"],shoe:"#F4F1E8"}
   ];
   function darker(hex){var n=parseInt(hex.slice(1),16),f=function(v){return Math.round(v*0.72)};return "#"+(16777216+(f(n>>16)<<16)+(f(n>>8&255)<<8)+f(n&255)).toString(16).slice(1)}
   function portrait(ci,kit,label){ // a bigger, more detailed picture of a runner, for the picker and the podium
@@ -1249,10 +1242,10 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     R(g,OUT,x,y,20,18);R(g,me?"#FFFFFF":n===1?GOLD:n===2?"#C9CED4":n===3?"#C98A5B":"#8A8F98",x+1,y+1,18,16);R(g,me?TAN:"#2E5E55",x+2,y+2,16,14);
     face(g,x+2,y+2,r);
     R(g,OUT,x+1,y+10,textW(t)+3,7);text(g,t,x+2,y+11,"#FFFFFF",1);
-    if(r.name){var nm=me?"You":r.name;R(g,OUT,x+20,y+5,textW(nm)+4,9);R(g,me?TAN:"#2E5E55",x+21,y+6,textW(nm)+2,7);text(g,nm,x+22,y+7,me?OUT:"#FFFFFF",1)} // the name, on a tag to the right
+    if(r.name){var nm=r.name;R(g,OUT,x+20,y+5,textW(nm)+4,9);R(g,me?TAN:"#2E5E55",x+21,y+6,textW(nm)+2,7);text(g,nm,x+22,y+7,me?OUT:"#FFFFFF",1)} // the name, on a tag to the right
   }
   function hud(){
-    var m=MAP||(MAP=buildMap()),mx=W-m.c.width-3,my=3,all=[{me:1,name:CHARS[chosen].name,ci:chosen,ki:-1,d:st.dist,fin:st.mode==="done"?st.t:0}],i,o,p,mine=0;
+    var m=MAP||(MAP=buildMap()),mx=W-m.c.width-3,my=3,all=[{me:1,name:"You",ci:chosen,ki:-1,d:st.dist,fin:st.mode==="done"?st.t:0}],i,o,p,mine=0;
     for(i=0;i<st.field.length;i++){o=st.field[i];all.push({name:o.name,ci:o.ci,ki:o.ki,eagle:o.eagle,d:o.d,fin:o.fin||0})}
     // the course map, top right: everyone is a dot, the Eagle is a white dot, and you are your runner's face
     ctx.fillStyle="rgba(18,54,48,.5)";ctx.fillRect(mx,my,m.c.width,m.c.height);
@@ -1406,12 +1399,11 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   }
 
   /* ---------- sound ---------- */
-  var soundOn=true;
-  try{soundOn=localStorage.getItem("eagleSound")!=="off"}catch(e){}
+  var soundOn=true; // there is no sound switch; the game is always meant to be heard
   // Older iPhones and iPads cannot play WebM sound, so each sound also has an .m4a copy for them.
   var SND=(function(){var a=document.createElement("audio");return a.canPlayType&&a.canPlayType('audio/webm; codecs="opus"')?".webm":".m4a"})();
   function audio(name,loop,vol){var a=new Audio(name+SND);a.loop=loop;a.volume=vol;a.preload="auto";return a}
-  var titleMusic=audio("titlescreenmusic1",true,0.5), raceMusic=audio("runningmuiscgame",true,0.45), ding=audio("ding",false,0.9), startBeep=audio("startbeep",false,0.9);
+  var titleMusic=audio("titlescreenmusic1",true,0.5), raceMusic=audio("runningmusic",true,0.5), ding=audio("ding",false,0.9), startBeep=audio("startbeep",false,0.9);
   var finishMusic=audio("finishline",false,0.7), endMusic=audio("endingmusic",false,0.7); // crossing the line, then the podium
   // Phones and tablets only let a sound play once a tap has started it. So on every tap or key press,
   // any sound that has not had its turn yet is started silently and stopped again. After that it can play whenever it is needed.
@@ -1434,8 +1426,6 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     if(soundOn&&!intro&&!outro&&st&&st.mode==="run")play(raceMusic);else quiet(raceMusic);
     if(!soundOn||intro||!st||st.mode!=="done"){quiet(finishMusic);quiet(endMusic)}
   }
-  function showSound(){$("snd1").textContent=$("snd2").textContent=$("snd3").textContent=soundOn?"Sound on":"Sound off"}
-  function toggleSound(){soundOn=!soundOn;try{localStorage.setItem("eagleSound",soundOn?"on":"off")}catch(e){}showSound();music()}
   // The start: wait 2 seconds, three dings with a full second between them, then the start beep. The race begins on the beep.
   var DING_GAP=1;
   function countdown(dt){
@@ -1555,7 +1545,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
       if(a.me)c=portrait(chosen,null,String(i+1));
       else if(a.o.eagle){c=mk(50,36);c.getContext("2d").drawImage(eagleSprites()[1],0,0);c.className="bird"}
       else c=portrait(a.o.ci,KITS[a.o.ki],String(i+1));
-      who.className="who";who.textContent=a.me?CHARS[chosen].name+" (you)":a.o.name;
+      who.className="who";who.textContent=a.me?"You":a.o.name;
       b.className="block";b.textContent=i+1;
       d.appendChild(c);d.appendChild(who);d.appendChild(b);el.appendChild(d);
     });
@@ -1594,10 +1584,9 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   // The title screen shows first, then the runner picker. Choosing a runner starts the game.
   var wrap=document.querySelector(".wrap"), titleEl=$("title"), runnersEl=$("runners"), runnerBtns=[];
   CHARS.forEach(function(ch,i){
-    var b=document.createElement("button"),c=portrait(i),nm=document.createElement("span");
-    b.type="button";b.setAttribute("aria-label",ch.name);b.setAttribute("aria-pressed",i===chosen?"true":"false");
-    nm.textContent=ch.name;
-    b.appendChild(c);b.appendChild(nm);
+    var b=document.createElement("button"),c=portrait(i);
+    b.type="button";b.setAttribute("aria-label","Runner "+(i+1));b.setAttribute("aria-pressed",i===chosen?"true":"false");
+    b.appendChild(c);
     b.addEventListener("click",function(){
       chosen=i;try{localStorage.setItem("eagleRunner",String(i))}catch(e){}
       runnerBtns.forEach(function(x,j){x.setAttribute("aria-pressed",j===i?"true":"false")});
@@ -1643,8 +1632,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   $("change").addEventListener("click",showPicker);
   if(TOUCH) $("startHint").textContent="Tap to start";
   if(PREVIEW) wrap.classList.remove("intro");
-  $("snd1").addEventListener("click",toggleSound);$("snd2").addEventListener("click",toggleSound);$("snd3").addEventListener("click",toggleSound);
-  showSound();music();
+  music();
   // Every tap, click and key press also makes sure the right music is playing, in case the browser refused to start it on its own.
   ["pointerdown","touchend","click","keydown"].forEach(function(ev){document.addEventListener(ev,function(){music();unlock()},true)});
 
@@ -1719,12 +1707,18 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   if(location.hash==="#scores") showScores(LAPS); // game.eaglechase5k.com/#scores opens straight to the leaderboard
   // After a race: two initials, then the run goes on the board and the player hears where it landed.
   var hsForm=$("hsForm"), iniBox=$("ini"), iniGo=$("iniGo"), hsMsg=$("hsMsg");
+  var BAD_INITIALS=["FU"]; // pairs of letters that are not allowed on the leaderboard
+  iniBox.addEventListener("input",function(){ // only letters go in, as capitals, two at most
+    var v=iniBox.value.toUpperCase().replace(/[^A-Z]/g,"").slice(0,2);
+    if(v!==iniBox.value)iniBox.value=v;
+  });
   function resetHsForm(){hsForm.hidden=false;iniBox.value="";iniBox.disabled=false;iniGo.disabled=false;hsMsg.textContent=""}
   hsForm.addEventListener("submit",function(e){
     e.preventDefault();
     var ini=iniBox.value.toUpperCase().replace(/[^A-Z]/g,""), run=st&&st.run;
     if(!run||run.saved) return;
     if(ini.length!==2){hsMsg.textContent="Type two letters: your first and last initial.";iniBox.focus();return}
+    if(BAD_INITIALS.indexOf(ini)>=0){hsMsg.textContent="Those initials cannot go on the leaderboard. Try your middle initial instead.";iniBox.value="";iniBox.focus();return}
     iniBox.value=ini;iniBox.disabled=true;iniGo.disabled=true;hsMsg.textContent="Saving…";run.saved=true;
     saveRun(ini,run).then(function(id){
       hs.lastId=id;
