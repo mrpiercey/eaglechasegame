@@ -1278,18 +1278,13 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   var TURNWORD={left:"LEFT ON ",right:"RIGHT ON ",uturn:"U-TURN ON "};
   function laneY(o,leg,lane){return leg.median?(lane?yB+21+Math.round(o*6):yS+37+Math.round(o*9)):yS+33+Math.round(o*14)} // each racer keeps to a line across the street
   function drawRacer(r){
-    var i,e,p,y=r.y,k=r.pose?r.pose.k:1,top;
+    var i,e,p,y=r.y,k=r.pose?r.pose.k:1;
     if(r.eagle){drawEagle(r.x,y,r.w.bend?1:r.w.face,k);return}
     if(r.w.bend)drawBendRunner(r.x,{y:y,k:k,view:r.pose.view},r.p,r.ci,r.ki);
     else{
       if(r.me)for(i=0;i<st.dust.length;i++){p=st.dust[i];R(ctx,p.life>0.5?"#D9D4C6":"#A9A69C",r.x+r.w.face*Math.round((p.x-st.dist)*ART),y-1-Math.round((1-p.life)*4),p.life>0.5?2:3,p.life>0.5?2:3)}
       for(i=-3;i<=3;i++){e=Math.round(Math.sqrt(1-i*i/14)*11);R(ctx,ROAD2,r.x+r.w.face-e,y+2+i,e*2,1)}
       drawRunner(r.x,y+3,r.p,r.s,st.clock,r.w.face<0,CHARS[r.ci],r.ki<0?CHARS[r.ci].kit:KITS[r.ki]);
-    }
-    if(r.me){ // a little arrow over your own runner
-      top=y-Math.round(46*k)-5+(Math.floor(st.clock*3)%2);
-      R(ctx,OUT,r.x-5,top-1,11,3);R(ctx,OUT,r.x-3,top+2,7,2);R(ctx,OUT,r.x-1,top+4,3,2);
-      R(ctx,TAN,r.x-4,top,9,2);R(ctx,TAN,r.x-2,top+2,5,2);R(ctx,TAN,r.x,top+4,1,1);
     }
   }
   function draw(){
