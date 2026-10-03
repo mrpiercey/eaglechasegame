@@ -347,25 +347,30 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
 <script>
 (function(){
   "use strict";
-  // What you type: one long, chatty passage. OPENING always comes first. The other paragraphs, each a reason to sign up, follow in a new order each race.
-  var OPENING="Hey, did you know that on Saturday, November 7th at 9:00am there's a 5k race at Ashland Elementary School? It's true! It's called the Eagle Chase 5k and you can sign up at eaglechase5k.com. Seriously, after you are done playing this game, you should go to eaglechase5k.com and sign up.";
+  // What you type: one long, chatty passage. OPENING (two paragraphs, in that order) always comes first.
+  // The other paragraphs, each a reason to sign up, follow in a new order each race.
+  var OPENING=[
+    "Mark your calendar! On Saturday, November 7th at 9:00am, there's a 5k race at Ashland Elementary School. It's called the Eagle Chase 5k, and you can sign up at eaglechase5k.com. Seriously, as soon as you finish playing this game, go to eaglechase5k.com and sign up.",
+    "So what's the Eagle Chase all about? It's a fundraiser for the big field trips at the end of the year for Ashland's 4th and 5th graders. Every dollar we raise goes directly to the students who need it. When you sign up, you are helping a kid go on the trip of the year."
+  ];
   var STORY=[
-    "Here's the biggest reason to sign up. All of the money raised by the Eagle Chase helps pay for field trips for Ashland's 4th and 5th graders. When you run, you are helping send a kid on a field trip. That's a pretty good reason to get out of bed on a Saturday.",
-    "Need another reason? Those 4th and 5th graders take a field trip every month. The trips are about STEM, the arts, and the careers they might have someday. When you sign up, you help them see things they can't see from a classroom.",
+    "So yes, this game you're playing right now is actually a shameless promotion for the Eagle Chase 5k. We're not even going to pretend it isn't. Every word you type is part of our sneaky plan to get you to sign up at eaglechase5k.com.",
     "Here's a reason that matters to a lot of families. Field trips cost money, and the Eagle Chase helps keep them affordable for every family. When you sign up, you help keep the cost down for everyone.",
     "There are also two big adventures at the end of the school year. The 4th and 5th graders look forward to them all year long. The Eagle Chase helps pay for those too, so signing up helps make them happen.",
     "Think you're not a runner? Sign up anyway. Walkers are welcome at the Eagle Chase. You can run it, jog it, or walk it with your family, and it counts just the same.",
     "Sign up because it's close to home. The race starts and ends at Ashland Elementary School, and the course is three laps through the neighborhood. You might even run right past your own house.",
     "Sign up because we need you. We want 300 runners this year, and every single one counts. Then find two more people and get them to sign up too. Ask your mom, your dad, your neighbor, or your best friend.",
+    "Hey after you're done playing this game, you should tell the person next to you about the Eagle Chase 5k.",
     "Sign up because it's good for you. A 5k is 3.1 miles, and you get to do it outside with your friends on a Saturday morning. That beats sitting on the couch.",
-    "Sign up because you care about Ashland. Our colors are green and gold, and this race is one of the ways we show up for our school. Come be part of it.",
+    "It's wild to think that somebody made a whole typing and racing game just to get people to sign up for a 5k. That's how much we want you there. Don't let all that hard work go to waste. Go to eaglechase5k.com and sign up after you're done racing!",
     "You've typed this far, so you clearly don't give up. That's exactly what it takes to finish a 5k. Sign up at eaglechase5k.com and prove it on race day.",
+    "Our 4th and 5th graders are really looking forward to seeing you all on Saturday, November 7th at the race. If you haven't visited eaglechase5k.com yet... you should do it after you're finished playing.",
     "Signing up is easy. Just go to eaglechase5k.com. The race is Saturday, November 7th at 9:00 in the morning at Ashland Elementary School. We'll see you at the starting line!"
   ];
-  function newText(first){ // the opening (only at the start of a race), then the rest shuffled
+  function newText(first){ // the two opening paragraphs (only at the start of a race), then the rest shuffled
     var order=STORY.slice(),i,j,t;
     for(i=order.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));t=order[i];order[i]=order[j];order[j]=t}
-    return (first?[OPENING]:[]).concat(order).join(" ")+" ";
+    return (first?OPENING:[]).concat(order).join(" ")+" ";
   }
 
   /* ---------- the race course, measured from the race map ---------- */

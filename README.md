@@ -30,7 +30,7 @@ Its color runs from blue when you are slow, through green and yellow, to red whe
 If you stop typing, the meter drains over a few seconds, and your runner keeps moving until it is empty.
 Two settings near the top of the script in `index.html` tune it: `DECAY` is how quickly it drains, and `METER_FULL` is the speed that fills it.
 
-What you type is one long, chatty passage about the race. It always opens with the same paragraph (`OPENING`). The other paragraphs (`STORY`) are each a reason to sign up, and they follow in a new order each race. Both are at the top of the script in `index.html`.
+What you type is one long, chatty passage about the race. It always opens with the same two paragraphs, in the same order (`OPENING`: "Mark your calendar!" and "So what's the Eagle Chase all about?"). The other paragraphs (`STORY`) are each a reason to sign up, and they follow in a new order each race. Both are at the top of the script in `index.html`.
 The race bib shows three lines at a time. The line you are typing is bright, the lines under it are dim, and they slide up as you reach them.
 
 Browsers do not let a page play sound until you click, tap or press a key, so the title music starts on your first one. There is no sound switch.
