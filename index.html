@@ -174,8 +174,6 @@ h1 .tag{display:inline-block;background:var(--green);color:var(--tan);text-shado
 .bibfoot{margin:0;padding:0 40px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 16px;color:var(--muted);font-size:.95rem}
 #typebox{position:absolute;inset:0;width:100%;height:100%;opacity:0;border:0;padding:0;font-size:16px;cursor:text}
 
-.foot{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;color:var(--muted);font-size:.92rem}
-.foot p{margin:0;flex:1 1 260px;min-width:0}
 button{font-family:var(--display);font-size:.9rem;letter-spacing:.04em;text-transform:uppercase;background:var(--green);color:#FFFFFF;border:0;border-radius:6px;box-shadow:0 0 0 3px var(--tan);padding:10px 18px;margin:3px;cursor:pointer}
 button,.bib,.stage{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 button:hover{background:var(--green-deep)}
@@ -186,7 +184,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
 .reg a:hover{text-decoration:underline;text-decoration-thickness:.08em;text-underline-offset:.14em}
 .reg p{margin:0;font-family:var(--label);font-size:clamp(1.15rem,3.4vw,1.6rem);line-height:1.15;letter-spacing:.05em;text-transform:uppercase;text-wrap:balance}
 
-.wrap.kb .reg,.wrap.kb .foot,.wrap.kb .bibhead,.wrap.kb .bibfoot,.wrap.kb .pin,.wrap.kb .names,.wrap.kb .mini{display:none}
+.wrap.kb .reg,.wrap.kb .bibhead,.wrap.kb .bibfoot,.wrap.kb .pin,.wrap.kb .names,.wrap.kb .mini{display:none}
 .wrap.kb .band{padding:6px 8px;gap:6px}
 .wrap.kb .band + .band{border-top-width:3px}
 .wrap.kb .rail{margin-top:12px}
@@ -338,9 +336,6 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
       <input id="typebox" type="text" inputmode="text" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" aria-label="Type the phrase here">
     </section>
 
-    <footer class="foot">
-      <p id="note">Three laps of the neighborhood, then the finish in front of the school. Capital letters and spaces count.</p>
-    </footer>
   </div>
 
   <section class="band reg" aria-label="Sign up for the real race">
@@ -1593,7 +1588,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     e.preventDefault();runnerBtns[(i+d+n)%n].focus();
   });
   // The lap choice: one button each for 1, 2 and 3 laps, with how much typing each one is.
-  var lapsEl=$("lapbtns"), lapBtns=[], WORDS=["One lap","Two laps","Three laps"];
+  var lapsEl=$("lapbtns"), lapBtns=[];
   [1,2,3].forEach(function(n){
     var b=document.createElement("button"),letters=Math.round(buildRoute(n)/STRIDE/BOOST/10)*10;
     b.type="button";
@@ -1606,7 +1601,6 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   });
   function showLapChoice(){
     lapBtns.forEach(function(x,j){x.setAttribute("aria-pressed",j===LAPS-1?"true":"false")});
-    $("note").textContent=WORDS[LAPS-1]+" of the neighborhood, then the finish in front of the school. "+(TOUCH?"Capital letters do not count here. Numbers, punctuation and spaces do.":"Capital letters and spaces count.");
   }
   buildRoute((function(){var n=3;try{n=Math.min(3,Math.max(1,parseInt(localStorage.getItem("eagleLaps"),10)||3))}catch(e){}return n})());
   showLapChoice();
