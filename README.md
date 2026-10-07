@@ -43,11 +43,11 @@ When you cross the finish line, your place comes up over the street while the fi
 
 You race 48 other runners and one Eagle, 50 racers in all. No two of the other runners look alike: each one has their own skin, hair, shirt, shorts and shoes, and keeps the same name and look every race.
 
-- The 48 other runners each hold a steady pace of their own for the whole race, so they spread out along the course. The 24 slowest type between 2.5 and 20 words per minute, so the back markers are under 5. The 24 fastest type between 20 and 30.
+- The 48 other runners each hold a steady pace of their own for the whole race, so they spread out along the course. In Regular mode the 24 slowest type between 2.5 and 20 words per minute, so the back markers are under 5, and the 24 fastest type between 20 and 30.
 - In Regular mode, only the Eagle adjusts to you. The game measures your speed so far in the race, counting only the time you were typing, and the Eagle flies about 45 pixels ahead of you for the first five sixths of the race, however fast or slow you type.
 - In the last sixth, the Eagle flies 4% faster than your speed so far. To beat it you have to finish about 5% faster than you typed the rest of the race. It never gets more than 70 pixels ahead while you are still trying, so it stays in reach to the line.
 - The Eagle does not wait for you. It never drops under 80% of your speed, so if you stop typing it leaves, and you have to catch up.
-- In Hard mode the Eagle does not adjust at all. It flies at one steady speed, picked at random between 80 and 100 words per minute when the race starts, so only a very fast typist beats it.
+- In Hard mode the Eagle does not adjust at all. It flies at one steady speed, picked at random between 80 and 100 words per minute when the race starts, so only a very fast typist beats it. The other 48 runners are a pack chasing the Eagle: their paces run from 18 words per minute behind it up to 2 behind, so the slow kids' field from Regular mode is gone.
 - Where you and the Eagle finish among the other runners depends on your typing speed. Type faster than 30 words per minute and the two of you are first and second. Type slower and the runners who are faster than you finish ahead of you both.
 
 `EAGLE_KICK` near the top of the script in `index.html` sets how hard the Eagle is to beat: 1 is easy, 1.04 is the setting now, 1.1 is very hard. The rest lives in the "field" part of `step`.
