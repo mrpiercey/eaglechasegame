@@ -1613,14 +1613,15 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     // The rest of the field: 48 other runners from slowest to fastest, each with a steady pace of their own, and the Eagle.
     // Regular: the 24 slowest type 2.5 to 20 words per minute, so the back markers are under 5. The 24 fastest type 20 to 30.
     //          Only the Eagle paces off the typist (see step).
-    // Hard: the Eagle flies a fixed 80 to 100 words per minute, drawn here, and the whole field is a pack chasing it,
-    //       from 18 words per minute behind the Eagle up to 2 behind.
+    // Hard: the Eagle flies a fixed 80 to 100 words per minute, drawn here, and the whole field is strung out evenly behind it:
+    //       the fastest runner is 2 words per minute behind the Eagle, the slowest 24, and each runner is about half a word
+    //       per minute behind the next, so they spread into an even line down the course as the race goes on.
     var lanes=[],N=FIELD_NAMES.length,i,j,t,ew=HARD_WPM[0]+Math.random()*(HARD_WPM[1]-HARD_WPM[0]);
     for(i=0;i<N;i++)lanes.push(i);
     for(i=N-1;i>0;i--){j=Math.floor(Math.random()*(i+1));t=lanes[i];lanes[i]=lanes[j];lanes[j]=t}
     st.field=[];st.eagleT=0;st.place=0;
     for(i=0;i<N;i++)st.field.push({name:FIELD_NAMES[i],ch:FIELD[i],
-      pace:HARD?ew-18+i*16/(N-1)+Math.random()*0.6:i<24?Math.min(20,2.5+i*17.5/23+Math.random()*0.6):Math.min(30,20+(i-24)*10/23+Math.random()*0.6), // words per minute
+      pace:HARD?ew-24+i*22/(N-1)+Math.random()*0.3:i<24?Math.min(20,2.5+i*17.5/23+Math.random()*0.6):Math.min(30,20+(i-24)*10/23+Math.random()*0.6), // words per minute
       v:0,d:-(10+i*144/(N-1)+Math.random()*6)/ART,o:-1+2*lanes[i]/(N-1),p:Math.random()*6,wob:Math.random()*6});
     st.field.push({name:"The Eagle",eagle:1,v:0,d:-26/ART,o:0.95,p:0,wob:0});
     st.eagleWpm=ew; // only used in hard mode
