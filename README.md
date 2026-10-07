@@ -21,9 +21,10 @@ The game's colors and lettering are copied from the Eagle Chase race posters.
 
 1. The title screen shows the school and the game's name. Press Start, or any key.
 2. Choose one of ten runners. They have no names. The game remembers your choice for next time.
-3. Choose 1, 2 or 3 laps. Three laps is the full 5K, about 820 letters of typing. One lap is about 290. The title music keeps playing on this screen.
-4. Wait for the start. After 2 seconds there are three dings, with a full second between them, then the start beep. The street shows a big 3..., 2... and 1... on the dings, then a big TYPE! on the beep, when the race begins.
-5. Type the words on the race bib. The faster you type, the faster you run.
+3. Choose 1 or 3 laps. Three laps is the full 5K, about 820 letters of typing. One lap is about 290. The title music keeps playing on this screen.
+4. Choose Regular or Hard. In Regular the Eagle keeps pace with you and pulls ahead near the finish. Hard is for grown-ups: the Eagle ignores how you type and flies at a fixed speed somewhere between 80 and 100 words per minute, drawn fresh each race. The game remembers both choices.
+5. Wait for the start. After 2 seconds there are three dings, with a full second between them, then the start beep. The street shows a big 3..., 2... and 1... on the dings, then a big TYPE! on the beep, when the race begins.
+6. Type the words on the race bib. The faster you type, the faster you run.
 
 The speed meter on the race bib shows how fast you are going. Every correct letter pushes it up, so faster typing holds it higher.
 Its color runs from blue when you are slow, through green and yellow, to red when you are flying.
@@ -40,12 +41,13 @@ The top right shows a small map of the course. Your runner's face moves around i
 
 When you cross the finish line, your place comes up over the street while the finish music plays. Then the podium screen shows the first three finishers, your place if you missed the podium, a link to sign up for the real race, and a Race again button.
 
-You race 28 other runners and one Eagle, 30 racers in all.
+You race 48 other runners and one Eagle, 50 racers in all. No two of the other runners look alike: each one has their own skin, hair, shirt, shorts and shoes, and keeps the same name and look every race.
 
-- The 28 other runners each hold a steady pace of their own for the whole race, so they spread out along the course. The 14 slowest type between 6 and 20 words per minute. The 14 fastest type between 20 and 30.
-- Only the Eagle adjusts to you. The game measures your speed so far in the race, counting only the time you were typing, and the Eagle flies about 45 pixels ahead of you for the first five sixths of the race, however fast or slow you type.
+- The 48 other runners each hold a steady pace of their own for the whole race, so they spread out along the course. The 24 slowest type between 2.5 and 20 words per minute, so the back markers are under 5. The 24 fastest type between 20 and 30.
+- In Regular mode, only the Eagle adjusts to you. The game measures your speed so far in the race, counting only the time you were typing, and the Eagle flies about 45 pixels ahead of you for the first five sixths of the race, however fast or slow you type.
 - In the last sixth, the Eagle flies 4% faster than your speed so far. To beat it you have to finish about 5% faster than you typed the rest of the race. It never gets more than 70 pixels ahead while you are still trying, so it stays in reach to the line.
 - The Eagle does not wait for you. It never drops under 80% of your speed, so if you stop typing it leaves, and you have to catch up.
+- In Hard mode the Eagle does not adjust at all. It flies at one steady speed, picked at random between 80 and 100 words per minute when the race starts, so only a very fast typist beats it.
 - Where you and the Eagle finish among the other runners depends on your typing speed. Type faster than 30 words per minute and the two of you are first and second. Type slower and the runners who are faster than you finish ahead of you both.
 
 `EAGLE_KICK` near the top of the script in `index.html` sets how hard the Eagle is to beat: 1 is easy, 1.04 is the setting now, 1.1 is very hard. The rest lives in the "field" part of `step`.
@@ -58,7 +60,7 @@ The title screen has a Leaderboard button, next to Start the race, and after a r
 Only the initials are stored, with the time, the typing speed and the number of errors.
 The initials box only takes letters, two at most, and `FU` is refused by the game and by the database (`BAD_INITIALS` in `index.html` is the list; the database rules have their own copy).
 
-There is one board for each lap count, 1, 2 or 3. Computer and mobile runs are on the same board, and each row says COMPUTER or MOBILE next to the initials. The game decides which one on its own, the same way it decides whether to use touch mode.
+There is one board for each lap count, 1 or 3. Regular and Hard runs share a board, because the Eagle never changes your own time. Computer and mobile runs are on the same board, and each row says COMPUTER or MOBILE next to the initials. The game decides which one on its own, the same way it decides whether to use touch mode.
 The leaderboard is sorted by fastest time and shows the top 50. Each row also shows the typing speed (words per minute) and the number of errors, but those are only shown, not ranked.
 (In the database the computer and mobile runs are kept apart, under `boards/computer_1`, `boards/mobile_1` and so on. The game reads both and puts them together.)
 Every finished race that gets initials goes on its board, whether or not it makes the top 50.

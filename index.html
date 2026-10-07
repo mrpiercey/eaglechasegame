@@ -54,16 +54,17 @@ body{background:var(--green);color:var(--ink);font-family:var(--body);font-size:
 .runners button:hover,.runners button:focus-visible{background:#FFFFFF;border-color:var(--green)}
 .runners button[aria-pressed="true"]{background:#FFF7DF;border-color:var(--gold)}
 .runners canvas{display:block;width:108px;height:186px;image-rendering:crisp-edges;image-rendering:pixelated}
-.lapbtns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.lapbtns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.modebtns b{font-size:clamp(1.5rem,5.5vw,2.4rem)}
 .lapbtns button{display:flex;flex-direction:column;align-items:center;gap:4px;margin:0;padding:14px 8px 12px;background:var(--track);color:var(--ink);border:3px solid transparent;border-radius:6px;box-shadow:none;letter-spacing:0}
 .lapbtns button:hover,.lapbtns button:focus-visible{background:#FFFFFF;border-color:var(--green)}
 .lapbtns button[aria-pressed="true"]{background:#FFF7DF;border-color:var(--gold)}
 .lapbtns b{font-size:clamp(2.2rem,8vw,3.6rem);line-height:1;font-weight:400}
 .lapbtns span{font-size:clamp(.9rem,2.6vw,1.2rem)}
 .lapbtns small{font-family:var(--body);font-size:.85rem;font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted)}
-.title.pick,.title.laps,.title.hs{justify-content:center}
-.title.pick .runpick,.title.laps .lappick,.title.hs .hspick{display:block}
-.title.pick .tlogo,.title.pick h1,.title.pick .tstart,.title.laps .tlogo,.title.laps h1,.title.laps .tstart,.title.hs .tlogo,.title.hs h1,.title.hs .tstart{display:none}
+.title.pick,.title.laps,.title.hard,.title.hs{justify-content:center}
+.title.pick .runpick,.title.laps .lappick,.title.hard .hardpick,.title.hs .hspick{display:block}
+.title.pick .tlogo,.title.pick h1,.title.pick .tstart,.title.laps .tlogo,.title.laps h1,.title.laps .tstart,.title.hard .tlogo,.title.hard h1,.title.hard .tstart,.title.hs .tlogo,.title.hs h1,.title.hs .tstart{display:none}
 .title .tbtns{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 14px}
 
 /* Leaderboard: two rows of choices (laps, what to rank by), then the top 50 */
@@ -260,6 +261,10 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
       <h2>How many laps?</h2>
       <div class="lapbtns" id="lapbtns" role="group" aria-label="Number of laps"></div>
     </div>
+    <div class="picker hardpick">
+      <h2>How hard?</h2>
+      <div class="lapbtns modebtns" id="modebtns" role="group" aria-label="Difficulty"></div>
+    </div>
     <div class="picker hspick" id="hspick">
       <h2>Leaderboard</h2>
       <div class="hsrow" id="hsLaps" role="group" aria-label="Number of laps"></div>
@@ -300,7 +305,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
       <div class="stat"><span class="k">Time</span><span class="v" id="sTime">0:00.0</span></div>
       <div class="stat"><span class="k">Speed</span><span class="v"><span id="sSpeed">0.0</span><small> mph</small></span></div>
       <div class="stat"><span class="k">Typing</span><span class="v"><span id="sWpm">0</span><small> wpm</small></span></div>
-      <div class="stat"><span class="k">Place</span><span class="v"><span id="sPlace">1</span><small> of 30</small></span></div>
+      <div class="stat"><span class="k">Place</span><span class="v"><span id="sPlace">1</span><small> of 50</small></span></div>
       <div class="course">
         <div class="names"><b id="nameA">Start</b><span id="nameB">Lap 1 of 3</span><b id="nameC">Finish</b></div>
         <div class="rail"><div class="fill" id="fill"></div><img class="egl" id="egl" src="eagles.png" width="720" height="310" alt="The Eagle" title="The Eagle"><div class="dot" id="dot"></div></div>
@@ -313,7 +318,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
         <div class="placecard" role="status">
           <p class="pk">You finished</p>
           <p class="pbig ol" id="pBig">1st</p>
-          <p class="pof" id="pOf">out of 30 racers</p>
+          <p class="pof" id="pOf">out of 50 racers</p>
         </div>
       </div>
     </div>
@@ -371,7 +376,9 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   }
 
   /* ---------- the race course, measured from the race map ---------- */
-  var LAPS=3;     // times around the neighborhood before the finish. The player picks 1, 2 or 3 before each race.
+  var LAPS=3;     // times around the neighborhood before the finish. The player picks 1 or 3 before each race.
+  var HARD=false; // Hard mode, for grown-ups: the Eagle ignores the typist and flies at a fixed 80 to 100 words per minute, drawn fresh each race.
+  var HARD_WPM=[80,100];
   var PXM=8;      // pixels of street for every meter of the real course
   var STRIDE=50;  // pixels the runner covers for each letter typed. A smaller number means more typing per lap.
   // One lap, in running order. m = length in meters. The runner turns at the last crossing of each leg.
@@ -417,7 +424,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   var COARSE=window.matchMedia&&window.matchMedia("(pointer: coarse)").matches;
   // Phones and tablets, including iPads that say they are Macs. On these, capital letters do not count: either case is accepted.
   var TOUCH=COARSE||/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)||(navigator.maxTouchPoints>1&&/Macintosh/.test(navigator.userAgent));
-  var EAGLE_KICK=1.04; // how hard the Eagle is to beat: its speed in the last sixth of the race, as a multiple of the typist's average. 1 is easy, 1.1 is very hard.
+  var EAGLE_KICK=1.04; // in regular mode, how hard the Eagle is to beat: its speed in the last sixth of the race, as a multiple of the typist's average. 1 is easy, 1.1 is very hard.
   var BOOST=TOUCH?1.6:1; // how much further one letter carries the runner on a phone or tablet. This makes the Eagle catchable when typing with thumbs.
   var PREVIEW=parseFloat((location.hash.match(/at=([\d.]+)/)||[])[1])||0; // add #at=900 to the address to look at a spot 900 meters in
 
@@ -973,7 +980,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
       var ex=sx+UA*Math.sin(ua), ey=sy+3+UA*Math.cos(ua);
       return {ex:ex,ey:ey,hx:ex+FA*Math.sin(fa),hy:ey+FA*Math.cos(fa)};
     });
-    var SKIN=ch.skin,SKIN2=ch.skin2,HAIR=ch.hair,hs=ch.style,SHIRT=kit[0],SHIRT2=kit[1],SHORT=kit[2],SHORT2=kit[3],SHOE="#FFFFFF",SHOE2="#D5D2C8";
+    var SKIN=ch.skin,SKIN2=ch.skin2,HAIR=ch.hair,hs=ch.style,SHIRT=kit[0],SHIRT2=kit[1],SHORT=kit[2],SHORT2=kit[3],SHOE=ch.shoe||"#FFFFFF",SHOE2=darker(SHOE);
     function leg(l,skin,shorts,shoe){
       limb(hx,hy,hx+l.kx,hy+l.ky,8.5,skin);limb(hx+l.kx,hy+l.ky,hx+l.fx,hy+l.fy,7.5,skin);
       limb(hx,hy,hx+l.kx*0.62,hy+l.ky*0.62,12,shorts);
@@ -1023,10 +1030,6 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     ctx.drawImage(rc,-26,-57);ctx.restore();
   }
 
-  // Shirts and shorts for the rest of the field. Your own runner wears the outfit shown in the picker.
-  var KITS=[["#C5312A","#9A241F","#22242A","#15161A"],["#2F5DA8","#234680","#F1EFEA","#CFCCC3"],["#7A4FA3","#5E3B80","#22242A","#15161A"],["#E8862A","#C06A1C","#2C3E66","#1F2C4A"],
-    ["#F1EFEA","#CFCCC3","#2F5DA8","#234680"],["#2A9D8F","#1F776C","#F1EFEA","#CFCCC3"],["#D95B8C","#B3446F","#3A3A42","#2A2A31"],["#E3C23A","#BFA02A","#22242A","#15161A"],
-    ["#8A8F98","#6B7078","#C5312A","#9A241F"],["#27375E","#1B2744","#E3C23A","#BFA02A"]];
   function outlined(body){ // a dark one-pixel outline around a sprite
     var w=body.width,h=body.height,c=mk(w,h),k=c.getContext("2d"),sil=mk(w,h),sk=sil.getContext("2d");
     sk.drawImage(body,0,0);sk.globalCompositeOperation="source-in";sk.fillStyle=OUT;sk.fillRect(0,0,w,h);
@@ -1071,10 +1074,37 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     {skin:"#D6A27A",skin2:"#BC875F",hair:"#5A3320",style:"curly",glasses:1,kit:["#27375E","#1B2744",GOLD,"#B08A2C"],shoe:"#F4F1E8"}
   ];
   function darker(hex){var n=parseInt(hex.slice(1),16),f=function(v){return Math.round(v*0.72)};return "#"+(16777216+(f(n>>16)<<16)+(f(n>>8&255)<<8)+f(n&255)).toString(16).slice(1)}
-  function portrait(ci,kit,label){ // a bigger, more detailed picture of a runner, for the picker and the podium
-    var ch=CHARS[ci],S=ch.skin,S2=ch.skin2,H=ch.hair,H2=darker(H),k=kit||ch.kit,st=ch.style,D="#1D1410";
+  CHARS.forEach(function(c,i){c.id="p"+i}); // the id tells the sprite cache which runner a picture belongs to
+  // The 48 other runners, slowest first. Each one keeps the same name and the same look every race. With you and the Eagle that makes 50.
+  // No two of them look alike: skin, hair color, hairstyle, shirt, shorts and shoes are dealt out so every combination is different,
+  // and none of them wears the outfits from the picker.
+  var FIELD_NAMES=["Ethan","Nora","Caleb","Isla","Jordan","Priya","Sam","Ruby","Diego","Harper","Eli","Amara","Finn","Chloe","Noah","Grace","Tariq","Ella","Wyatt",
+    "Lucas","Maya","Henry","Zoe","Omar","Lucy","Ben","Aria","Jack","Mia","Leo","Sofia","Owen","Ava","Theo","Layla","Mateo","Hazel","Kai","Ivy","Jonah",
+    "Rosa","Asher","Willa","Malik","Penny","Reid","Nina","Cole"];
+  var FIELD=(function(){
+    var SKINS=[["#F6D2B0","#DDB08C"],["#F0C8A4","#D8A983"],["#EBC39A","#D1A57C"],["#D6A27A","#BC875F"],["#C98B62","#A9714D"],["#B97C52","#9C6441"],["#7A4B2E","#643B22"],["#5E3A24","#4C2D1B"]],
+        HAIRS=["#2B1D17","#F0CC5E","#4A2E1F","#17100C","#C8552A","#8C8C8C","#5A3320","#E2BD52"],
+        STYLES=["short","pony","spiky","long","cap","puffs","hightop","bob","braid","curly"],
+        SHIRTS=["#C5312A","#2F5DA8","#6A3FA0","#E8862A","#F1EFEA","#2A9D8F","#D95B8C","#E3C23A","#8A8F98","#27375E","#2E7A4F","#6FB1E8","#8C3A2A","#F2A7B5"],
+        SHORTS=["#22242A","#F1EFEA","#2C3E66","#2F5DA8","#C5312A","#E3C23A","#7A4FA3","#1F776C"],
+        SHOES=["#F4F1E8","#E8862A","#C5312A","#2F6FD0","#E0508A","#22242A"],
+        TRIM=[GOLD,"#E0508A","#2F6FD0","#F1EFEA","#C5312A"],
+        out=[],i,g,sk,st,shirt,sh,c;
+    for(i=0;i<FIELD_NAMES.length;i++){
+      g=Math.floor(i/10);sk=SKINS[(i*3+g)%8];st=STYLES[i%10];shirt=SHIRTS[(i*5+g)%14];sh=SHORTS[(i*3+g*2)%8];
+      c={id:"f"+i,skin:sk[0],skin2:sk[1],hair:HAIRS[(i*7+g*3)%8],style:st,kit:[shirt,darker(shirt),sh,darker(sh)],shoe:SHOES[(i*5+g)%6]};
+      if(st==="cap")c.cap=TRIM[(i+g)%5];
+      if(st==="pony"||st==="braid"||st==="puffs")c.tie=TRIM[(i*2+g)%5];
+      if(i%7===3)c.band=TRIM[(i+1)%5];
+      if(i%9===5)c.glasses=1;
+      out.push(c);
+    }
+    return out;
+  })();
+  function portrait(ch,label){ // a bigger, more detailed picture of a runner, for the picker and the podium
+    var S=ch.skin,S2=ch.skin2,H=ch.hair,H2=darker(H),k=ch.kit,st=ch.style,D="#1D1410";
     return outlined(sprite(36,62,function(r,c2){
-      var i,n=label||String(ci+1);
+      var i,n=label;
       // hair that falls behind the head
       if(st==="long"){r(H,8,7,20,19);r(H2,8,24,20,2)}
       if(st==="bob")r(H,9,6,18,14);
@@ -1118,17 +1148,17 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   try{chosen=Math.min(CHARS.length-1,Math.max(0,parseInt(localStorage.getItem("eagleRunner"),10)||0))}catch(e){}
   // Each runner as seen from the front and from the back, for rounding corners and for the picker.
   var turnCache={};
-  function turnSprites(ci,ki){
-    var key=ci+"|"+ki,kit=ki<0?CHARS[ci].kit:KITS[ki];
+  function turnSprites(ch){
+    var key=ch.id,kit=ch.kit;
     if(turnCache[key])return turnCache[key];
-    var ch=CHARS[ci],SKIN=ch.skin,SKIN2=ch.skin2,HAIR=ch.hair,st=ch.style,out={front:[],back:[]};
+    var SKIN=ch.skin,SKIN2=ch.skin2,HAIR=ch.hair,st=ch.style,SHOE=ch.shoe||"#FFFFFF",SHOE2=darker(SHOE),out={front:[],back:[]};
     ["front","back"].forEach(function(view){
       var back=view==="back",f;
       for(f=0;f<4;f++)(function(f){
         var body=sprite(26,50,function(r){
           var bob=f%2?0:1,arm=f===0?-3:f===2?2:0,legL=f===0?0:f===2?-5:-2,legR=f===2?0:f===0?-5:-2,y=bob;
-          r(SKIN,8,32+bob,4,11+legL-bob);r("#FFFFFF",7,43+legL,5,3);r("#D5D2C8",7,45+legL,5,1);
-          r(SKIN2,14,32+bob,4,11+legR-bob);r("#FFFFFF",14,43+legR,5,3);r("#D5D2C8",14,45+legR,5,1);
+          r(SKIN,8,32+bob,4,11+legL-bob);r(SHOE,7,43+legL,5,3);r(SHOE2,7,45+legL,5,1);
+          r(SKIN2,14,32+bob,4,11+legR-bob);r(SHOE,14,43+legR,5,3);r(SHOE2,14,45+legR,5,1);
           r(kit[2],7,26+bob,12,7);r(kit[3],12,29+bob,2,4);
           r(kit[0],6,13+bob,14,14);r(kit[1],6,25+bob,14,2);
           if(!back){r("#FFFFFF",10,17+bob,6,6);r("#3A3A42",11,19+bob,4,1)}
@@ -1179,8 +1209,8 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     if(w.exit==="down")return {y:Math.round(from+t*(H+64-from)),k:1+t*0.3,view:"front"};
     return {y:Math.round(from+t*(yB+10-from)),k:1-t*(w.lane?0.15:0.4),view:"back"};
   }
-  function drawBendRunner(x,pose,phase,ci,ki){
-    var TAU=Math.PI*2,f=turnSprites(ci,ki)[pose.view][Math.floor((((phase%TAU)+TAU)%TAU)/(TAU/4))%4],w=Math.round(26*pose.k),h=Math.round(50*pose.k),e,i;
+  function drawBendRunner(x,pose,phase,ch){
+    var TAU=Math.PI*2,f=turnSprites(ch)[pose.view][Math.floor((((phase%TAU)+TAU)%TAU)/(TAU/4))%4],w=Math.round(26*pose.k),h=Math.round(50*pose.k),e,i;
     for(i=-2;i<=2;i++){e=Math.round(Math.sqrt(1-i*i/7)*8*pose.k);R(ctx,ROAD2,x-e,pose.y+i,e*2,1)}
     ctx.imageSmoothingEnabled=false;
     ctx.drawImage(f,x-(w>>1),pose.y+2-h,w,h);
@@ -1231,7 +1261,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   }
   function face(g,x,y,r){ // a racer's face, 16 by 14
     if(r.eagle)g.drawImage(eagleSprites()[1],31,10,16,14,x,y,16,14);
-    else g.drawImage(turnSprites(r.ci,r.ki).front[1],5,0,16,14,x,y,16,14);
+    else g.drawImage(turnSprites(r.ch).front[1],5,0,16,14,x,y,16,14);
   }
   function leaderTile(g,x,y,r,n,me){
     var t=String(n);
@@ -1241,8 +1271,8 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     if(r.name){var nm=r.name;R(g,OUT,x+20,y+5,textW(nm)+4,9);R(g,me?TAN:"#2E5E55",x+21,y+6,textW(nm)+2,7);text(g,nm,x+22,y+7,me?OUT:"#FFFFFF",1)} // the name, on a tag to the right
   }
   function hud(){
-    var m=MAP||(MAP=buildMap()),mx=W-m.c.width-3,my=3,all=[{me:1,name:"You",ci:chosen,ki:-1,d:st.dist,fin:st.mode==="done"?st.t:0}],i,o,p,mine=0;
-    for(i=0;i<st.field.length;i++){o=st.field[i];all.push({name:o.name,ci:o.ci,ki:o.ki,eagle:o.eagle,d:o.d,fin:o.fin||0})}
+    var m=MAP||(MAP=buildMap()),mx=W-m.c.width-3,my=3,all=[{me:1,name:"You",ch:CHARS[chosen],d:st.dist,fin:st.mode==="done"?st.t:0}],i,o,p,mine=0;
+    for(i=0;i<st.field.length;i++){o=st.field[i];all.push({name:o.name,ch:o.ch,eagle:o.eagle,d:o.d,fin:o.fin||0})}
     // the course map, top right: everyone is a dot, the Eagle is a white dot, and you are your runner's face
     ctx.fillStyle="rgba(18,54,48,.5)";ctx.fillRect(mx,my,m.c.width,m.c.height);
     ctx.drawImage(m.c,mx,my);
@@ -1255,7 +1285,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     p=mapXY(Math.max(0,st.dist*ART));
     p=[mx+8+Math.round((p[0]-m.x0)*m.s),my+8+Math.round((p[1]-m.y0)*m.s)];
     R(ctx,OUT,p[0]-6,p[1]-6,12,12);R(ctx,"#FFFFFF",p[0]-5,p[1]-5,10,10);
-    ctx.drawImage(turnSprites(chosen,-1).front[1],7,1,12,11,p[0]-6+1,p[1]-6+1,10,10);
+    ctx.drawImage(turnSprites(CHARS[chosen]).front[1],7,1,12,11,p[0]-6+1,p[1]-6+1,10,10);
     // the leaders, top left: the first three, and then you if you are further back
     all.sort(function(a,b){return (a.fin&&b.fin)?a.fin-b.fin:a.fin?-1:b.fin?1:b.d-a.d});
     for(i=0;i<all.length;i++)if(all[i].me)mine=i;
@@ -1278,18 +1308,18 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   function drawRacer(r){
     var i,e,p,y=r.y,k=r.pose?r.pose.k:1;
     if(r.eagle){drawEagle(r.x,y,r.w.bend?1:r.w.face,k);return}
-    if(r.w.bend)drawBendRunner(r.x,{y:y,k:k,view:r.pose.view},r.p,r.ci,r.ki);
+    if(r.w.bend)drawBendRunner(r.x,{y:y,k:k,view:r.pose.view},r.p,r.ch);
     else{
       if(r.me)for(i=0;i<st.dust.length;i++){p=st.dust[i];R(ctx,p.life>0.5?"#D9D4C6":"#A9A69C",r.x+r.w.face*Math.round((p.x-st.dist)*ART),y-1-Math.round((1-p.life)*4),p.life>0.5?2:3,p.life>0.5?2:3)}
       for(i=-3;i<=3;i++){e=Math.round(Math.sqrt(1-i*i/14)*11);R(ctx,ROAD2,r.x+r.w.face-e,y+2+i,e*2,1)}
-      drawRunner(r.x,y+3,r.p,r.s,st.clock,r.w.face<0,CHARS[r.ci],r.ki<0?CHARS[r.ci].kit:KITS[r.ki]);
+      drawRunner(r.x,y+3,r.p,r.s,st.clock,r.w.face<0,r.ch,r.ch.kit);
     }
   }
   function draw(){
     var dA=st.dist*ART, w=where(dA), seg=route[w.si], leg=LEGS[seg.li], cx=W>>1, i, p, x, o, wo, sx, r, who=[], trees=!leg.median;
     scene(ctx,w.si,w.x,dA);
     // everyone on this stretch of street, you included
-    who.push({me:1,w:w,x:cx,o:0.3,p:st.p,s:Math.min(1,st.v/520),ci:chosen,ki:-1});
+    who.push({me:1,w:w,x:cx,o:0.3,p:st.p,s:Math.min(1,st.v/520),ch:CHARS[chosen]});
     for(i=0;i<st.field.length;i++){
       o=st.field[i];wo=where(o.d*ART);
       if(wo.bend===1&&route[wo.si].li!==seg.li&&route[wo.si+1].li===seg.li) // rounding the corner onto this street
@@ -1297,7 +1327,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
       if(route[wo.si].li!==seg.li)continue;
       sx=cx+Math.round(wo.x-w.x)+(wo.bend?Math.round(o.o*9):0);
       if(sx<-40||sx>W+40)continue;
-      who.push({w:wo,x:sx,o:o.o,p:o.p,s:Math.min(1,o.v/520),ci:o.ci,ki:o.ki,eagle:o.eagle});
+      who.push({w:wo,x:sx,o:o.o,p:o.p,s:Math.min(1,o.v/520),ch:o.ch,eagle:o.eagle});
     }
     for(i=0;i<who.length;i++){
       r=who[i];
@@ -1346,21 +1376,23 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     }
     if(st.mode!=="count"){
       // The field.
-      //  - The 28 other runners each hold their own steady pace all race, so they spread out along the course:
-      //    the 14 slowest type 6 to 20 words per minute, the 14 fastest 20 to 30.
+      //  - The 48 other runners each hold their own steady pace all race, so they spread out along the course:
+      //    the 24 slowest type 2.5 to 20 words per minute (the back markers are under 5), the 24 fastest 20 to 30.
       //  - Only the Eagle adjusts to the typist. ref is the typist's speed so far this race, counting only the time they
       //    were typing (pauses over 2 seconds are left out). It starts from a guess of 18 words per minute.
       //    The Eagle flies just ahead of the typist for the first five sixths of the race.
       //    In the last sixth it flies at EAGLE_KICK times ref, so the typist has to finish faster than their own average
       //    to pass it. It never gets more than 70 pixels ahead of a typist who is still trying, so it is in reach to the line.
       //    It does not wait: it never drops under 80% of ref (or 8 words per minute), so a typist who stops is left behind.
+      //  - In hard mode none of that applies: the Eagle flies at st.eagleWpm (80 to 100 words per minute) from the beep to the line.
       var WPM=5/60*PX_PER_CHAR, ref=(st.dist+18*WPM*1.5)/(st.act+1.5), low=Math.max(8*WPM,0.8*ref), sp, g;
       var home=(st.dist-course*5/6)/(course/6);
       if(home>0&&!st.kick)st.kick=EAGLE_KICK*ref; // set once, as the typist enters the home stretch
       for(i=0;i<st.field.length;i++){
         o=st.field[i];
         if(o.eagle){
-          if(st.mode==="done")sp=st.kick||ref;
+          if(HARD)sp=st.eagleWpm*WPM;
+          else if(st.mode==="done")sp=st.kick||ref;
           else if(home>0){
             sp=st.kick;g=o.d-st.dist;
             if(g>70/ART)sp=Math.max(low,Math.min(sp,st.v+1.5*(70/ART-g)));
@@ -1557,9 +1589,9 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
       if(!a)return;
       d=document.createElement("div");who=document.createElement("span");b=document.createElement("div");
       d.className="pod p"+(i+1)+(a.me?" me":"");
-      if(a.me)c=portrait(chosen,null,String(i+1));
+      if(a.me)c=portrait(CHARS[chosen],String(i+1));
       else if(a.o.eagle){c=mk(50,36);c.getContext("2d").drawImage(eagleSprites()[1],0,0);c.className="bird"}
-      else c=portrait(a.o.ci,KITS[a.o.ki],String(i+1));
+      else c=portrait(a.o.ch,String(i+1));
       who.className="who";who.textContent=a.me?"You":a.o.name;
       b.className="block";b.textContent=i+1;
       d.appendChild(c);d.appendChild(who);d.appendChild(b);el.appendChild(d);
@@ -1573,23 +1605,22 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     wrap.scrollIntoView({block:"start"});
     try{$("again").focus({preventScroll:true})}catch(e){}
   }
-  // The 28 other runners, slowest first. Each one keeps the same name every race. With you and the Eagle that makes 30.
-  var FIELD_NAMES=["Ethan","Nora","Caleb","Isla","Jordan","Priya","Sam","Ruby","Diego","Harper","Eli","Amara","Finn","Chloe","Noah","Grace","Tariq","Ella","Wyatt",
-    "Lucas","Maya","Henry","Zoe","Omar","Lucy","Ben","Aria","Jack"];
   function reset(focus){
     clearTimeout(doneTimer);
     st={mode:PREVIEW?"run":"count",cd:0,cdn:0,dist:Math.min(course-1,PREVIEW*PXM/ART),v:0,e:0,p:0,t:0,clock:0,text:newText(true),gi:0,li:0,lines:[],ok:0,miss:0,top:0,act:0,lastKey:0,slow:false,dust:[],confetti:[],seg:0,note:0};
     st.seg=where(st.dist*ART).si;
-    // The rest of the field: 28 other runners from slowest to fastest, each with a steady pace of their own, and the Eagle.
-    // The 14 slowest type 6 to 20 words per minute. The 14 fastest type 20 to 30. Only the Eagle paces off the typist (see step).
+    // The rest of the field: 48 other runners from slowest to fastest, each with a steady pace of their own, and the Eagle.
+    // The 24 slowest type 2.5 to 20 words per minute, so the back markers are under 5. The 24 fastest type 20 to 30.
+    // Only the Eagle paces off the typist (see step).
     var lanes=[],N=FIELD_NAMES.length,i,j,t;
     for(i=0;i<N;i++)lanes.push(i);
     for(i=N-1;i>0;i--){j=Math.floor(Math.random()*(i+1));t=lanes[i];lanes[i]=lanes[j];lanes[j]=t}
     st.field=[];st.eagleT=0;st.place=0;
-    for(i=0;i<N;i++)st.field.push({name:FIELD_NAMES[i],ci:Math.floor(Math.random()*CHARS.length),ki:i%KITS.length,
-      pace:i<14?Math.min(20,6+i*14/13+Math.random()*0.6):Math.min(30,20+(i-14)*10/13+Math.random()*0.6), // words per minute
+    for(i=0;i<N;i++)st.field.push({name:FIELD_NAMES[i],ch:FIELD[i],
+      pace:i<24?Math.min(20,2.5+i*17.5/23+Math.random()*0.6):Math.min(30,20+(i-24)*10/23+Math.random()*0.6), // words per minute
       v:0,d:-(10+i*144/(N-1)+Math.random()*6)/ART,o:-1+2*lanes[i]/(N-1),p:Math.random()*6,wob:Math.random()*6});
     st.field.push({name:"The Eagle",eagle:1,v:0,d:-26/ART,o:0.95,p:0,wob:0});
+    st.eagleWpm=HARD_WPM[0]+Math.random()*(HARD_WPM[1]-HARD_WPM[0]); // only used in hard mode
     elResult.hidden=true;box.value="";prevVal="";resetHsForm();
     $("sTime").textContent="0:00.0";$("sSpeed").textContent="0.0";$("sWpm").textContent="0";
     $("fill").style.width="0%";$("dot").style.left="0%";$("egl").style.left="0%";$("sPlace").textContent="1";
@@ -1602,7 +1633,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   // The title screen shows first, then the runner picker. Choosing a runner starts the game.
   var wrap=document.querySelector(".wrap"), titleEl=$("title"), runnersEl=$("runners"), runnerBtns=[];
   CHARS.forEach(function(ch,i){
-    var b=document.createElement("button"),c=portrait(i);
+    var b=document.createElement("button"),c=portrait(CHARS[i],String(i+1));
     b.type="button";b.setAttribute("aria-label","Runner "+(i+1));b.setAttribute("aria-pressed",i===chosen?"true":"false");
     b.appendChild(c);
     b.addEventListener("click",function(){
@@ -1617,33 +1648,54 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     if(i<0||!d) return;
     e.preventDefault();runnerBtns[(i+d+n)%n].focus();
   });
-  // The lap choice: one button each for 1, 2 and 3 laps, with how much typing each one is.
-  var lapsEl=$("lapbtns"), lapBtns=[];
-  [1,2,3].forEach(function(n){
+  // The lap choice: one button each for 1 and 3 laps, with how much typing each one is.
+  var LAP_CHOICES=[1,3], lapsEl=$("lapbtns"), lapBtns=[];
+  LAP_CHOICES.forEach(function(n){
     var b=document.createElement("button"),letters=Math.round(buildRoute(n)/STRIDE/BOOST/10)*10;
     b.type="button";
     b.innerHTML="<b>"+n+"</b><span>"+(n===1?"lap":"laps")+"</span><small>"+(n===3?"the full 5k, ":"")+"about "+letters+" letters</small>";
     b.addEventListener("click",function(){
       try{localStorage.setItem("eagleLaps",String(n))}catch(e){}
-      buildRoute(n);showLapChoice();begin();
+      buildRoute(n);showLapChoice();showMode();
     });
     lapsEl.appendChild(b);lapBtns.push(b);
   });
   function showLapChoice(){
-    lapBtns.forEach(function(x,j){x.setAttribute("aria-pressed",j===LAPS-1?"true":"false")});
+    lapBtns.forEach(function(x,j){x.setAttribute("aria-pressed",LAP_CHOICES[j]===LAPS?"true":"false")});
   }
-  buildRoute((function(){var n=3;try{n=Math.min(3,Math.max(1,parseInt(localStorage.getItem("eagleLaps"),10)||3))}catch(e){}return n})());
+  buildRoute((function(){var n=3;try{n=parseInt(localStorage.getItem("eagleLaps"),10)===1?1:3}catch(e){}return n})());
   showLapChoice();
-  lapsEl.addEventListener("keydown",function(e){ // arrow keys move between the choices
-    var i=lapBtns.indexOf(document.activeElement),d={ArrowRight:1,ArrowDown:1,ArrowLeft:-1,ArrowUp:-1}[e.key];
-    if(i<0||!d) return;
-    e.preventDefault();lapBtns[(i+d+3)%3].focus();
+  // The difficulty: regular (the Eagle paces off the typist) or hard (a fixed 80 to 100 words per minute, for grown-ups).
+  var modesEl=$("modebtns"), modeBtns=[];
+  try{HARD=localStorage.getItem("eagleHard")==="1"}catch(e){}
+  [{hard:false,name:"Regular",note:"The Eagle keeps pace with you and pulls ahead near the finish."},
+   {hard:true,name:"Hard",note:"For grown-ups. The Eagle flies "+HARD_WPM[0]+" to "+HARD_WPM[1]+" words per minute, however you type."}].forEach(function(m){
+    var b=document.createElement("button");
+    b.type="button";
+    b.innerHTML="<b>"+m.name+"</b><small>"+m.note+"</small>";
+    b.addEventListener("click",function(){
+      HARD=m.hard;try{localStorage.setItem("eagleHard",HARD?"1":"0")}catch(e){}
+      showModeChoice();begin();
+    });
+    modesEl.appendChild(b);modeBtns.push(b);
   });
-  function showPicker(){wrap.classList.remove("outro");wrap.classList.add("intro");titleEl.classList.remove("laps");titleEl.classList.remove("hs");titleEl.classList.add("pick");runnerBtns[chosen].focus();music()}
-  function showLaps(){titleEl.classList.remove("pick");titleEl.classList.add("laps");lapBtns[LAPS-1].focus()}
+  function showModeChoice(){modeBtns.forEach(function(x,j){x.setAttribute("aria-pressed",(j===1)===HARD?"true":"false")})}
+  showModeChoice();
+  [[lapsEl,lapBtns],[modesEl,modeBtns]].forEach(function(pair){
+    pair[0].addEventListener("keydown",function(e){ // arrow keys move between the choices
+      var btns=pair[1],i=btns.indexOf(document.activeElement),d={ArrowRight:1,ArrowDown:1,ArrowLeft:-1,ArrowUp:-1}[e.key];
+      if(i<0||!d) return;
+      e.preventDefault();btns[(i+d+btns.length)%btns.length].focus();
+    });
+  });
+  var INTRO_SCREENS=["pick","laps","hard","hs"];
+  function showScreen(name){INTRO_SCREENS.forEach(function(c){titleEl.classList.remove(c)});if(name)titleEl.classList.add(name)}
+  function showPicker(){wrap.classList.remove("outro");wrap.classList.add("intro");showScreen("pick");runnerBtns[chosen].focus();music()}
+  function showLaps(){showScreen("laps");lapBtns[LAP_CHOICES.indexOf(LAPS)].focus()}
+  function showMode(){showScreen("hard");modeBtns[HARD?1:0].focus()}
   function begin(){
     if(!wrap.classList.contains("intro")) return;
-    wrap.classList.remove("intro");titleEl.classList.remove("pick");titleEl.classList.remove("laps");titleEl.classList.remove("hs");resize();reset(true);
+    wrap.classList.remove("intro");showScreen(null);resize();reset(true);
   }
   $("start").addEventListener("click",showPicker);
   if(TOUCH) $("startHint").textContent="Tap to start";
@@ -1654,7 +1706,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
 
   /* ---------- leaderboard ----------
      The scores live in a Firebase database (free plan). Runs are stored by how they were played: computer or mobile,
-     times 1, 2 or 3 laps. Anyone can read them and a finished race can be added, but nothing can be changed or removed.
+     times 1 or 3 laps (older 2-lap runs are still stored but no longer shown). Anyone can read them and a finished race can be added, but nothing can be changed or removed.
      The database checks every run it is sent (two capital letters, sane numbers).
      The player sees one leaderboard per lap count, computer and mobile runs together, fastest time first,
      with the device, the typing speed and the error count shown beside each run. */
@@ -1690,7 +1742,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
       .then(function(){return id});
   }
   var hsLaps=$("hsLaps"), hsBody=$("hsBody"), hsNote=$("hsNote");
-  [1,2,3].forEach(function(n){ // the lap choice: one button each, the current one pressed
+  LAP_CHOICES.forEach(function(n){ // the lap choice: one button each, the current one pressed
     var b=document.createElement("button");
     b.type="button";b.textContent=n+(n===1?" lap":" laps");b.dataset.v=String(n);
     b.addEventListener("click",function(){hs.laps=n;showBoard()});
@@ -1713,7 +1765,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   }
   function showScores(laps){ // the leaderboard screen, on the title background
     if(laps)hs.laps=laps;
-    wrap.classList.remove("outro");wrap.classList.add("intro");titleEl.classList.remove("pick");titleEl.classList.remove("laps");titleEl.classList.add("hs");
+    wrap.classList.remove("outro");wrap.classList.add("intro");showScreen("hs");
     showBoard();music();
     try{$("hsBack").focus({preventScroll:true})}catch(e){}
   }
