@@ -262,7 +262,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
       <div class="lapbtns" id="lapbtns" role="group" aria-label="Number of laps"></div>
     </div>
     <div class="picker hardpick">
-      <h2>How hard?</h2>
+      <h2>Difficulty?</h2>
       <div class="lapbtns modebtns" id="modebtns" role="group" aria-label="Difficulty"></div>
     </div>
     <div class="picker hspick" id="hspick">
@@ -1672,11 +1672,10 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   // The difficulty: regular (the Eagle paces off the typist) or hard (a fixed 80 to 100 words per minute, for grown-ups).
   var modesEl=$("modebtns"), modeBtns=[];
   try{HARD=localStorage.getItem("eagleHard")==="1"}catch(e){}
-  [{hard:false,name:"Regular",note:"The Eagle keeps pace with you and pulls ahead near the finish."},
-   {hard:true,name:"Hard",note:"For grown-ups. The Eagle flies "+HARD_WPM[0]+" to "+HARD_WPM[1]+" words per minute, however you type."}].forEach(function(m){
+  [{hard:false,name:"Regular"},{hard:true,name:"Hard"}].forEach(function(m){
     var b=document.createElement("button");
     b.type="button";
-    b.innerHTML="<b>"+m.name+"</b><small>"+m.note+"</small>";
+    b.innerHTML="<b>"+m.name+"</b>";
     b.addEventListener("click",function(){
       HARD=m.hard;try{localStorage.setItem("eagleHard",HARD?"1":"0")}catch(e){}
       showModeChoice();begin();
