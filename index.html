@@ -206,6 +206,16 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
 .wrap.kb .bib{border-width:3px;padding-bottom:6px}
 .wrap.kb .meter{padding:8px 14px 0}
 .wrap.kb .phrase{margin:6px 0 2px;padding:0 14px}
+/* Two QR codes beside the game on a wide screen (a projector, say): the game on the left, the real race on the right. Hidden where there is no room. */
+.qr{display:none;position:fixed;top:50%;transform:translateY(-50%);width:140px;padding:12px 12px 10px;background:var(--paper);border-radius:6px;box-shadow:0 0 0 5px var(--tan),0 0 0 8px var(--green-deep);text-align:center}
+.qr-l{right:calc(50% + 526px)}
+.qr-r{left:calc(50% + 526px)}
+.qr img{display:block;width:100%;height:auto}
+.qr p{margin:10px 0 0;font-family:var(--display);font-size:1.05rem;line-height:1.1;text-transform:uppercase;color:var(--green);text-wrap:balance}
+.qr small{display:block;margin-top:4px;font-family:var(--label);font-size:1rem;line-height:1.1;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);overflow-wrap:anywhere}
+@media (min-width:1400px){.qr{display:block}}
+@media (min-width:1600px){.qr{width:200px;padding:16px 16px 14px}.qr p{font-size:1.3rem}.qr small{font-size:1.15rem}}
+@media (min-width:1800px){.qr{width:240px}.qr p{font-size:1.5rem}}
 @media (max-width:640px){
   body{padding:8px}
   .wrap.kb .board{grid-template-columns:repeat(4,minmax(0,1fr));gap:4px 8px}
@@ -359,6 +369,17 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     <p>Saturday, November 7 at 9:00AM &middot; Ashland Elementary School &middot; Walkers are welcome!</p>
   </section>
 </main>
+
+<aside class="qr qr-l" aria-label="Scan to play this game on your phone">
+  <img src="qr-play.svg" width="232" height="232" alt="QR code for game.eaglechase5k.com">
+  <p>Scan to play</p>
+  <small>game.eaglechase5k.com</small>
+</aside>
+<aside class="qr qr-r" aria-label="Scan to sign up for the real Eagle Chase 5K">
+  <img src="qr-signup.svg" width="200" height="200" alt="QR code for eaglechase5k.com">
+  <p>Sign up for the real Eagle Chase</p>
+  <small>eaglechase5k.com</small>
+</aside>
 
 <script>
 (function(){
