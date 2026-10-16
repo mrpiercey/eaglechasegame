@@ -178,7 +178,6 @@ h1 .tag{display:inline-block;background:var(--green);color:var(--tan);text-shado
 .ln.later{color:var(--muted);opacity:.36}
 .ln.was{color:var(--typed);opacity:.5}
 .phrase .d{color:var(--typed)}
-.phrase .x{color:var(--miss);text-decoration:underline;text-decoration-thickness:.1em;text-underline-offset:.12em} /* a letter typed wrong */
 .phrase .t{color:var(--ink)}
 .phrase .c{background:var(--green);color:#FFFFFF;border-radius:4px}
 .bib.oops .phrase .c{background:var(--miss);color:var(--on-miss)}
@@ -1574,7 +1573,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   }
   function fillRow(){ // the line being typed: done letters, the one to type next, and the rest
     var a=st.lines[st.li], frag=document.createDocumentFragment(), i, sp;
-    for(i=a[0];i<a[1];i++){sp=document.createElement("span");sp.textContent=st.text[i];sp.className=i<st.gi?(st.bad[i]?"x":"d"):i===st.gi?"c":"t";frag.appendChild(sp)}
+    for(i=a[0];i<a[1];i++){sp=document.createElement("span");sp.textContent=st.text[i];sp.className=i<st.gi?"d":i===st.gi?"c":"t";frag.appendChild(sp)}
     curRow.textContent="";curRow.appendChild(frag);
   }
   function renderLines(slide){
@@ -1601,18 +1600,18 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     if(ch==="\u2019"||ch==="\u2018")ch="'"; // phones like to curl apostrophes
     want=st.text[st.gi];
     ok=TOUCH?ch.toLowerCase()===want.toLowerCase():ch===want; // capital letters do not matter on a phone or tablet
-    // Right or wrong, the letter is done and the next one comes up. A right letter pushes the runner on;
-    // a wrong one pushes nothing, knocks some speed off, and stays marked in red.
-    if(ok){st.ok++;st.e+=KICK*BOOST}
-    else{
-      st.miss++;st.e*=0.88;st.bad[st.gi]=1;
+    // A right letter pushes the runner on and brings up the next one. A wrong letter knocks some speed off,
+    // and the same letter stays up until it is typed right.
+    if(ok){
+      st.ok++;st.e+=KICK*BOOST;st.gi++;was=st.li;
+      if(st.gi>=st.text.length){st.text=newText(false);st.gi=0;layoutText();return}  // typed it all: keep going with a fresh order
+      while(st.li<st.lines.length-1&&st.gi>=st.lines[st.li][1])st.li++;
+      if(st.li!==was)renderLines(true);else fillRow();
+    }else{
+      st.miss++;st.e*=0.88;
       bib.classList.remove("oops");void bib.offsetWidth;bib.classList.add("oops");
       clearTimeout(oopsTimer);oopsTimer=setTimeout(function(){bib.classList.remove("oops")},190);
     }
-    st.gi++;was=st.li;
-    if(st.gi>=st.text.length){st.text=newText(false);st.gi=0;st.bad={};layoutText();return}  // typed it all: keep going with a fresh order
-    while(st.li<st.lines.length-1&&st.gi>=st.lines[st.li][1])st.li++;
-    if(st.li!==was)renderLines(true);else fillRow();
   }
   function finish(){
     st.mode="done";st.e=Math.max(st.e,200);music();
@@ -1676,7 +1675,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   }
   function reset(focus){
     clearTimeout(doneTimer);
-    st={mode:PREVIEW?"run":"count",cd:0,cdn:0,dist:Math.min(course-1,PREVIEW*PXM/ART),v:0,e:0,p:0,t:0,clock:0,text:newText(true),gi:0,li:0,lines:[],bad:{},ok:0,miss:0,top:0,act:0,lastKey:0,slow:false,dust:[],confetti:[],seg:0,note:0,demo:false,demoT:0};
+    st={mode:PREVIEW?"run":"count",cd:0,cdn:0,dist:Math.min(course-1,PREVIEW*PXM/ART),v:0,e:0,p:0,t:0,clock:0,text:newText(true),gi:0,li:0,lines:[],ok:0,miss:0,top:0,act:0,lastKey:0,slow:false,dust:[],confetti:[],seg:0,note:0,demo:false,demoT:0};
     st.seg=where(st.dist*ART).si;
     // The rest of the field: 48 other runners from slowest to fastest, each with a steady pace of their own, and the Eagle.
     // Regular: the 24 slowest type 2.5 to 20 words per minute, so the back markers are under 5. The 24 fastest type 20 to 30.
