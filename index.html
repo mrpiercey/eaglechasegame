@@ -1416,24 +1416,31 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
       //    the 24 slowest type 2.5 to 20 words per minute (the back markers are under 5), the 24 fastest 20 to 30.
       //  - Only the Eagle adjusts to the typist. ref is the typist's speed so far this race, counting only the time they
       //    were typing (pauses over 2 seconds are left out). It starts from a guess of 18 words per minute.
-      //    The Eagle flies just ahead of the typist for the first five sixths of the race.
+      //    The Eagle flies just ahead of the typist for the first five sixths of the race, and never behind the fastest other runner,
+      //    so it is always at the front of the field.
       //    In the last sixth it flies at EAGLE_KICK times ref, so the typist has to finish faster than their own average
       //    to pass it. It never gets more than 70 pixels ahead of a typist who is still trying, so it is in reach to the line.
       //    It does not wait: it never drops under 80% of ref (or 8 words per minute), so a typist who stops is left behind.
       //  - In hard mode none of that applies: the Eagle flies at st.eagleWpm (80 to 100 words per minute) from the beep to the line,
       //    and the other runners were given paces just behind it (see reset).
       var WPM=5/60*PX_PER_CHAR, ref=(st.dist+18*WPM*1.5)/(st.act+1.5), low=Math.max(8*WPM,0.8*ref), sp, g;
-      var home=(st.dist-course*5/6)/(course/6);
+      var home=(st.dist-course*5/6)/(course/6), lead=null;
       if(home>0&&!st.kick)st.kick=EAGLE_KICK*ref; // set once, as the typist enters the home stretch
+      for(i=0;i<st.field.length;i++){o=st.field[i];if(!o.eagle&&(!lead||o.d>lead.d))lead=o} // the fastest of the other runners
       for(i=0;i<st.field.length;i++){
         o=st.field[i];
         if(o.eagle){
           if(HARD)sp=st.eagleWpm*WPM;
-          else if(st.mode==="done")sp=st.kick||ref;
-          else if(home>0){
-            sp=st.kick;g=o.d-st.dist;
-            if(g>70/ART)sp=Math.max(low,Math.min(sp,st.v+1.5*(70/ART-g)));
-          }else sp=Math.max(low,st.v+1.5*(st.dist+(45+18*Math.sin(st.clock*0.3)*Math.max(0,Math.min(1,-home-0.3)))/ART-o.d)); // 45 pixels ahead, give or take, and a steady 45 coming up to the home stretch
+          else{
+            if(st.mode==="done")sp=st.kick||ref;
+            else if(home>0){
+              sp=st.kick;g=o.d-st.dist;
+              if(g>70/ART)sp=Math.max(low,Math.min(sp,st.v+1.5*(70/ART-g)));
+            }else sp=Math.max(low,st.v+1.5*(st.dist+(45+18*Math.sin(st.clock*0.3)*Math.max(0,Math.min(1,-home-0.3)))/ART-o.d)); // 45 pixels ahead, give or take, and a steady 45 coming up to the home stretch
+            // The Eagle also leads the whole field: it never drops behind the fastest of the other runners, so a typist back in the pack
+            // sees it out front, and a typist who is out front has it pacing just ahead of them as before.
+            if(lead)sp=Math.max(sp,lead.v+1.5*(lead.d+30/ART-o.d));
+          }
           o.v+=(sp-o.v)*(1-Math.exp(-3*dt));
         }else o.v+=(o.pace*WPM*(1+0.06*Math.sin(st.clock*0.4+o.wob))-o.v)*(1-Math.exp(-1.5*dt));
         o.d+=o.v*dt;
