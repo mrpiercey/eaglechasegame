@@ -178,10 +178,12 @@ h1 .tag{display:inline-block;background:var(--green);color:var(--tan);text-shado
 .ln.later{color:var(--muted);opacity:.36}
 .ln.was{color:var(--typed);opacity:.5}
 .phrase .d{color:var(--typed)}
+.phrase .x{color:var(--miss);text-decoration:underline;text-decoration-thickness:.1em;text-underline-offset:.12em} /* a letter typed wrong */
 .phrase .t{color:var(--ink)}
 .phrase .c{background:var(--green);color:#FFFFFF;border-radius:4px}
 .bib.oops .phrase .c{background:var(--miss);color:var(--on-miss)}
-.bibfoot{margin:0;padding:0 40px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 16px;color:var(--muted);font-size:.95rem}
+.bibfoot{margin:0;padding:0 40px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:4px 16px;color:var(--muted);font-size:.95rem}
+.bibfoot button{position:relative;z-index:1;margin:0 0 0 auto;font-size:.8rem;padding:7px 14px;box-shadow:0 0 0 2px var(--tan)} /* above the invisible typing box that covers the bib */
 #typebox{position:absolute;inset:0;width:100%;height:100%;opacity:0;border:0;padding:0;font-size:16px;cursor:text}
 
 button{font-family:var(--display);font-size:.9rem;letter-spacing:.04em;text-transform:uppercase;background:var(--green);color:#FFFFFF;border:0;border-radius:6px;box-shadow:0 0 0 3px var(--tan);padding:10px 18px;margin:3px;cursor:pointer}
@@ -194,19 +196,20 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
 .reg a:hover{text-decoration:underline;text-decoration-thickness:.08em;text-underline-offset:.14em}
 .reg p{margin:0;font-family:var(--label);font-size:clamp(1.15rem,3.4vw,1.6rem);line-height:1.15;letter-spacing:.05em;text-transform:uppercase;text-wrap:balance}
 
-.wrap.kb .reg,.wrap.kb .bibhead,.wrap.kb .bibfoot,.wrap.kb .pin,.wrap.kb .names,.wrap.kb .mini{display:none}
+.wrap.kb .reg,.wrap.kb .bibhead,.wrap.kb .bibfoot #hint,.wrap.kb .pin,.wrap.kb .names,.wrap.kb .mini{display:none}
+.wrap.kb .bibfoot{padding:0 14px;justify-content:flex-end} /* with the keyboard up, only the Restart button stays under the words */
 .wrap.kb .band{padding:6px 8px;gap:6px}
 .wrap.kb .band + .band{border-top-width:3px}
 .wrap.kb .rail{margin-top:12px}
 .wrap.kb .board{grid-template-columns:auto auto auto auto minmax(0,1fr)}
-.wrap.kb .stage{aspect-ratio:auto;height:calc(var(--vvh,100vh) - 258px);max-height:none;min-height:96px;border-width:3px}
+.wrap.kb .stage{aspect-ratio:auto;height:calc(var(--vvh,100vh) - 292px);max-height:none;min-height:96px;border-width:3px}
 .wrap.kb .bib{border-width:3px;padding-bottom:6px}
 .wrap.kb .meter{padding:8px 14px 0}
 .wrap.kb .phrase{margin:6px 0 2px;padding:0 14px}
 @media (max-width:640px){
   body{padding:8px}
   .wrap.kb .board{grid-template-columns:repeat(4,minmax(0,1fr));gap:4px 8px}
-  .wrap.kb .stage{height:calc(var(--vvh,100vh) - 218px)}
+  .wrap.kb .stage{height:calc(var(--vvh,100vh) - 252px)}
   .title{aspect-ratio:auto;min-height:calc(100vh - 16px);min-height:calc(100svh - 16px)}
   .finale{min-height:calc(100vh - 16px);min-height:calc(100svh - 16px);padding:14px 10px}
   .fcard{padding:14px 12px 16px;gap:8px}
@@ -345,7 +348,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
         <span class="mword" id="mword">Stopped</span>
       </div>
       <div class="phrase" id="phrase"><div class="lines" id="lines"></div></div>
-      <p class="bibfoot"><span id="hint">Get ready. The race starts on the beep.</span></p>
+      <p class="bibfoot"><span id="hint">Get ready. The race starts on the beep.</span><button type="button" id="restart" title="Start this race over from the countdown">Restart</button></p>
       <input id="typebox" type="text" inputmode="text" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" aria-label="Type the phrase here">
     </section>
 
@@ -438,6 +441,9 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   var EAGLE_KICK=1.04; // in regular mode, how hard the Eagle is to beat: its speed in the last sixth of the race, as a multiple of the typist's average. 1 is easy, 1.1 is very hard.
   var BOOST=TOUCH?1.6:1; // how much further one letter carries the runner on a phone or tablet. This makes the Eagle catchable when typing with thumbs.
   var PREVIEW=parseFloat((location.hash.match(/at=([\d.]+)/)||[])[1])||0; // add #at=900 to the address to look at a spot 900 meters in
+  // The attract mode: left alone on the title screen for DEMO_WAIT, the game races one lap by itself with a random runner
+  // typing at DEMO_WPM words per minute, which lands in the middle of the field. Any key or tap goes to the runner picker.
+  var DEMO_WAIT=location.hash==="#demo"?3000:120000, DEMO_WPM=20, DEMO_SLIP=0.02, demo=null, demoTimer=0, idleAt=0; // #demo in the address starts it after 3 seconds, for trying it out
 
   var $=function(id){return document.getElementById(id)};
   var stage=$("stage"), cv=$("street"), ctx=cv.getContext("2d"), bib=$("bib"), box=$("typebox");
@@ -1314,6 +1320,13 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     if(arrow)bits(ctx,ARROW[arrow],x+2*k,y+((h-9*k)>>1),TAN,k);
     for(i=0;i<lines.length;i++)text(ctx,lines[i],x+(arrow?13*k:0)+3*k,y+2*k+i*6*k,i?TAN:"#FFFFFF",k);
   }
+  function arcade(s){ // big white pixel letters with a dark edge, in the middle of the street, like an arcade cabinet waiting for a coin
+    var k=4,x,y;
+    while(k>1&&textW(s,k)>W-24)k--;
+    x=(W-textW(s,k))>>1;y=(H>>1)-3*k;
+    [[-k,0],[k,0],[0,-k],[0,k],[k,k],[-k,k],[k,-k],[-k,-k]].forEach(function(o){text(ctx,s,x+o[0],y+o[1],OUT,k)});
+    text(ctx,s,x,y,"#FFFFFF",k);
+  }
   var TURNWORD={left:"LEFT ON ",right:"RIGHT ON ",uturn:"U-TURN ON "};
   function laneY(o,leg,lane){return leg.median?(lane?yB+21+Math.round(o*6):yS+37+Math.round(o*9)):yS+33+Math.round(o*14)} // each racer keeps to a line across the street
   function drawRacer(r){
@@ -1354,6 +1367,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     for(i=0;i<st.confetti.length;i++){p=st.confetti[i];R(ctx,p.c,Math.round(p.x),Math.round(p.y),Math.sin(p.rot)>0?3:2,Math.sin(p.rot)>0?2:3)}
 
     hud();
+    if(st.demo&&st.clock%1<0.62)arcade(TOUCH?"TAP TO RACE":"PRESS ENTER TO RACE"); // flashes through the whole demo
     if(st.mode==="done")return;
     if(st.mode==="count"){if(st.cdn)callout([["3...","2...","1..."][st.cdn-1]||"1..."],null,5);else callout(["GET READY"]);return} // a big 3, 2, 1 on the dings, then a big TYPE! on the beep
     x=seg.x0+dA-seg.d0;
@@ -1372,9 +1386,20 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
 
   function step(now){
     var dt=Math.min(0.05,(now-last)/1000||0), si, prev, i, o;last=now;
+    if(wrap.classList.contains("intro")){ // the attract mode: two idle minutes on the plain title screen, and the game plays itself
+      if(PREVIEW||document.hidden||INTRO_SCREENS.some(function(c){return titleEl.classList.contains(c)}))idleAt=now;
+      else if(now-idleAt>DEMO_WAIT)startDemo();
+    }
     if(wrap.classList.contains("intro")||wrap.classList.contains("outro")){requestAnimationFrame(step);return} // the race waits until the title, runner and lap screens are done
     st.clock+=dt;
     if(st.mode==="count")countdown(dt);
+    if(st.demo&&st.mode==="run"){ // the demo's typist: steady, a little uneven, and now and then a wrong letter
+      st.demoT-=dt;
+      if(st.demoT<=0){
+        type(Math.random()<DEMO_SLIP?(st.text[st.gi]===" "?"x":" "):st.text[st.gi]);
+        st.demoT=60/(DEMO_WPM*5)*BOOST*(0.6+Math.random()*0.8);
+      }
+    }
     if(st.mode!=="count"){
       st.e*=Math.exp(-DECAY*dt);if(st.e<1)st.e=0;
       st.v+=(st.e-st.v)*(1-Math.exp(-7*dt));if(st.v<1&&st.e===0)st.v=0;
@@ -1447,7 +1472,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
       $("fill").style.width=pct+"%";$("dot").style.left=pct+"%";
       $("egl").style.left=Math.max(0,Math.min(100,st.field[st.field.length-1].d/course*100))+"%";
       $("sPlace").textContent=st.mode==="done"?st.place:place();
-      if(st.mode==="run"){
+      if(st.mode==="run"&&!st.demo){
         var slow=st.v<45&&st.t>1.5;
         if(slow!==st.slow){st.slow=slow;elHint.textContent=slow?"Keep typing! Your runner is slowing down.":"Nice pace. Keep those fingers moving."}
       }
@@ -1495,7 +1520,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
       else{
         play(startBeep,true);
         st.mode="run";st.note=1;st.noteLines=["TYPE!"];st.noteArrow=null;st.noteBig=5;
-        elHint.textContent="Go! Type the words.";
+        if(!st.demo)elHint.textContent="Go! Type the words.";
         try{raceMusic.currentTime=0}catch(e){}
         music();
       }
@@ -1521,7 +1546,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   }
   function fillRow(){ // the line being typed: done letters, the one to type next, and the rest
     var a=st.lines[st.li], frag=document.createDocumentFragment(), i, sp;
-    for(i=a[0];i<a[1];i++){sp=document.createElement("span");sp.textContent=st.text[i];sp.className=i<st.gi?"d":i===st.gi?"c":"t";frag.appendChild(sp)}
+    for(i=a[0];i<a[1];i++){sp=document.createElement("span");sp.textContent=st.text[i];sp.className=i<st.gi?(st.bad[i]?"x":"d"):i===st.gi?"c":"t";frag.appendChild(sp)}
     curRow.textContent="";curRow.appendChild(frag);
   }
   function renderLines(slide){
@@ -1548,20 +1573,23 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     if(ch==="\u2019"||ch==="\u2018")ch="'"; // phones like to curl apostrophes
     want=st.text[st.gi];
     ok=TOUCH?ch.toLowerCase()===want.toLowerCase():ch===want; // capital letters do not matter on a phone or tablet
-    if(ok){
-      st.ok++;st.e+=KICK*BOOST;st.gi++;was=st.li;
-      if(st.gi>=st.text.length){st.text=newText(false);st.gi=0;layoutText();return}  // typed it all: keep going with a fresh order
-      while(st.li<st.lines.length-1&&st.gi>=st.lines[st.li][1])st.li++;
-      if(st.li!==was)renderLines(true);else fillRow();
-    }else{
-      st.miss++;st.e*=0.88;
+    // Right or wrong, the letter is done and the next one comes up. A right letter pushes the runner on;
+    // a wrong one pushes nothing, knocks some speed off, and stays marked in red.
+    if(ok){st.ok++;st.e+=KICK*BOOST}
+    else{
+      st.miss++;st.e*=0.88;st.bad[st.gi]=1;
       bib.classList.remove("oops");void bib.offsetWidth;bib.classList.add("oops");
       clearTimeout(oopsTimer);oopsTimer=setTimeout(function(){bib.classList.remove("oops")},190);
     }
+    st.gi++;was=st.li;
+    if(st.gi>=st.text.length){st.text=newText(false);st.gi=0;st.bad={};layoutText();return}  // typed it all: keep going with a fresh order
+    while(st.li<st.lines.length-1&&st.gi>=st.lines[st.li][1])st.li++;
+    if(st.li!==was)renderLines(true);else fillRow();
   }
   function finish(){
     st.mode="done";st.e=Math.max(st.e,200);music();
     st.run={laps:LAPS,time:Math.round(st.t*100)/100,wpm:wpm(),err:st.miss,saved:false}; // what goes on the leaderboard, if the player adds it
+    if(st.demo)hsForm.hidden=true; // a demo race does not go on the leaderboard
     if(TOUCH)setTimeout(function(){box.blur()},600); // put the keyboard away so the results have room
     $("sTime").textContent=fmtTime(st.t);$("sWpm").textContent=wpm();
     elHint.textContent="You crossed the finish line!";
@@ -1616,10 +1644,11 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     quiet(finishMusic);play(endMusic,true);
     wrap.scrollIntoView({block:"start"});
     try{$("again").focus({preventScroll:true})}catch(e){}
+    if(st.demo){clearTimeout(demoTimer);demoTimer=setTimeout(endDemo,10000)} // the demo shows its podium for a bit, then goes back to the title
   }
   function reset(focus){
     clearTimeout(doneTimer);
-    st={mode:PREVIEW?"run":"count",cd:0,cdn:0,dist:Math.min(course-1,PREVIEW*PXM/ART),v:0,e:0,p:0,t:0,clock:0,text:newText(true),gi:0,li:0,lines:[],ok:0,miss:0,top:0,act:0,lastKey:0,slow:false,dust:[],confetti:[],seg:0,note:0};
+    st={mode:PREVIEW?"run":"count",cd:0,cdn:0,dist:Math.min(course-1,PREVIEW*PXM/ART),v:0,e:0,p:0,t:0,clock:0,text:newText(true),gi:0,li:0,lines:[],bad:{},ok:0,miss:0,top:0,act:0,lastKey:0,slow:false,dust:[],confetti:[],seg:0,note:0,demo:false,demoT:0};
     st.seg=where(st.dist*ART).si;
     // The rest of the field: 48 other runners from slowest to fastest, each with a steady pace of their own, and the Eagle.
     // Regular: the 24 slowest type 2.5 to 20 words per minute, so the back markers are under 5. The 24 fastest type 20 to 30.
@@ -1717,12 +1746,38 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     if(!wrap.classList.contains("intro")) return;
     wrap.classList.remove("intro");showScreen(null);resize();reset(true);
   }
+  // The attract mode. The demo races one lap in regular mode with a runner picked at random, and puts everything back after.
+  function startDemo(){
+    if(demo||!wrap.classList.contains("intro"))return;
+    demo={laps:LAPS,hard:HARD,chosen:chosen};
+    buildRoute(1);HARD=false;chosen=Math.floor(Math.random()*CHARS.length);
+    wrap.classList.remove("intro");showScreen(null);resize();reset(false);
+    st.demo=true;st.demoT=1;
+    $("restart").hidden=true;
+    elHint.textContent=TOUCH?"This is a demo. Tap anywhere to race for real.":"This is a demo. Press Enter to race for real.";
+    music();
+  }
+  function endDemo(){ // back to the title screen, with the player's own runner, laps and difficulty restored
+    if(!demo)return;
+    clearTimeout(demoTimer);clearTimeout(doneTimer);
+    buildRoute(demo.laps);HARD=demo.hard;chosen=demo.chosen;demo=null;
+    showLapChoice();showModeChoice();
+    st.demo=false;st.mode="count";elResult.hidden=true;hsForm.hidden=false;
+    $("restart").hidden=false;
+    try{box.blur()}catch(e){}
+    wrap.classList.remove("outro","kb");wrap.classList.add("intro");showScreen(null);
+    window.scrollTo(0,0);idleAt=performance.now();music();
+  }
+  function exitDemo(){endDemo();showPicker()} // someone wants to play: straight to the runner picker
+  // Any click or tap during the demo goes to the picker, and nothing else gets it (the podium's buttons included).
+  document.addEventListener("click",function(e){if(demo){e.preventDefault();e.stopPropagation();exitDemo()}},true);
+  $("restart").addEventListener("click",function(){if(!demo)reset(true)}); // the same runner, laps and difficulty, from the countdown
   $("start").addEventListener("click",showPicker);
   if(TOUCH) $("startHint").textContent="Tap to start";
   if(PREVIEW) wrap.classList.remove("intro");
   music();
   // Every tap, click and key press also makes sure the right music is playing, in case the browser refused to start it on its own.
-  ["pointerdown","touchend","click","keydown"].forEach(function(ev){document.addEventListener(ev,function(){music();unlock()},true)});
+  ["pointerdown","touchend","click","keydown"].forEach(function(ev){document.addEventListener(ev,function(){idleAt=performance.now();music();unlock()},true)});
 
   /* ---------- leaderboard ----------
      The scores live in a Firebase database (free plan). Runs are stored by how they were played: computer or mobile,
@@ -1824,6 +1879,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   document.addEventListener("keydown",function(e){
     if(e.ctrlKey||e.metaKey||e.altKey) return;
     if(e.target===iniBox) return; // the initials box keeps its own letters
+    if(demo){if(e.key==="Enter"||(e.key&&e.key.length===1)){e.preventDefault();exitDemo()}return} // Enter (or any letter) during the demo: let them play
     if(wrap.classList.contains("intro")){
       if(titleEl.classList.contains("hs")){if(e.key==="Escape")hideScores();return}
       if(titleEl.classList.contains("laps")){if(e.key==="1"||e.key==="2"||e.key==="3"){e.preventDefault();lapBtns[+e.key-1].click()}} // number keys pick the laps
@@ -1879,7 +1935,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   if(window.ResizeObserver) new ResizeObserver(resize).observe(stage);
 
   reset(false);resize();
-  requestAnimationFrame(function(t){last=t;requestAnimationFrame(step)});
+  requestAnimationFrame(function(t){last=idleAt=t;requestAnimationFrame(step)});
 })();
 </script>
 </body>
