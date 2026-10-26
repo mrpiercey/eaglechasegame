@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Eagle Chase 5K Finish Line</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@500;600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="finish">
+<main class="wrap top">
+  <header class="bar">
+    <img class="birds tiny" src="birds.png" alt="">
+    <h1 class="title">Finish Line<span class="small">Eagle Chase 5K</span></h1>
+    <p class="clock mini" id="clock"><span id="main">00:00</span><span class="tenths" id="tenths">.0</span></p>
+  </header>
+
+  <div class="actions" id="signedOut">
+    <button class="btn quiet signin" id="signInBtn" type="button">Sign in with Google</button>
+    <p class="note">Finish-line helpers sign in here, then Mr. Piercey approves them.</p>
+  </div>
+
+  <div class="actions" id="waiting" hidden>
+    <p class="note"><strong id="whoEmail"></strong> is signed in. Waiting for Mr. Piercey to approve this helper on the Runners page.</p>
+    <button class="btn quiet" id="askBtn" type="button">Ask for approval</button>
+    <p class="note ok" id="askMsg" hidden>Request sent. This page unlocks on its own once approved.</p>
+    <button class="btn quiet" id="signOutBtn2" type="button">Sign out</button>
+  </div>
+
+  <div id="panel" hidden>
+    <form id="bibForm" class="bibForm">
+      <label for="bib" class="label">Type the bib number and press Enter the moment they cross</label>
+      <div class="bibRow">
+        <input id="bib" class="bibInput" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="Bib #" autofocus>
+        <button class="btn go square" id="recordBtn" type="submit">Record</button>
+      </div>
+      <p class="note warn" id="msg" hidden></p>
+    </form>
+
+    <section class="recent">
+      <div class="recentHead">
+        <h2 class="label">Just finished <span id="count"></span></h2>
+        <button class="btn quiet tiny" id="undoBtn" type="button" hidden>Undo last</button>
+      </div>
+      <ol class="finishList" id="list"></ol>
+      <p class="note" id="empty">No finishers yet.</p>
+    </section>
+    <p class="who"><span id="who"></span> &middot; <a href="#" id="signOutBtn">Sign out</a> &middot; <a href="results.html">Results</a></p>
+  </div>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="race-clock.js"></script>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var db = RaceClock.db;
+  var mainEl = $("main"), tenthsEl = $("tenths"), clockEl = $("clock");
+  var lastMain = "", lastTenths = "";
+  var runners = {}, finishes = {}, me = null, lastRecorded = null;
+
+  function paint() {
+    var f = RaceClock.format(RaceClock.elapsedMs());
+    if (f.main !== lastMain) { mainEl.textContent = f.main; lastMain = f.main; }
+    if (f.tenths !== lastTenths) { tenthsEl.textContent = f.tenths; lastTenths = f.tenths; }
+    requestAnimationFrame(paint);
+  }
+  requestAnimationFrame(paint);
+  RaceClock.onChange(function (s) { clockEl.classList.toggle("finished", s.status === "finished"); });
+
+  db.ref("runners").on("value", function (snap) { runners = snap.val() || {}; render(); });
+  db.ref("finishes").on("value", function (snap) { finishes = snap.val() || {}; render(); });
+
+  function runnerName(bib) {
+    var r = runners[bib];
+    if (!r) return "Unknown bib";
+    return ((r.first || "") + " " + (r.last || "")).trim() || "Unknown name";
+  }
+  function groupLabel(bib) {
+    var r = runners[bib]; if (!r) return "";
+    var g = RaceClock.ageGroup(Number(r.age));
+    return [r.gender === "M" ? "Male" : r.gender === "F" ? "Female" : "", g ? g.label : ""].filter(Boolean).join(", ");
+  }
+
+  function render() {
+    var list = $("list"); list.innerHTML = "";
+    var all = Object.keys(finishes).map(function (k) { return finishes[k]; }).sort(function (a, b) { return b.at - a.at; });
+    $("count").textContent = all.length ? "(" + all.length + " total)" : "";
+    $("empty").hidden = all.length > 0;
+    $("undoBtn").hidden = !(lastRecorded && finishes[lastRecorded]);
+    all.slice(0, 12).forEach(function (f) {
+      var li = document.createElement("li");
+      var name = runnerName(String(f.bib)), group = groupLabel(String(f.bib));
+      li.innerHTML = '<span class="fbib">#' + f.bib + '</span><span class="fname">' + escapeHtml(name) +
+        (group ? '<small>' + escapeHtml(group) + '</small>' : '<small class="warnText">Not on the runner list</small>') +
+        '</span><span class="ftime">' + RaceClock.formatFull(f.elapsed) + '</span>';
+      list.appendChild(li);
+    });
+  }
+  function escapeHtml(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+
+  function say(text, kind) { var m = $("msg"); m.textContent = text; m.className = "note " + (kind || "warn"); m.hidden = !text; }
+
+  $("bibForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var elapsed = RaceClock.elapsedMs();       // grab the time first, before anything else
+    var bib = $("bib").value.replace(/\D/g, "");
+    $("bib").value = ""; $("bib").focus();
+    if (!bib) return;
+    if (RaceClock.getState().status !== "running") { say("The race clock is not running, so there is no time to record yet."); return; }
+    if (finishes[bib]) { say("Bib " + bib + " (" + runnerName(bib) + ") already finished at " + RaceClock.formatFull(finishes[bib].elapsed) + ". Not recorded again."); return; }
+    var entry = { bib: bib, elapsed: elapsed, at: firebase.database.ServerValue.TIMESTAMP, by: me ? me.email : "" };
+    db.ref("finishes/" + bib).set(entry).then(function () {
+      lastRecorded = bib;
+      say("#" + bib + " " + runnerName(bib) + " at " + RaceClock.formatFull(elapsed), "ok");
+      render();
+    }).catch(function (err) { say("Could not save: " + (err && err.message ? err.message : "no permission")); });
+  });
+
+  $("undoBtn").addEventListener("click", function () {
+    if (!lastRecorded) return;
+    var bib = lastRecorded;
+    db.ref("finishes/" + bib).remove().then(function () { say("Removed #" + bib + ". Type it again when they cross.", "ok"); lastRecorded = null; render(); $("bib").focus(); });
+  });
+
+  $("signInBtn").addEventListener("click", function () { RaceClock.signIn(); });
+  function signOut(e) { if (e) e.preventDefault(); RaceClock.signOut(); }
+  $("signOutBtn").addEventListener("click", signOut);
+  $("signOutBtn2").addEventListener("click", signOut);
+  $("askBtn").addEventListener("click", function () { if (me && me.user) RaceClock.requestAccess(me.user).then(function () { $("askMsg").hidden = false; }); });
+
+  RaceClock.onUser(function (u) {
+    me = u;
+    $("signedOut").hidden = !!u.user;
+    $("waiting").hidden = !u.user || u.isStaff;
+    $("panel").hidden = !u.isStaff;
+    $("who").textContent = u.email;
+    $("whoEmail").textContent = u.email;
+    if (u.isStaff) setTimeout(function () { $("bib").focus(); }, 50);
+  });
+})();
+</script>
+</body>
+</html>

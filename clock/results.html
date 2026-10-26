@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Eagle Chase 5K Results</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@500;600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="results">
+<main class="wrap top">
+  <header class="bar">
+    <img class="birds tiny" src="birds.png" alt="">
+    <h1 class="title">Live Results<span class="small">The 2026 Ashland Eagle Chase 5K</span></h1>
+    <p class="clock mini" id="clock"><span id="main">00:00</span><span class="tenths" id="tenths">.0</span></p>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button class="tab on" data-view="overall" type="button">Overall</button>
+    <button class="tab" data-view="M" type="button">Male</button>
+    <button class="tab" data-view="F" type="button">Female</button>
+  </nav>
+
+  <p class="note center" id="summary">No finishers yet. Results appear here the moment a bib is entered at the finish line.</p>
+  <div id="boards"></div>
+  <p class="foot links"><a href="index.html">Big clock</a> &middot; eaglechase5k.com</p>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="race-clock.js"></script>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var db = RaceClock.db;
+  var mainEl = $("main"), tenthsEl = $("tenths"), clockEl = $("clock");
+  var lastMain = "", lastTenths = "";
+  var runners = {}, finishes = {}, view = "overall";
+
+  function paint() {
+    var f = RaceClock.format(RaceClock.elapsedMs());
+    if (f.main !== lastMain) { mainEl.textContent = f.main; lastMain = f.main; }
+    if (f.tenths !== lastTenths) { tenthsEl.textContent = f.tenths; lastTenths = f.tenths; }
+    requestAnimationFrame(paint);
+  }
+  requestAnimationFrame(paint);
+  RaceClock.onChange(function (s) { clockEl.classList.toggle("finished", s.status === "finished"); });
+
+  db.ref("runners").on("value", function (snap) { runners = snap.val() || {}; render(); });
+  db.ref("finishes").on("value", function (snap) { finishes = snap.val() || {}; render(); });
+
+  $("tabs").addEventListener("click", function (e) {
+    var b = e.target.closest(".tab"); if (!b) return;
+    view = b.dataset.view;
+    [].forEach.call(document.querySelectorAll(".tab"), function (t) { t.classList.toggle("on", t === b); });
+    render();
+  });
+
+  function escapeHtml(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+
+  function rows() {
+    return Object.keys(finishes).map(function (bib) {
+      var f = finishes[bib], r = runners[bib] || {};
+      var age = r.age === undefined || r.age === "" ? null : Number(r.age);
+      return { bib: bib, elapsed: f.elapsed, name: ((r.first || "") + " " + (r.last || "")).trim(), gender: r.gender || "", age: age, group: RaceClock.ageGroup(age), known: !!runners[bib] };
+    }).sort(function (a, b) { return a.elapsed - b.elapsed; });
+  }
+
+  function table(title, list, showGroup) {
+    if (!list.length) return "";
+    var h = '<section class="board"><h2 class="boardTitle">' + escapeHtml(title) + ' <span>' + list.length + '</span></h2><table class="rt"><thead><tr><th>Place</th><th>Bib</th><th>Name</th>' + (showGroup ? '<th>Division</th>' : '') + '<th>Time</th></tr></thead><tbody>';
+    list.forEach(function (r, i) {
+      var div = [r.gender === "M" ? "M" : r.gender === "F" ? "F" : "", r.group ? r.group.key : ""].filter(Boolean).join(" ");
+      h += '<tr class="' + (i < 3 ? "top" + (i + 1) : "") + '"><td class="place">' + (i + 1) + '</td><td class="bibcol">#' + escapeHtml(r.bib) + '</td><td class="namecol">' + (r.known ? escapeHtml(r.name || "Unknown name") : '<em>Not on runner list</em>') + '</td>' + (showGroup ? '<td>' + escapeHtml(div) + '</td>' : '') + '<td class="time">' + RaceClock.formatFull(r.elapsed) + '</td></tr>';
+    });
+    return h + "</tbody></table></section>";
+  }
+
+  function render() {
+    var all = rows();
+    $("summary").hidden = all.length > 0;
+    var html = "";
+    if (view === "overall") {
+      html = table("Overall", all, true);
+    } else {
+      var g = all.filter(function (r) { return r.gender === view; });
+      var label = view === "M" ? "Male" : "Female";
+      html += table(label + " overall", g, true);
+      RaceClock.AGE_GROUPS.forEach(function (ag) {
+        html += table(label + ", " + ag.label, g.filter(function (r) { return r.group && r.group.key === ag.key; }), false);
+      });
+      var noAge = g.filter(function (r) { return !r.group; });
+      if (noAge.length) html += table(label + ", age not listed", noAge, false);
+    }
+    $("boards").innerHTML = html;
+  }
+})();
+</script>
+</body>
+</html>

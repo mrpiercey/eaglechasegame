@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Eagle Chase 5K Runners</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@500;600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="runners">
+<main class="wrap top">
+  <header class="bar">
+    <img class="birds tiny" src="birds.png" alt="">
+    <h1 class="title">Runner List<span class="small">Eagle Chase 5K</span></h1>
+  </header>
+
+  <div class="actions" id="signedOut">
+    <button class="btn quiet signin" id="signInBtn" type="button">Sign in with Google</button>
+    <p class="note">This page is for Mr. Piercey only.</p>
+  </div>
+  <div class="actions" id="notAllowed" hidden>
+    <p class="note"><strong id="whoEmail"></strong> can't edit the runner list.</p>
+    <button class="btn quiet" id="signOutBtn2" type="button">Sign out</button>
+  </div>
+
+  <div id="panel" hidden>
+    <section class="card">
+      <h2 class="label">Finish-line helpers waiting for approval</h2>
+      <ul class="plain" id="requests"></ul>
+      <p class="note" id="noRequests">Nobody is waiting. Helpers sign in on the Finish Line page and tap "Ask for approval."</p>
+      <h2 class="label">Approved helpers</h2>
+      <ul class="plain" id="staff"></ul>
+    </section>
+
+    <section class="card">
+      <h2 class="label">Paste the runner list</h2>
+      <p class="note">In RunSignup, export participants as a spreadsheet, open it, select all, copy, and paste here. I'll look for columns named bib, first name, last name, gender, and age (or date of birth). Columns can be in any order.</p>
+      <textarea id="paste" class="pasteBox" rows="8" placeholder="Bib	First Name	Last Name	Gender	Age&#10;101	Ada	Lovelace	F	10"></textarea>
+      <div class="confirm">
+        <button class="btn quiet" id="previewBtn" type="button">Check it</button>
+        <button class="btn go square" id="importBtn" type="button" disabled>Add to runner list</button>
+      </div>
+      <p class="note" id="previewMsg" hidden></p>
+    </section>
+
+    <section class="card">
+      <h2 class="label">Add one runner</h2>
+      <form id="oneForm" class="oneForm">
+        <input id="oBib" type="text" inputmode="numeric" placeholder="Bib" required>
+        <input id="oFirst" type="text" placeholder="First name" required>
+        <input id="oLast" type="text" placeholder="Last name">
+        <select id="oGender"><option value="">Gender</option><option value="M">Male</option><option value="F">Female</option></select>
+        <input id="oAge" type="text" inputmode="numeric" placeholder="Age">
+        <button class="btn quiet" type="submit">Add</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2 class="label">Runners on the list <span id="rCount"></span></h2>
+      <input id="search" class="timeInput wide" type="search" placeholder="Search by bib or name">
+      <div class="scrollX"><table class="rt" id="rTable"><thead><tr><th>Bib</th><th>Name</th><th>Gender</th><th>Age</th><th>Division</th><th></th></tr></thead><tbody></tbody></table></div>
+    </section>
+
+    <section class="card danger">
+      <h2 class="label">Danger zone</h2>
+      <div class="confirm">
+        <button class="btn quiet" id="clearFinishes" type="button">Clear all finish times</button>
+        <button class="btn quiet" id="clearRunners" type="button">Clear the runner list</button>
+      </div>
+      <div class="confirm" id="dangerConfirm" hidden>
+        <p class="note warn" id="dangerText"></p>
+        <button class="btn stop small" id="dangerYes" type="button">Yes, do it</button>
+        <button class="btn quiet" id="dangerNo" type="button">Never mind</button>
+      </div>
+    </section>
+    <p class="who"><span id="who"></span> &middot; <a href="#" id="signOutBtn">Sign out</a> &middot; <a href="control.html">Starter</a> &middot; <a href="finish.html">Finish line</a> &middot; <a href="results.html">Results</a></p>
+  </div>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="race-clock.js"></script>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var db = RaceClock.db;
+  var runners = {}, parsed = null;
+  var RACE_DAY = new Date(2026, 10, 7); // November 7, 2026
+
+  function escapeHtml(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+
+  // ---- Sign in ----
+  $("signInBtn").addEventListener("click", function () { RaceClock.signIn(); });
+  function signOut(e) { if (e) e.preventDefault(); RaceClock.signOut(); }
+  $("signOutBtn").addEventListener("click", signOut);
+  $("signOutBtn2").addEventListener("click", signOut);
+  RaceClock.onUser(function (u) {
+    $("signedOut").hidden = !!u.user;
+    $("notAllowed").hidden = !u.user || u.isOwner;
+    $("panel").hidden = !u.isOwner;
+    $("who").textContent = u.email; $("whoEmail").textContent = u.email;
+    if (u.isOwner) watchStaff();
+  });
+
+  // ---- Helper approvals ----
+  var watching = false;
+  function watchStaff() {
+    if (watching) return; watching = true;
+    db.ref("requests").on("value", function (snap) {
+      var v = snap.val() || {}; var ul = $("requests"); ul.innerHTML = "";
+      var keys = Object.keys(v); $("noRequests").hidden = keys.length > 0;
+      keys.forEach(function (uid) {
+        var li = document.createElement("li");
+        li.innerHTML = '<span>' + escapeHtml(v[uid].email || uid) + '</span> <button class="btn quiet tiny" type="button">Approve</button> <button class="btn quiet tiny" type="button">Ignore</button>';
+        li.children[1].addEventListener("click", function () { db.ref("staff/" + uid).set({ email: v[uid].email || "" }).then(function () { return db.ref("requests/" + uid).remove(); }); });
+        li.children[2].addEventListener("click", function () { db.ref("requests/" + uid).remove(); });
+        ul.appendChild(li);
+      });
+    });
+    db.ref("staff").on("value", function (snap) {
+      var v = snap.val() || {}; var ul = $("staff"); ul.innerHTML = "";
+      Object.keys(v).forEach(function (uid) {
+        var li = document.createElement("li");
+        li.innerHTML = '<span>' + escapeHtml(v[uid].email || uid) + '</span> <button class="btn quiet tiny" type="button">Remove</button>';
+        li.children[1].addEventListener("click", function () { db.ref("staff/" + uid).remove(); });
+        ul.appendChild(li);
+      });
+      if (!Object.keys(v).length) ul.innerHTML = '<li class="note">Only you so far.</li>';
+    });
+  }
+
+  // ---- Roster ----
+  db.ref("runners").on("value", function (snap) { runners = snap.val() || {}; renderRunners(); });
+  $("search").addEventListener("input", renderRunners);
+
+  function renderRunners() {
+    var q = $("search").value.trim().toLowerCase();
+    var tb = $("rTable").tBodies[0]; tb.innerHTML = "";
+    var keys = Object.keys(runners).sort(function (a, b) { return Number(a) - Number(b); });
+    $("rCount").textContent = "(" + keys.length + ")";
+    keys.forEach(function (bib) {
+      var r = runners[bib]; var name = ((r.first || "") + " " + (r.last || "")).trim();
+      if (q && (bib + " " + name).toLowerCase().indexOf(q) === -1) return;
+      var g = RaceClock.ageGroup(Number(r.age));
+      var tr = document.createElement("tr");
+      tr.innerHTML = '<td class="bibcol">#' + escapeHtml(bib) + '</td><td class="namecol">' + escapeHtml(name) + '</td><td>' + (r.gender === "M" ? "Male" : r.gender === "F" ? "Female" : "") + '</td><td>' + escapeHtml(r.age === undefined ? "" : r.age) + '</td><td>' + (g ? g.label : "") + '</td><td><button class="btn quiet tiny" type="button">Remove</button></td>';
+      tr.querySelector("button").addEventListener("click", function () { db.ref("runners/" + bib).remove(); });
+      tb.appendChild(tr);
+    });
+  }
+
+  $("oneForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var bib = $("oBib").value.replace(/\D/g, ""); if (!bib) return;
+    var age = $("oAge").value.replace(/\D/g, "");
+    db.ref("runners/" + bib).set({ bib: bib, first: $("oFirst").value.trim(), last: $("oLast").value.trim(), gender: $("oGender").value, age: age ? Number(age) : "" })
+      .then(function () { $("oneForm").reset(); $("oBib").focus(); });
+  });
+
+  // ---- Paste import ----
+  function normGender(s) {
+    s = String(s || "").trim().toLowerCase();
+    if (!s) return "";
+    if (s[0] === "m" || s === "boy" || s === "male") return "M";
+    if (s[0] === "f" || s === "girl" || s === "female" || s === "woman") return "F";
+    return "";
+  }
+  function ageFromDob(s) {
+    var d = new Date(s); if (isNaN(d)) return "";
+    var a = RACE_DAY.getFullYear() - d.getFullYear();
+    if (RACE_DAY.getMonth() < d.getMonth() || (RACE_DAY.getMonth() === d.getMonth() && RACE_DAY.getDate() < d.getDate())) a--;
+    return a >= 0 && a < 120 ? a : "";
+  }
+  function splitLine(line, sep) {
+    if (sep === "\t") return line.split("\t");
+    var out = [], cur = "", q = false;
+    for (var i = 0; i < line.length; i++) {
+      var c = line[i];
+      if (c === '"') { if (q && line[i + 1] === '"') { cur += '"'; i++; } else q = !q; }
+      else if (c === "," && !q) { out.push(cur); cur = ""; }
+      else cur += c;
+    }
+    out.push(cur); return out;
+  }
+  function parsePaste(text) {
+    var lines = text.split(/\r?\n/).filter(function (l) { return l.trim(); });
+    if (lines.length < 2) return { error: "I need a header row plus at least one runner." };
+    var sep = lines[0].indexOf("\t") !== -1 ? "\t" : ",";
+    var head = splitLine(lines[0], sep).map(function (h) { return h.trim().toLowerCase(); });
+    function col(tests) { for (var i = 0; i < head.length; i++) for (var t = 0; t < tests.length; t++) if (tests[t].test(head[i])) return i; return -1; }
+    var cBib = col([/^bib/, /bib ?(num|#|number)/, /bib/]);
+    var cFirst = col([/^first/, /first ?name/]);
+    var cLast = col([/^last/, /last ?name/, /surname/]);
+    var cName = col([/^(full )?name$/, /participant/]);
+    var cGender = col([/gender/, /^sex$/]);
+    var cAge = col([/^age$/, /race ?age/, /^age /, /age/]);
+    var cDob = col([/birth/, /dob/]);
+    if (cBib === -1) return { error: "I couldn't find a bib column. The header row needs a column with 'bib' in its name." };
+    if (cFirst === -1 && cName === -1) return { error: "I couldn't find a first name (or name) column." };
+    var out = {}, skipped = 0;
+    for (var i = 1; i < lines.length; i++) {
+      var f = splitLine(lines[i], sep);
+      var bib = String(f[cBib] || "").replace(/\D/g, "");
+      if (!bib) { skipped++; continue; }
+      var first = "", last = "";
+      if (cFirst !== -1) { first = (f[cFirst] || "").trim(); last = cLast !== -1 ? (f[cLast] || "").trim() : ""; }
+      else { var parts = (f[cName] || "").trim().split(/\s+/); first = parts.shift() || ""; last = parts.join(" "); }
+      var age = "";
+      if (cAge !== -1 && String(f[cAge] || "").trim() !== "") age = Number(String(f[cAge]).replace(/\D/g, ""));
+      if (age === "" && cDob !== -1) age = ageFromDob(f[cDob]);
+      out[bib] = { bib: bib, first: first, last: last, gender: cGender !== -1 ? normGender(f[cGender]) : "", age: isNaN(age) ? "" : age };
+    }
+    return { runners: out, skipped: skipped, found: { gender: cGender !== -1, age: cAge !== -1 || cDob !== -1 } };
+  }
+
+  $("previewBtn").addEventListener("click", function () {
+    parsed = parsePaste($("paste").value); var m = $("previewMsg"); m.hidden = false;
+    if (parsed.error) { m.className = "note warn"; m.textContent = parsed.error; $("importBtn").disabled = true; return; }
+    var n = Object.keys(parsed.runners).length, sample = parsed.runners[Object.keys(parsed.runners)[0]];
+    m.className = "note ok";
+    m.textContent = "Found " + n + " runners" + (parsed.skipped ? " (" + parsed.skipped + " rows had no bib and were skipped)" : "") +
+      ". First one: #" + sample.bib + " " + sample.first + " " + sample.last + (sample.gender ? ", " + sample.gender : "") + (sample.age !== "" ? ", age " + sample.age : "") + "." +
+      (!parsed.found.gender ? " No gender column found." : "") + (!parsed.found.age ? " No age or birthday column found." : "");
+    $("importBtn").disabled = n === 0;
+  });
+  $("importBtn").addEventListener("click", function () {
+    if (!parsed || parsed.error) return;
+    $("importBtn").disabled = true;
+    db.ref("runners").update(parsed.runners).then(function () {
+      $("previewMsg").textContent = "Added " + Object.keys(parsed.runners).length + " runners. Runners with the same bib were updated.";
+      $("paste").value = ""; parsed = null;
+    }).catch(function (err) { $("previewMsg").className = "note warn"; $("previewMsg").textContent = "Could not save: " + err.message; });
+  });
+
+  // ---- Danger zone ----
+  var dangerAction = null;
+  function askDanger(text, fn) { $("dangerText").textContent = text; $("dangerConfirm").hidden = false; dangerAction = fn; }
+  $("clearFinishes").addEventListener("click", function () { askDanger("This erases every finish time recorded so far. Sure?", function () { return db.ref("finishes").remove(); }); });
+  $("clearRunners").addEventListener("click", function () { askDanger("This erases the whole runner list. Sure?", function () { return db.ref("runners").remove(); }); });
+  $("dangerNo").addEventListener("click", function () { $("dangerConfirm").hidden = true; dangerAction = null; });
+  $("dangerYes").addEventListener("click", function () { if (dangerAction) dangerAction().then(function () { $("dangerConfirm").hidden = true; dangerAction = null; }); });
+})();
+</script>
+</body>
+</html>

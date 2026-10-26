@@ -29,15 +29,30 @@
   <div class="actions" id="panel" hidden>
     <button class="btn go" id="goBtn" type="button">GO</button>
     <button class="btn stop" id="stopBtn" type="button" hidden>Stop</button>
+    <button class="btn" id="resumeBtn" type="button" hidden>Resume</button>
+
+    <details class="adjust" id="adjust" hidden>
+      <summary>Adjust the time</summary>
+      <form id="adjustForm" class="adjustForm">
+        <label for="adjustInput" class="note">Type the correct race time (like <strong>4:30</strong>) and the clock jumps there and keeps running.</label>
+        <div class="confirm">
+          <input id="adjustInput" class="timeInput" type="text" inputmode="numeric" placeholder="mm:ss" autocomplete="off">
+          <button class="btn quiet" id="adjustBtn" type="submit">Set time</button>
+        </div>
+        <p class="note warn" id="adjustMsg" hidden></p>
+      </form>
+    </details>
+
     <button class="btn quiet" id="resetBtn" type="button" hidden>Reset the clock</button>
     <div class="confirm" id="resetConfirm" hidden>
       <p class="note">Reset wipes the time on every screen. Sure?</p>
-      <button class="btn stop" id="resetYes" type="button" style="font-size:22px;width:auto">Yes, reset</button>
+      <button class="btn stop small" id="resetYes" type="button">Yes, reset</button>
       <button class="btn quiet" id="resetNo" type="button">Keep it</button>
     </div>
     <p class="note" id="hint">Pressing GO starts every Eagle Chase clock at the same moment.</p>
     <p class="who"><span id="who"></span> &middot; <a href="#" id="signOutBtn">Sign out</a></p>
   </div>
+  <p class="foot links"><a href="finish.html">Finish line</a> &middot; <a href="results.html">Results</a> &middot; <a href="runners.html">Runners</a> &middot; <a href="index.html">Big clock</a></p>
 </main>
 
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
@@ -65,31 +80,27 @@
     statusEl.textContent = s.status === "running" ? "Race is on!" : s.status === "finished" ? "Clock stopped" : "Waiting for the start";
     $("goBtn").hidden = s.status !== "ready";
     $("stopBtn").hidden = s.status !== "running";
+    $("resumeBtn").hidden = s.status !== "finished";
+    $("adjust").hidden = s.status === "ready";
     $("resetBtn").hidden = s.status === "ready";
     $("resetConfirm").hidden = true;
     $("hint").textContent = s.status === "ready"
       ? "Pressing GO starts every Eagle Chase clock at the same moment."
-      : s.status === "running" ? "Stop freezes the clock on every screen." : "Reset gets the clock ready for another start.";
+      : s.status === "running" ? "Stop freezes the clock on every screen. Resume picks up where it left off."
+      : "Resume keeps counting from the stopped time. Reset gets the clock ready for another start.";
   });
 
-  // Sign in with Google, then show the buttons only to admins.
-  var auth = firebase.auth();
-  var provider = new firebase.auth.GoogleAuthProvider();
-  $("signInBtn").addEventListener("click", function () {
-    auth.signInWithPopup(provider).catch(function () { auth.signInWithRedirect(provider); });
-  });
-  function signOut(e) { if (e) e.preventDefault(); auth.signOut(); }
+  $("signInBtn").addEventListener("click", function () { RaceClock.signIn(); });
+  function signOut(e) { if (e) e.preventDefault(); RaceClock.signOut(); }
   $("signOutBtn").addEventListener("click", signOut);
   $("signOutBtn2").addEventListener("click", signOut);
 
-  auth.onAuthStateChanged(function (user) {
-    var email = user && user.email ? user.email.toLowerCase() : "";
-    var admin = email && window.EAGLE_ADMINS.map(function (a) { return a.toLowerCase(); }).indexOf(email) !== -1;
-    $("signedOut").hidden = !!user;
-    $("notAllowed").hidden = !user || admin;
-    $("panel").hidden = !admin;
-    $("who").textContent = email;
-    $("whoEmail").textContent = email;
+  RaceClock.onUser(function (u) {
+    $("signedOut").hidden = !!u.user;
+    $("notAllowed").hidden = !u.user || u.isOwner;
+    $("panel").hidden = !u.isOwner;
+    $("who").textContent = u.email;
+    $("whoEmail").textContent = u.email;
   });
 
   function busy(btn, p) {
@@ -99,9 +110,19 @@
   }
   $("goBtn").addEventListener("click", function () { busy($("goBtn"), RaceClock.start()); });
   $("stopBtn").addEventListener("click", function () { busy($("stopBtn"), RaceClock.stop()); });
+  $("resumeBtn").addEventListener("click", function () { busy($("resumeBtn"), RaceClock.resume()); });
   $("resetBtn").addEventListener("click", function () { $("resetConfirm").hidden = false; });
   $("resetNo").addEventListener("click", function () { $("resetConfirm").hidden = true; });
   $("resetYes").addEventListener("click", function () { busy($("resetYes"), RaceClock.reset()); });
+
+  $("adjustForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var msg = $("adjustMsg");
+    var ms = RaceClock.parseTime($("adjustInput").value);
+    if (ms === null) { msg.textContent = "Type the time as minutes:seconds, like 4:30."; msg.hidden = false; return; }
+    msg.hidden = true;
+    busy($("adjustBtn"), RaceClock.setElapsed(ms).then(function () { $("adjustInput").value = ""; $("adjust").open = false; }));
+  });
 })();
 </script>
 </body>
