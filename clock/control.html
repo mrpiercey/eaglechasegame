@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Eagle Chase 5K Starter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@500;600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="control">
+<main class="wrap">
+  <img class="birds" src="birds.png" alt="Two Ashland eagles flying">
+  <h1 class="title">Race Starter<span class="small">Eagle Chase 5K</span></h1>
+  <p class="clock" id="clock"><span id="main">00:00</span><span class="tenths" id="tenths">.0</span></p>
+  <p class="status" id="status">Waiting for the start</p>
+
+  <div class="actions" id="signedOut">
+    <button class="btn quiet signin" id="signInBtn" type="button">Sign in with Google</button>
+    <p class="note">Only race officials can start the clock. Sign in with the Google account that is on the admin list.</p>
+  </div>
+
+  <div class="actions" id="notAllowed" hidden>
+    <p class="note"><strong id="whoEmail"></strong> is not on the admin list, so this phone can only watch the clock.</p>
+    <button class="btn quiet" id="signOutBtn2" type="button">Sign out</button>
+  </div>
+
+  <div class="actions" id="panel" hidden>
+    <button class="btn go" id="goBtn" type="button">GO</button>
+    <button class="btn stop" id="stopBtn" type="button" hidden>Stop</button>
+    <button class="btn quiet" id="resetBtn" type="button" hidden>Reset the clock</button>
+    <div class="confirm" id="resetConfirm" hidden>
+      <p class="note">Reset wipes the time on every screen. Sure?</p>
+      <button class="btn stop" id="resetYes" type="button" style="font-size:22px;width:auto">Yes, reset</button>
+      <button class="btn quiet" id="resetNo" type="button">Keep it</button>
+    </div>
+    <p class="note" id="hint">Pressing GO starts every Eagle Chase clock at the same moment.</p>
+    <p class="who"><span id="who"></span> &middot; <a href="#" id="signOutBtn">Sign out</a></p>
+  </div>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="race-clock.js"></script>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var mainEl = $("main"), tenthsEl = $("tenths"), statusEl = $("status"), clockEl = $("clock");
+  var lastMain = "", lastTenths = "";
+
+  function paint() {
+    var f = RaceClock.format(RaceClock.elapsedMs());
+    if (f.main !== lastMain) { mainEl.textContent = f.main; lastMain = f.main; }
+    if (f.tenths !== lastTenths) { tenthsEl.textContent = f.tenths; lastTenths = f.tenths; }
+    requestAnimationFrame(paint);
+  }
+  requestAnimationFrame(paint);
+
+  RaceClock.onChange(function (s) {
+    clockEl.classList.toggle("finished", s.status === "finished");
+    statusEl.classList.toggle("live", s.status === "running");
+    statusEl.textContent = s.status === "running" ? "Race is on!" : s.status === "finished" ? "Clock stopped" : "Waiting for the start";
+    $("goBtn").hidden = s.status !== "ready";
+    $("stopBtn").hidden = s.status !== "running";
+    $("resetBtn").hidden = s.status === "ready";
+    $("resetConfirm").hidden = true;
+    $("hint").textContent = s.status === "ready"
+      ? "Pressing GO starts every Eagle Chase clock at the same moment."
+      : s.status === "running" ? "Stop freezes the clock on every screen." : "Reset gets the clock ready for another start.";
+  });
+
+  // Sign in with Google, then show the buttons only to admins.
+  var auth = firebase.auth();
+  var provider = new firebase.auth.GoogleAuthProvider();
+  $("signInBtn").addEventListener("click", function () {
+    auth.signInWithPopup(provider).catch(function () { auth.signInWithRedirect(provider); });
+  });
+  function signOut(e) { if (e) e.preventDefault(); auth.signOut(); }
+  $("signOutBtn").addEventListener("click", signOut);
+  $("signOutBtn2").addEventListener("click", signOut);
+
+  auth.onAuthStateChanged(function (user) {
+    var email = user && user.email ? user.email.toLowerCase() : "";
+    var admin = email && window.EAGLE_ADMINS.map(function (a) { return a.toLowerCase(); }).indexOf(email) !== -1;
+    $("signedOut").hidden = !!user;
+    $("notAllowed").hidden = !user || admin;
+    $("panel").hidden = !admin;
+    $("who").textContent = email;
+    $("whoEmail").textContent = email;
+  });
+
+  function busy(btn, p) {
+    btn.disabled = true;
+    p.catch(function (err) { statusEl.textContent = "Could not save: " + (err && err.message ? err.message : "check the database rules"); })
+     .then(function () { btn.disabled = false; });
+  }
+  $("goBtn").addEventListener("click", function () { busy($("goBtn"), RaceClock.start()); });
+  $("stopBtn").addEventListener("click", function () { busy($("stopBtn"), RaceClock.stop()); });
+  $("resetBtn").addEventListener("click", function () { $("resetConfirm").hidden = false; });
+  $("resetNo").addEventListener("click", function () { $("resetConfirm").hidden = true; });
+  $("resetYes").addEventListener("click", function () { busy($("resetYes"), RaceClock.reset()); });
+})();
+</script>
+</body>
+</html>

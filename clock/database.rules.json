@@ -1,0 +1,8 @@
+{
+  "rules": {
+    "race": {
+      ".read": true,
+      ".write": "auth != null && (auth.token.email == 'donald.piercey@gmail.com')"
+    }
+  }
+}

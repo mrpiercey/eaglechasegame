@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Eagle Chase 5K Race Clock</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@500;600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="display">
+<main class="wrap">
+  <img class="birds" src="birds.png" alt="Two Ashland eagles flying">
+  <h1 class="title">The 2026 Ashland<span class="small">Eagle Chase 5K</span></h1>
+  <hr class="rule">
+  <p class="clock" id="clock"><span id="main">00:00</span><span class="tenths" id="tenths">.0</span></p>
+  <p class="status" id="status">Waiting for the start</p>
+  <hr class="rule">
+  <p class="foot">Saturday, November 7 &middot; Ashland Elementary &middot; eaglechase5k.com</p>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="race-clock.js"></script>
+<script>
+(function () {
+  var clockEl = document.getElementById("clock");
+  var mainEl = document.getElementById("main");
+  var tenthsEl = document.getElementById("tenths");
+  var statusEl = document.getElementById("status");
+  var lastMain = "", lastTenths = "";
+
+  function paint() {
+    var f = RaceClock.format(RaceClock.elapsedMs());
+    if (f.main !== lastMain) { mainEl.textContent = f.main; lastMain = f.main; }
+    if (f.tenths !== lastTenths) { tenthsEl.textContent = f.tenths; lastTenths = f.tenths; }
+    requestAnimationFrame(paint);
+  }
+  requestAnimationFrame(paint);
+
+  RaceClock.onChange(function (s) {
+    clockEl.classList.toggle("finished", s.status === "finished");
+    statusEl.classList.toggle("live", s.status === "running");
+    if (s.status === "running") statusEl.textContent = "Race is on! Go Eagles!";
+    else if (s.status === "finished") statusEl.textContent = "Clock stopped";
+    else statusEl.textContent = "Waiting for the start";
+  });
+
+  // Keep the finish-line screen awake. Tap anywhere to go fullscreen.
+  if ("wakeLock" in navigator) {
+    var lock = null;
+    function grab() { navigator.wakeLock.request("screen").then(function (l) { lock = l; }).catch(function () {}); }
+    grab();
+    document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") grab(); });
+  }
+  document.addEventListener("click", function () {
+    var el = document.documentElement;
+    if (!document.fullscreenElement && el.requestFullscreen) el.requestFullscreen().catch(function () {});
+  });
+  // Press N to flip to night mode (green background) if the screen is in shade or indoors.
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "n" || e.key === "N") document.body.classList.toggle("night");
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+/* Eagle Chase 5K race clock
+   Layout: one centered column; the clock is the whole point of the page.
+   Brand pulled from the race flyer: forest green, pale gold outline, beak gold, white ground. */
+:root {
+  --green: #1b4d3b;
+  --green-deep: #123528;
+  --gold: #d9c27e;
+  --gold-beak: #dfae2c;
+  --paper: #ffffff;
+  --paper-dim: #eef0e9;
+  --ink: #1b4d3b;
+  --ink-soft: #4b6b5c;
+  --font-display: "Anton", "Impact", "Arial Narrow Bold", sans-serif;
+  --font-body: "Barlow Condensed", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --stroke: var(--gold);
+}
+
+html, body { height: 100%; }
+[hidden] { display: none !important; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0;
+  -webkit-font-smoothing: antialiased;
+}
+body.night {
+  --paper: #0f2b21;
+  --paper-dim: #16382c;
+  --ink: #ffffff;
+  --ink-soft: #cfd9d2;
+}
+
+.wrap {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(8px, 2vh, 24px);
+  text-align: center;
+  padding-block: clamp(12px, 3vh, 32px);
+  box-sizing: border-box;
+}
+
+.birds {
+  width: min(60vw, 26vh * 2.3, 520px);
+  max-width: 100%;
+  height: auto;
+}
+
+.title {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  line-height: 0.95;
+  margin: 0;
+  color: var(--green);
+  -webkit-text-stroke: 0.035em var(--stroke);
+  paint-order: stroke fill;
+  text-wrap: balance;
+}
+.title .small { display: block; font-size: 0.55em; letter-spacing: 0.03em; }
+.display .title { font-size: clamp(28px, 6vw, 72px); }
+
+.rule {
+  width: min(92vw, 1100px);
+  border: 0;
+  border-top: 4px double var(--green);
+  margin: 0;
+}
+
+.clock {
+  font-family: var(--font-display);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  margin: 0;
+  color: var(--green);
+  -webkit-text-stroke: 0.025em var(--stroke);
+  paint-order: stroke fill;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.display .clock { font-size: clamp(64px, 19vw, 34vh); }
+.clock .tenths { font-size: 0.5em; vertical-align: baseline; }
+.clock.finished { color: var(--gold-beak); }
+
+.status {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: clamp(16px, 2.6vw, 30px);
+  margin: 0;
+  color: var(--ink-soft);
+}
+.status.live { color: var(--gold-beak); }
+
+.foot {
+  font-size: clamp(14px, 1.8vw, 22px);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+  margin: 0;
+}
+.foot a { color: inherit; }
+
+/* Controller (phone) */
+.control .title { font-size: clamp(24px, 7vw, 40px); }
+.control .clock { font-size: clamp(48px, 18vw, 96px); }
+.control .birds { width: min(70vw, 320px); }
+
+.btn {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  color: var(--paper);
+  background: var(--green);
+  box-shadow: 0 6px 0 var(--green-deep);
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+  width: min(80vw, 340px);
+  padding: 0.5em 1em;
+  font-size: clamp(28px, 9vw, 48px);
+}
+.btn:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--green-deep); }
+.btn:focus-visible { outline: 4px solid var(--gold-beak); outline-offset: 4px; }
+.btn.go { background: var(--gold-beak); color: var(--green-deep); box-shadow: 0 6px 0 #a87f12; font-size: clamp(44px, 16vw, 84px); width: min(80vw, 340px); aspect-ratio: 1; display: grid; place-items: center; padding: 0; border-radius: 50%; }
+.btn.go:active { box-shadow: 0 2px 0 #a87f12; }
+.btn.stop { background: #a33b2b; box-shadow: 0 6px 0 #6b2419; }
+.btn.stop:active { box-shadow: 0 2px 0 #6b2419; }
+.btn.quiet { background: var(--paper-dim); color: var(--ink); box-shadow: 0 4px 0 #c9cfc4; font-size: clamp(18px, 5vw, 24px); width: auto; }
+.btn.quiet:active { box-shadow: 0 1px 0 #c9cfc4; }
+.btn:disabled { opacity: 0.45; cursor: default; }
+
+.actions { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.confirm { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+
+.note {
+  max-width: 34ch;
+  font-size: clamp(15px, 4vw, 19px);
+  line-height: 1.35;
+  color: var(--ink-soft);
+  margin: 0;
+}
+.note strong { color: var(--ink); }
+
+.signin { font-size: clamp(18px, 5vw, 24px); }
+.who { font-size: 15px; color: var(--ink-soft); margin: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .btn { transition: none; }
+}
