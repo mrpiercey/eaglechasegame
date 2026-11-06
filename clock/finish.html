@@ -63,6 +63,7 @@
   var mainEl = $("main"), tenthsEl = $("tenths"), clockEl = $("clock");
   var lastMain = "", lastTenths = "";
   var runners = {}, finishes = {}, me = null, lastRecorded = null;
+  var editing = null, deleteArmed = false, editError = "";
 
   function paint() {
     var f = RaceClock.format(RaceClock.elapsedMs());
@@ -87,21 +88,123 @@
     return [r.gender === "M" ? "Male" : r.gender === "F" ? "Female" : "", g ? g.label : ""].filter(Boolean).join(", ");
   }
 
+  // Finish rows redraw on every database update, so an open editor keeps what was typed.
+  function readDraft() {
+    var bibEl = $("editBib"), timeEl = $("editTime");
+    if (!bibEl) return null;
+    var active = document.activeElement;
+    var focused = active === bibEl || active === timeEl ? active.id : null;
+    return { bib: bibEl.value, time: timeEl.value, focused: focused, start: focused ? active.selectionStart : 0, end: focused ? active.selectionEnd : 0 };
+  }
+
+  function editorRow(f, draft) {
+    var li = document.createElement("li");
+    li.className = "editing";
+    li.innerHTML = '<form class="editForm" id="editForm">' +
+      '<label class="editField">Bib <input id="editBib" class="timeInput" type="text" inputmode="numeric" autocomplete="off"></label>' +
+      '<label class="editField">Time <input id="editTime" class="timeInput" type="text" autocomplete="off" placeholder="mm:ss.t"></label>' +
+      '<button class="btn quiet tiny" type="submit">Save</button>' +
+      '<button class="btn quiet tiny" type="button" data-act="cancel">Cancel</button>' +
+      '<button class="btn quiet tiny editDelete" type="button" data-act="delete"></button>' +
+      '<p class="note warn" id="editMsg" hidden></p></form>';
+    li.querySelector("#editBib").value = draft ? draft.bib : f.bib;
+    li.querySelector("#editTime").value = draft ? draft.time : RaceClock.formatFull(f.elapsed);
+    li.querySelector("[data-act=delete]").textContent = deleteArmed ? "Sure? Delete" : "Delete";
+    var msg = li.querySelector("#editMsg");
+    msg.textContent = editError; msg.hidden = !editError;
+    return li;
+  }
+
   function render() {
+    var draft = readDraft();
+    if (editing && !finishes[editing]) { editing = null; deleteArmed = false; editError = ""; draft = null; }
     var list = $("list"); list.innerHTML = "";
     var all = Object.keys(finishes).map(function (k) { return finishes[k]; }).sort(function (a, b) { return b.at - a.at; });
     $("count").textContent = all.length ? "(" + all.length + " total)" : "";
     $("empty").hidden = all.length > 0;
     $("undoBtn").hidden = !(lastRecorded && finishes[lastRecorded]);
-    all.slice(0, 12).forEach(function (f) {
+    all.forEach(function (f) {
+      if (String(f.bib) === editing) { list.appendChild(editorRow(f, draft)); return; }
       var li = document.createElement("li");
+      li.setAttribute("data-bib", f.bib);
       var name = runnerName(String(f.bib)), group = groupLabel(String(f.bib));
       li.innerHTML = '<span class="fbib">#' + f.bib + '</span><span class="fname">' + escapeHtml(name) +
         (group ? '<small>' + escapeHtml(group) + '</small>' : '<small class="warnText">Not on the runner list</small>') +
-        '</span><span class="ftime">' + RaceClock.formatFull(f.elapsed) + '</span>';
+        '</span><span class="ftime">' + RaceClock.formatFull(f.elapsed) + '</span>' +
+        '<button class="btn quiet tiny" type="button" data-act="edit">Edit</button>';
       list.appendChild(li);
     });
+    if (editing && draft && draft.focused) {
+      var el = $(draft.focused);
+      if (el) { el.focus({ preventScroll: true }); el.setSelectionRange(draft.start, draft.end); }
+    }
   }
+
+  function openEditor(bib) {
+    editing = String(bib); deleteArmed = false; editError = "";
+    var open = $("editForm"); if (open) open.closest("li").remove();   // don't carry one row's draft into another
+    render();
+    var t = $("editTime"); if (t) { t.focus(); t.select(); }
+  }
+  function closeEditor() {
+    editing = null; deleteArmed = false; editError = "";
+    var open = $("editForm"); if (open) open.closest("li").remove();
+    render();
+    $("bib").focus();
+  }
+  function editFail(text) {
+    editError = text;
+    var msg = $("editMsg"); if (msg) { msg.textContent = text; msg.hidden = false; }
+  }
+
+  function saveEdit() {
+    var oldBib = editing, f = finishes[oldBib];
+    if (!f) { closeEditor(); return; }
+    var newBib = $("editBib").value.replace(/\D/g, "");
+    var timeText = $("editTime").value.trim();
+    if (!newBib) { editFail("Type a bib number."); return; }
+    // Leave the exact stored time alone unless it was actually changed.
+    var elapsed = timeText === RaceClock.formatFull(f.elapsed) ? f.elapsed : RaceClock.parseTime(timeText);
+    if (elapsed === null || elapsed < 0) { editFail("Type the time like 3:23.7 or 1:02:15.4."); return; }
+    if (newBib !== oldBib && finishes[newBib]) { editFail("Bib " + newBib + " (" + runnerName(newBib) + ") already finished at " + RaceClock.formatFull(finishes[newBib].elapsed) + "."); return; }
+    var entry = {}; Object.keys(f).forEach(function (k) { entry[k] = f[k]; });
+    entry.bib = newBib; entry.elapsed = elapsed;
+    var updates = {}; updates[newBib] = entry;
+    if (newBib !== oldBib) updates[oldBib] = null;
+    db.ref("finishes").update(updates).then(function () {
+      if (lastRecorded === oldBib) lastRecorded = newBib;
+      say("Saved #" + newBib + " " + runnerName(newBib) + " at " + RaceClock.formatFull(elapsed), "ok");
+      closeEditor();
+    }).catch(function (err) { editFail("Could not save: " + (err && err.message ? err.message : "no permission")); });
+  }
+
+  function deleteEdit() {
+    if (!deleteArmed) {
+      deleteArmed = true;
+      var b = document.querySelector("#editForm [data-act=delete]"); if (b) b.textContent = "Sure? Delete";
+      return;
+    }
+    var bib = editing;
+    db.ref("finishes/" + bib).remove().then(function () {
+      if (lastRecorded === bib) lastRecorded = null;
+      say("Removed #" + bib + ".", "ok");
+      closeEditor();
+    }).catch(function (err) { editFail("Could not delete: " + (err && err.message ? err.message : "no permission")); });
+  }
+
+  $("list").addEventListener("click", function (e) {
+    var act = e.target.closest("[data-act]"), action = act ? act.getAttribute("data-act") : "";
+    if (action === "cancel") { closeEditor(); return; }
+    if (action === "delete") { deleteEdit(); return; }
+    if (e.target.closest("#editForm")) return;
+    var row = e.target.closest("li[data-bib]");
+    if (!row) return;
+    if (action !== "edit" && String(window.getSelection())) return;   // dragging to select text isn't a click on the row
+    openEditor(row.getAttribute("data-bib"));
+  });
+  $("list").addEventListener("submit", function (e) { e.preventDefault(); saveEdit(); });
+  $("list").addEventListener("keydown", function (e) { if (e.key === "Escape" && editing) closeEditor(); });
+
   function escapeHtml(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
 
   function say(text, kind) { var m = $("msg"); m.textContent = text; m.className = "note " + (kind || "warn"); m.hidden = !text; }
