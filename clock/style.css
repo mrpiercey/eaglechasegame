@@ -218,12 +218,34 @@ body.night {
 }
 
 body.tap .wrap.top { box-sizing: border-box; width: 100%; max-width: none; height: 100dvh; min-height: 0; padding: 10px 16px; gap: 6px; overflow: hidden; }
-body.tap #panel:not([hidden]) { display: flex; flex-direction: column; flex: 1; min-height: 0; gap: 6px; }
-body.tap .who { margin: 0; }
+body.tap #panel:not([hidden]) { flex: 1; min-height: 0; display: flex; }
+.tapMain { flex: 1; min-width: 0; display: grid; grid-template-columns: minmax(0, 58fr) minmax(0, 42fr); gap: 16px; }
+.tapLeft, .tapRight { display: flex; flex-direction: column; gap: 6px; min-width: 0; min-height: 0; }
+body.tap .bibInput { font-size: 30px; padding: 0.15em 0.4em; }
+body.tap .btn.square { font-size: 20px; }
 .tapStatus { display: flex; align-items: center; gap: 14px; min-height: 36px; flex: none; }
-.tapStatus .note { margin: 0; max-width: none; font-size: 20px; }
-.tapCount { margin: 0; font-size: 18px; white-space: nowrap; }
-.tapGrid { flex: 1; min-height: 0; display: grid; gap: 4px; justify-content: center; align-content: start; overflow: auto; }
+.tapStatus .note { margin: 0; max-width: none; font-size: 18px; }
+.tapCount { margin: 0; font-size: 16px; white-space: nowrap; }
+.tapGrid { flex: 1; min-height: 0; display: grid; gap: 4px; justify-content: start; align-content: start; overflow: auto; }
+.tapRight .label { margin: 0; font-size: 18px; flex: none; }
+.tapRight .finishList { flex: 1 1 0; min-height: 0; overflow-y: auto; padding-right: 4px; }
+.tapRight .note { flex: none; margin: 0; }
+body.tap .who { flex: none; margin: 0; }
+.fplace { font-family: var(--font-display); color: var(--ink-soft); text-align: right; }
+body.tap .finishList li { grid-template-columns: 34px 56px minmax(0, 1fr) 96px 58px; gap: 10px; flex: none; min-height: 56px; padding: 6px 10px; font-size: 17px; }
+body.tap .finishList li:first-child { border-left-color: var(--green); }
+body.tap .finishList li.newest, body.tap .finishList li.editing { border-left-color: var(--gold-beak); }
+body.tap .editForm #editBib { grid-column: 2; }
+body.tap .editForm .editMid { grid-column: 3; }
+body.tap .editForm #editTime { grid-column: 4; }
+body.tap .editForm > .btn { grid-column: 5; }
+body.tap .editForm .timeInput { height: 40px; }
+@media (max-width: 900px) {
+  body.tap .wrap.top { height: auto; overflow: visible; }
+  .tapMain { grid-template-columns: minmax(0, 1fr); }
+  .tapRight .finishList { flex: none; overflow: visible; }
+  .tapGrid { flex: none; }
+}
 .tapCard { box-sizing: border-box; display: grid; place-items: center; width: 100%; height: 100%; margin: 0; padding: 0; border: 0; border-radius: 6px; background: var(--green); color: var(--paper); font-family: var(--font-display); font-size: inherit; line-height: 1; cursor: pointer; touch-action: manipulation; transition: opacity 0.6s ease, visibility 0s linear 0.6s; }
 .tapCard:hover { background: var(--green-deep); }
 .tapCard:active { background: var(--gold-beak); color: var(--green-deep); }
