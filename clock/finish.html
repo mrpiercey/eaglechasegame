@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@500;600&display=swap">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=2">
 </head>
 <body class="finish">
 <main class="wrap top">
@@ -100,13 +100,16 @@
   function editorRow(f, draft) {
     var li = document.createElement("li");
     li.className = "editing";
+    // Same columns as a normal row, so each box opens right where its value was.
+    var bib = String(f.bib), group = groupLabel(bib);
     li.innerHTML = '<form class="editForm" id="editForm">' +
-      '<label class="editField">Bib <input id="editBib" class="timeInput" type="text" inputmode="numeric" autocomplete="off"></label>' +
-      '<label class="editField">Time <input id="editTime" class="timeInput" type="text" autocomplete="off" placeholder="mm:ss.t"></label>' +
+      '<input id="editBib" class="timeInput" type="text" inputmode="numeric" autocomplete="off" aria-label="Bib number">' +
+      '<input id="editTime" class="timeInput" type="text" autocomplete="off" placeholder="mm:ss.t" aria-label="Finish time">' +
       '<button class="btn quiet tiny" type="submit">Save</button>' +
-      '<button class="btn quiet tiny" type="button" data-act="cancel">Cancel</button>' +
-      '<button class="btn quiet tiny editDelete" type="button" data-act="delete"></button>' +
-      '<p class="note warn" id="editMsg" hidden></p></form>';
+      '<div class="editMid"><span class="fname">' + escapeHtml(runnerName(bib)) +
+        '<small class="warnText" id="editMsg" hidden></small><small>' + escapeHtml(group) + '</small></span>' +
+        '<button class="btn quiet tiny" type="button" data-act="cancel">Cancel</button>' +
+        '<button class="btn quiet tiny editDelete" type="button" data-act="delete"></button></div></form>';
     li.querySelector("#editBib").value = draft ? draft.bib : f.bib;
     li.querySelector("#editTime").value = draft ? draft.time : RaceClock.formatFull(f.elapsed);
     li.querySelector("[data-act=delete]").textContent = deleteArmed ? "Sure? Delete" : "Delete";
@@ -144,13 +147,13 @@
     editing = String(bib); deleteArmed = false; editError = "";
     var open = $("editForm"); if (open) open.closest("li").remove();   // don't carry one row's draft into another
     render();
-    var t = $("editTime"); if (t) { t.focus(); t.select(); }
+    var t = $("editTime"); if (t) { t.focus({ preventScroll: true }); t.select(); }
   }
   function closeEditor() {
     editing = null; deleteArmed = false; editError = "";
     var open = $("editForm"); if (open) open.closest("li").remove();
     render();
-    $("bib").focus();
+    $("bib").focus({ preventScroll: true });   // stay on this spot in the list
   }
   function editFail(text) {
     editError = text;
