@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@500;600&display=swap">
-<link rel="stylesheet" href="style.css?v=2">
+<link rel="stylesheet" href="style.css?v=3">
 </head>
 <body class="finish">
 <main class="wrap top">
@@ -107,12 +107,16 @@
       '<input id="editTime" class="timeInput" type="text" autocomplete="off" placeholder="mm:ss.t" aria-label="Finish time">' +
       '<button class="btn quiet tiny" type="submit">Save</button>' +
       '<div class="editMid"><span class="fname">' + escapeHtml(runnerName(bib)) +
-        '<small class="warnText" id="editMsg" hidden></small><small>' + escapeHtml(group) + '</small></span>' +
-        '<button class="btn quiet tiny" type="button" data-act="cancel">Cancel</button>' +
-        '<button class="btn quiet tiny editDelete" type="button" data-act="delete"></button></div></form>';
+        '<small class="warnText" id="editMsg" hidden></small><small><span class="editGroup">' + escapeHtml(group) + '</span>' +
+        (deleteArmed ? '' : '<button class="editDeleteLink" type="button" data-act="delete">Delete</button>') + '</small></span>' +
+        // Yes sits across the row from the Delete link, so a double click can't delete.
+        (deleteArmed
+          ? '<button class="btn quiet tiny" type="button" data-act="delete-no">Keep it</button>' +
+            '<button class="btn quiet tiny editDelete" type="button" data-act="delete-yes">Yes, delete</button>'
+          : '<button class="btn quiet tiny" type="button" data-act="cancel">Cancel</button>') +
+        '</div></form>';
     li.querySelector("#editBib").value = draft ? draft.bib : f.bib;
     li.querySelector("#editTime").value = draft ? draft.time : RaceClock.formatFull(f.elapsed);
-    li.querySelector("[data-act=delete]").textContent = deleteArmed ? "Sure? Delete" : "Delete";
     var msg = li.querySelector("#editMsg");
     msg.textContent = editError; msg.hidden = !editError;
     return li;
@@ -182,11 +186,6 @@
   }
 
   function deleteEdit() {
-    if (!deleteArmed) {
-      deleteArmed = true;
-      var b = document.querySelector("#editForm [data-act=delete]"); if (b) b.textContent = "Sure? Delete";
-      return;
-    }
     var bib = editing;
     db.ref("finishes/" + bib).remove().then(function () {
       if (lastRecorded === bib) lastRecorded = null;
@@ -198,7 +197,17 @@
   $("list").addEventListener("click", function (e) {
     var act = e.target.closest("[data-act]"), action = act ? act.getAttribute("data-act") : "";
     if (action === "cancel") { closeEditor(); return; }
-    if (action === "delete") { deleteEdit(); return; }
+    if (action === "delete") {
+      deleteArmed = true; render();
+      var keep = document.querySelector("[data-act=delete-no]"); if (keep) keep.focus({ preventScroll: true });
+      return;
+    }
+    if (action === "delete-no") {
+      deleteArmed = false; render();
+      var t = $("editTime"); if (t) t.focus({ preventScroll: true });
+      return;
+    }
+    if (action === "delete-yes") { deleteEdit(); return; }
     if (e.target.closest("#editForm")) return;
     var row = e.target.closest("li[data-bib]");
     if (!row) return;

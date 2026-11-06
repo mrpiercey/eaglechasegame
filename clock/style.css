@@ -192,7 +192,7 @@ body.night {
 .fbib { font-family: var(--font-display); font-size: 1.3em; color: var(--green); }
 .fname { min-width: 0; display: flex; flex-direction: column; line-height: 1.15; }
 .fname small { color: var(--ink-soft); font-size: 0.8em; }
-.ftime { font-family: var(--font-display); font-variant-numeric: tabular-nums; font-size: 1.3em; }
+.ftime { font-family: var(--font-display); font-variant-numeric: tabular-nums; font-size: 1.3em; text-align: right; }
 .finishList li[data-bib] { cursor: pointer; }
 .finishList li.editing { border-left-color: var(--gold-beak); }
 .finishList li > .btn, .editForm > .btn { width: 100%; padding-left: 0; padding-right: 0; }
@@ -203,10 +203,13 @@ body.night {
 .editForm #editTime { grid-column: 3; text-align: right; }
 .editForm > .btn { grid-column: 4; }
 .editForm .timeInput { box-sizing: border-box; width: calc(100% + 16px); height: 44px; margin: 0 -8px; padding: 0 6px; border-width: 2px; border-radius: 8px; font-family: var(--font-display); font-variant-numeric: tabular-nums; font-size: 1.3em; }
-.editForm #editBib { color: var(--green); }
+.editForm #editBib { color: var(--green); text-align: left; }
 .editMid { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .editMid .fname { flex: 1; }
 #editMsg:not([hidden]) + small { display: none; }
+.editGroup:not(:empty)::after { content: " \00b7 "; }
+.editDeleteLink { background: none; border: 0; padding: 0; font: inherit; color: #a33b2b; text-decoration: underline; cursor: pointer; }
+.editDeleteLink:focus-visible { outline: 3px solid var(--gold-beak); outline-offset: 2px; }
 .btn.quiet.editDelete { color: #a33b2b; }
 
 @media (max-width: 560px) {
