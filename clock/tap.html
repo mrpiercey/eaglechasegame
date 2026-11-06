@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Eagle Chase 5K Tap to Finish</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@500;600&display=swap">
+<link rel="stylesheet" href="style.css?v=4">
+</head>
+<body class="finish tap">
+<main class="wrap top">
+  <header class="bar">
+    <img class="birds tiny" src="birds.png" alt="">
+    <h1 class="title">Tap to Finish<span class="small">Eagle Chase 5K</span></h1>
+    <p class="clock mini" id="clock"><span id="main">00:00</span><span class="tenths" id="tenths">.0</span></p>
+  </header>
+
+  <div class="actions" id="signedOut">
+    <button class="btn quiet signin" id="signInBtn" type="button">Sign in with Google</button>
+    <p class="note">Finish-line helpers sign in here, then Mr. Piercey approves them.</p>
+  </div>
+
+  <div class="actions" id="waiting" hidden>
+    <p class="note"><strong id="whoEmail"></strong> is signed in. Waiting for Mr. Piercey to approve this helper on the Runners page.</p>
+    <button class="btn quiet" id="askBtn" type="button">Ask for approval</button>
+    <p class="note ok" id="askMsg" hidden>Request sent. This page unlocks on its own once approved.</p>
+    <button class="btn quiet" id="signOutBtn2" type="button">Sign out</button>
+  </div>
+
+  <div id="panel" hidden>
+    <div class="tapStatus">
+      <span class="label tapCount" id="count"></span>
+      <p class="note" id="msg" hidden></p>
+      <button class="btn quiet tiny" id="undoBtn" type="button" hidden>Undo</button>
+    </div>
+    <div class="tapGrid" id="grid"></div>
+    <p class="note" id="empty" hidden></p>
+    <p class="who"><span id="who"></span> &middot; <a href="#" id="signOutBtn">Sign out</a> &middot; <a href="finish.html">Finish line (fix a mistake)</a> &middot; <a href="results.html">Results</a></p>
+  </div>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="race-clock.js"></script>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var db = RaceClock.db;
+  var mainEl = $("main"), tenthsEl = $("tenths"), clockEl = $("clock");
+  var lastMain = "", lastTenths = "";
+  var runners = {}, finishes = {}, me = null, lastRecorded = null;
+  var cards = {};   // bib -> button
+
+  function paint() {
+    var f = RaceClock.format(RaceClock.elapsedMs());
+    if (f.main !== lastMain) { mainEl.textContent = f.main; lastMain = f.main; }
+    if (f.tenths !== lastTenths) { tenthsEl.textContent = f.tenths; lastTenths = f.tenths; }
+    requestAnimationFrame(paint);
+  }
+  requestAnimationFrame(paint);
+  RaceClock.onChange(function (s) { clockEl.classList.toggle("finished", s.status === "finished"); });
+
+  db.ref("runners").on("value", function (snap) { runners = snap.val() || {}; buildGrid(); });
+  db.ref("finishes").on("value", function (snap) { finishes = snap.val() || {}; refresh(); });
+
+  function runnerName(bib) {
+    var r = runners[bib];
+    if (!r) return "Unknown bib";
+    return ((r.first || "") + " " + (r.last || "")).trim() || "Unknown name";
+  }
+  // Buttons are made once and then only updated. Replacing one between press and
+  // release would lose the click, and finishes arrive constantly during a race.
+  function buildGrid() {
+    var grid = $("grid"); grid.innerHTML = ""; cards = {};
+    Object.keys(runners).sort(function (a, b) { return Number(a) - Number(b); }).forEach(function (bib) {
+      var btn = document.createElement("button");
+      btn.type = "button"; btn.className = "tapCard"; btn.setAttribute("data-bib", bib);
+      btn.textContent = bib; btn.title = runnerName(bib);
+      btn.style.gridColumn = Math.ceil(Number(bib) / ROWS);
+      btn.style.gridRow = (Number(bib) - 1) % ROWS + 1;
+      grid.appendChild(btn);
+      cards[bib] = btn;
+    });
+    fitGrid();
+    refresh();
+  }
+
+  // Ten bibs down each column: 1-10, then 11-20, and so on. Each bib has a fixed
+  // spot from its number, so a gap in the list doesn't shift the columns.
+  var ROWS = 10, GAP = 4, MAX_SQUARE = 110, MIN_SQUARE = 20;
+  function fitGrid() {
+    var grid = $("grid"), bibs = Object.keys(cards);
+    var w = grid.clientWidth, h = grid.clientHeight;
+    if (!bibs.length || !w || !h) return;
+    var cols = Math.ceil(Math.max.apply(null, bibs.map(Number)) / ROWS);
+    var size = Math.floor(Math.min((w + GAP) / cols, (h + GAP) / ROWS)) - GAP;
+    size = Math.max(MIN_SQUARE, Math.min(MAX_SQUARE, size));
+    grid.style.gridTemplateColumns = "repeat(" + cols + ", " + size + "px)";
+    grid.style.gridTemplateRows = "repeat(" + ROWS + ", " + size + "px)";
+    grid.style.fontSize = Math.round(size * 0.42) + "px";
+  }
+  if (window.ResizeObserver) new ResizeObserver(fitGrid).observe($("grid"));
+
+  function refresh() {
+    var total = 0, done = 0;
+    Object.keys(cards).forEach(function (bib) {
+      total++; if (finishes[bib]) done++;
+      cards[bib].classList.toggle("done", !!finishes[bib]);
+    });
+    var extra = Object.keys(finishes).filter(function (bib) { return !runners[bib]; }).length;
+    $("count").textContent = (done + extra) + " of " + total + " finished";
+    $("undoBtn").hidden = !(lastRecorded && finishes[lastRecorded]);
+    $("empty").hidden = total > 0;
+    $("empty").textContent = "No runners on the list yet.";
+  }
+
+  function say(text, kind) { var m = $("msg"); m.textContent = text; m.className = "note " + (kind || "warn"); m.hidden = !text; }
+
+  $("grid").addEventListener("click", function (e) {
+    var elapsed = RaceClock.elapsedMs();       // grab the time first, before anything else
+    var btn = e.target.closest(".tapCard");
+    if (!btn) return;
+    var bib = btn.getAttribute("data-bib");
+    if (finishes[bib]) { say("#" + bib + " " + runnerName(bib) + " already finished at " + RaceClock.formatFull(finishes[bib].elapsed) + ". Not recorded again."); return; }
+    if (RaceClock.getState().status !== "running") { say("The race clock is not running, so there is no time to record yet."); return; }
+    var entry = { bib: bib, elapsed: elapsed, at: firebase.database.ServerValue.TIMESTAMP, by: me ? me.email : "" };
+    // A transaction so two helpers tapping the same runner can't overwrite the first time.
+    db.ref("finishes/" + bib).transaction(function (current) {
+      return current === null ? entry : undefined;
+    }).then(function (result) {
+      if (!result.committed) { say("#" + bib + " " + runnerName(bib) + " was already recorded by another helper."); return; }
+      lastRecorded = bib;
+      say("#" + bib + " " + runnerName(bib) + " at " + RaceClock.formatFull(elapsed), "ok");
+      refresh();
+    }).catch(function (err) { say("Could not save: " + (err && err.message ? err.message : "no permission")); });
+  });
+
+  $("undoBtn").addEventListener("click", function () {
+    if (!lastRecorded) return;
+    var bib = lastRecorded;
+    db.ref("finishes/" + bib).remove().then(function () { say("Removed #" + bib + " " + runnerName(bib) + ".", "ok"); lastRecorded = null; refresh(); })
+      .catch(function (err) { say("Could not undo: " + (err && err.message ? err.message : "no permission")); });
+  });
+
+  $("signInBtn").addEventListener("click", function () { RaceClock.signIn(); });
+  function signOut(e) { if (e) e.preventDefault(); RaceClock.signOut(); }
+  $("signOutBtn").addEventListener("click", signOut);
+  $("signOutBtn2").addEventListener("click", signOut);
+  $("askBtn").addEventListener("click", function () { if (me && me.user) RaceClock.requestAccess(me.user).then(function () { $("askMsg").hidden = false; }); });
+
+  RaceClock.onUser(function (u) {
+    me = u;
+    $("signedOut").hidden = !!u.user;
+    $("waiting").hidden = !u.user || u.isStaff;
+    $("panel").hidden = !u.isStaff;
+    $("who").textContent = u.email;
+    $("whoEmail").textContent = u.email;
+  });
+})();
+</script>
+</body>
+</html>
