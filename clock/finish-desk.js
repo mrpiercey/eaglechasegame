@@ -9,7 +9,8 @@ window.FinishDesk = function (opts) {
   var db = RaceClock.db;
   var mainEl = $("main"), tenthsEl = $("tenths"), clockEl = $("clock");
   var lastMain = "", lastTenths = "";
-  var runners = {}, finishes = {}, me = null, lastRecorded = null;
+  var runners = {}, finishes = {}, me = null;
+  var HISTORY_LIMIT = 50, undoStack = [], redoStack = [];
   var editing = null, deleteArmed = false, editError = "";
 
   function paint() {
@@ -80,7 +81,7 @@ window.FinishDesk = function (opts) {
     if (opts.results) all.sort(function (a, b) { return a.elapsed - b.elapsed || a.at - b.at; });
     $("count").textContent = all.length ? "(" + all.length + " total)" : "";
     $("empty").hidden = all.length > 0;
-    $("undoBtn").hidden = !(lastRecorded && finishes[lastRecorded]);
+    historyButtons();
     all.forEach(function (f, i) {
       if (String(f.bib) === editing) { list.appendChild(editorRow(f, draft, i + 1)); return; }
       var li = document.createElement("li");
@@ -131,17 +132,20 @@ window.FinishDesk = function (opts) {
     entry.bib = newBib; entry.elapsed = elapsed;
     var updates = {}; updates[newBib] = entry;
     if (newBib !== oldBib) updates[oldBib] = null;
+    var before = {}; before[oldBib] = f;
+    if (newBib !== oldBib) before[newBib] = null;
     db.ref("finishes").update(updates).then(function () {
-      if (lastRecorded === oldBib) lastRecorded = newBib;
+      remember(before, updates, "#" + newBib + " " + runnerName(newBib));
       say("Saved #" + newBib + " " + runnerName(newBib) + " at " + RaceClock.formatFull(elapsed), "ok");
       closeEditor();
     }).catch(function (err) { editFail("Could not save: " + (err && err.message ? err.message : "no permission")); });
   }
 
   function deleteEdit() {
-    var bib = editing;
+    var bib = editing, before = {}, after = {};
+    before[bib] = finishes[bib]; after[bib] = null;
     db.ref("finishes/" + bib).remove().then(function () {
-      if (lastRecorded === bib) lastRecorded = null;
+      remember(before, after, "#" + bib + " " + runnerName(bib));
       say("Removed #" + bib + ".", "ok");
       closeEditor();
     }).catch(function (err) { editFail("Could not delete: " + (err && err.message ? err.message : "no permission")); });
@@ -184,7 +188,9 @@ window.FinishDesk = function (opts) {
       return current === null ? entry : undefined;
     }).then(function (result) {
       if (!result.committed) { say("Bib " + bib + " (" + runnerName(bib) + ") was already recorded by another helper."); return; }
-      lastRecorded = bib;
+      var before = {}, after = {};
+      before[bib] = null; after[bib] = entry;
+      remember(before, after, "#" + bib + " " + runnerName(bib));
       say("#" + bib + " " + runnerName(bib) + " at " + RaceClock.formatFull(elapsed), "ok");
       render();
       if (opts.results && !editing) {
@@ -202,11 +208,45 @@ window.FinishDesk = function (opts) {
     record(bib, elapsed);
   });
 
-  $("undoBtn").addEventListener("click", function () {
-    if (!lastRecorded) return;
-    var bib = lastRecorded;
-    db.ref("finishes/" + bib).remove().then(function () { say("Removed #" + bib + ". Type it again when they cross.", "ok"); lastRecorded = null; render(); $("bib").focus(); });
-  });
+  // Undo history for this device. Each step holds what its bibs looked like before
+  // and after, so undo and redo put back exact times. Recording someone new keeps
+  // the redo list: a runner undone by mistake mid-race can still be brought back.
+  function remember(before, after, label) {
+    undoStack.push({ before: before, after: after, label: label });
+    if (undoStack.length > HISTORY_LIMIT) undoStack.shift();
+    historyButtons();
+  }
+  function historyButtons() {
+    $("undoBtn").disabled = !undoStack.length;
+    $("redoBtn").disabled = !redoStack.length;
+  }
+  function sameFinish(a, b) { return (!a && !b) || !!(a && b && a.elapsed === b.elapsed); }
+
+  function step(from, to, expectedKey, targetKey, done) {
+    var action = from.pop();
+    if (!action) return;
+    var expected = action[expectedKey], target = action[targetKey];
+    var changed = Object.keys(expected).some(function (bib) { return !sameFinish(finishes[bib], expected[bib]); });
+    if (changed) {
+      say(action.label + " has changed since then, so that step was skipped.");
+      historyButtons();
+      return;
+    }
+    // Keep the saved copy, which has the real server timestamp.
+    Object.keys(expected).forEach(function (bib) { expected[bib] = finishes[bib] || null; });
+    db.ref("finishes").update(target).then(function () {
+      to.push(action);
+      if (to.length > HISTORY_LIMIT) to.shift();
+      say(done + " " + action.label + ".", "ok");
+      render();
+    }).catch(function (err) {
+      from.push(action);
+      historyButtons();
+      say("Could not save: " + (err && err.message ? err.message : "no permission"));
+    });
+  }
+  $("undoBtn").addEventListener("click", function () { step(undoStack, redoStack, "after", "before", "Undid"); });
+  $("redoBtn").addEventListener("click", function () { step(redoStack, undoStack, "before", "after", "Redid"); });
 
   $("signInBtn").addEventListener("click", function () { RaceClock.signIn(); });
   function signOut(e) { if (e) e.preventDefault(); RaceClock.signOut(); }
