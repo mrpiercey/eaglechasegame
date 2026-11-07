@@ -17,12 +17,33 @@
   db.ref(".info/serverTimeOffset").on("value", function (snap) { serverOffset = snap.val() || 0; });
   function serverNow() { return Date.now() + serverOffset; }
 
+  // GO sets a start time 10 seconds ahead, so every screen counts down together
+  // and the race still starts if the starter's phone goes offline.
+  var COUNTDOWN_MS = 10000, CHEER_MS = 5000;
+
   var state = { status: "ready", startAt: null, stopAt: null };
   var listeners = [];
+  var lastPhase = null;
+
+  function countdownMs() {
+    return state.status === "running" && state.startAt ? Math.max(0, state.startAt - serverNow()) : 0;
+  }
+  // "ready", "countdown", "cheer" (just started), "running", or "finished".
+  function phase() {
+    if (state.status !== "running") return state.status;
+    if (countdownMs() > 0) return "countdown";
+    return serverNow() - state.startAt < CHEER_MS ? "cheer" : "running";
+  }
+  function notify() {
+    lastPhase = phase();
+    listeners.forEach(function (fn) { fn(state); });
+  }
+  // The countdown ends with no database update, so watch for it here.
+  setInterval(function () { if (phase() !== lastPhase) notify(); }, 100);
   raceRef.on("value", function (snap) {
     var v = snap.val() || {};
     state = { status: v.status || "ready", startAt: v.startAt || null, stopAt: v.stopAt || null };
-    listeners.forEach(function (fn) { fn(state); });
+    notify();
   });
 
   function elapsedMs() {
@@ -39,6 +60,11 @@
     var totalSec = Math.floor(totalTenths / 10);
     var s = totalSec % 60, m = Math.floor(totalSec / 60) % 60, h = Math.floor(totalSec / 3600);
     return { main: (h > 0 ? h + ":" + pad(m) : pad(m)) + ":" + pad(s), tenths: "." + tenths };
+  }
+  // What a clock should show: the countdown, then the race time.
+  function display() {
+    var left = countdownMs();
+    return left > 0 ? { main: String(Math.ceil(left / 1000)), tenths: "" } : format(elapsedMs());
   }
   function formatFull(ms) { var f = format(ms); return f.main + f.tenths; }
 
@@ -58,7 +84,7 @@
   }
 
   // Controller actions.
-  function start() { return raceRef.set({ status: "running", startAt: firebase.database.ServerValue.TIMESTAMP, stopAt: null }); }
+  function start() { return raceRef.set({ status: "running", startAt: serverNow() + COUNTDOWN_MS, stopAt: null }); }
   function stop() { return raceRef.update({ status: "finished", stopAt: firebase.database.ServerValue.TIMESTAMP }); }
   function reset() { return raceRef.set({ status: "ready", startAt: null, stopAt: null }); }
   // Resume after a Stop: keep the elapsed time and keep counting from there.
@@ -110,7 +136,8 @@
     db: db, serverNow: serverNow,
     onChange: function (fn) { listeners.push(fn); fn(state); },
     getState: function () { return state; },
-    elapsedMs: elapsedMs, format: format, formatFull: formatFull,
+    elapsedMs: elapsedMs, format: format, formatFull: formatFull, display: display,
+    countdownMs: countdownMs, phase: phase,
     AGE_GROUPS: AGE_GROUPS, ageGroup: ageGroup,
     start: start, stop: stop, reset: reset, resume: resume, setElapsed: setElapsed, parseTime: parseTime,
     signIn: signIn, signOut: signOut, onUser: onUser, requestAccess: requestAccess

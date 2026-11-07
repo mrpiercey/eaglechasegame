@@ -32,7 +32,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="firebase-config.js"></script>
-<script src="race-clock.js"></script>
+<script src="race-clock.js?v=2"></script>
 <script>
 (function () {
   var $ = function (id) { return document.getElementById(id); };
@@ -42,7 +42,7 @@
   var runners = {}, finishes = {}, view = "overall";
 
   function paint() {
-    var f = RaceClock.format(RaceClock.elapsedMs());
+    var f = RaceClock.display();
     if (f.main !== lastMain) { mainEl.textContent = f.main; lastMain = f.main; }
     if (f.tenths !== lastTenths) { tenthsEl.textContent = f.tenths; lastTenths = f.tenths; }
     requestAnimationFrame(paint);

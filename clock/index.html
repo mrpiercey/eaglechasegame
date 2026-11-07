@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@500;600&display=swap">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=8">
 </head>
 <body class="display">
 <main class="wrap">
@@ -24,7 +24,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="firebase-config.js"></script>
-<script src="race-clock.js"></script>
+<script src="race-clock.js?v=2"></script>
 <script>
 (function () {
   var clockEl = document.getElementById("clock");
@@ -34,7 +34,7 @@
   var lastMain = "", lastTenths = "";
 
   function paint() {
-    var f = RaceClock.format(RaceClock.elapsedMs());
+    var f = RaceClock.display();
     if (f.main !== lastMain) { mainEl.textContent = f.main; lastMain = f.main; }
     if (f.tenths !== lastTenths) { tenthsEl.textContent = f.tenths; lastTenths = f.tenths; }
     requestAnimationFrame(paint);
@@ -43,8 +43,12 @@
 
   RaceClock.onChange(function (s) {
     clockEl.classList.toggle("finished", s.status === "finished");
-    statusEl.classList.toggle("live", s.status === "running");
-    if (s.status === "running") statusEl.textContent = "Race is on! Go Eagles!";
+    var phase = RaceClock.phase();
+    statusEl.classList.toggle("live", phase === "running");
+    statusEl.classList.toggle("cheer", phase === "cheer");
+    if (phase === "countdown") statusEl.textContent = "Get ready!";
+    else if (phase === "cheer") statusEl.textContent = "LET'S GO EAGLES!";
+    else if (phase === "running") statusEl.textContent = "Race is on! Go Eagles!";
     else if (s.status === "finished") statusEl.textContent = "Clock stopped";
     else statusEl.textContent = "Waiting for the start";
   });

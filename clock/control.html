@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@500;600&display=swap">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=8">
 </head>
 <body class="control">
 <main class="wrap">
@@ -29,6 +29,7 @@
   <div class="actions" id="panel" hidden>
     <button class="btn go" id="goBtn" type="button">GO</button>
     <button class="btn stop" id="stopBtn" type="button" hidden>Stop</button>
+    <button class="btn quiet" id="cancelBtn" type="button" hidden>Cancel the start</button>
     <button class="btn" id="resumeBtn" type="button" hidden>Resume</button>
 
     <details class="adjust" id="adjust" hidden>
@@ -59,7 +60,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="firebase-config.js"></script>
-<script src="race-clock.js"></script>
+<script src="race-clock.js?v=2"></script>
 <script>
 (function () {
   var $ = function (id) { return document.getElementById(id); };
@@ -67,7 +68,7 @@
   var lastMain = "", lastTenths = "";
 
   function paint() {
-    var f = RaceClock.format(RaceClock.elapsedMs());
+    var f = RaceClock.display();
     if (f.main !== lastMain) { mainEl.textContent = f.main; lastMain = f.main; }
     if (f.tenths !== lastTenths) { tenthsEl.textContent = f.tenths; lastTenths = f.tenths; }
     requestAnimationFrame(paint);
@@ -76,16 +77,20 @@
 
   RaceClock.onChange(function (s) {
     clockEl.classList.toggle("finished", s.status === "finished");
-    statusEl.classList.toggle("live", s.status === "running");
-    statusEl.textContent = s.status === "running" ? "Race is on!" : s.status === "finished" ? "Clock stopped" : "Waiting for the start";
+    var phase = RaceClock.phase(), counting = phase === "countdown";
+    statusEl.classList.toggle("live", phase === "running");
+    statusEl.classList.toggle("cheer", phase === "cheer");
+    statusEl.textContent = counting ? "Get ready!" : phase === "cheer" ? "LET'S GO EAGLES!" : phase === "running" ? "Race is on!" : s.status === "finished" ? "Clock stopped" : "Waiting for the start";
     $("goBtn").hidden = s.status !== "ready";
-    $("stopBtn").hidden = s.status !== "running";
+    $("stopBtn").hidden = s.status !== "running" || counting;
+    $("cancelBtn").hidden = !counting;
     $("resumeBtn").hidden = s.status !== "finished";
-    $("adjust").hidden = s.status === "ready";
-    $("resetBtn").hidden = s.status === "ready";
+    $("adjust").hidden = s.status === "ready" || counting;
+    $("resetBtn").hidden = s.status === "ready" || counting;
     $("resetConfirm").hidden = true;
     $("hint").textContent = s.status === "ready"
-      ? "Pressing GO starts every Eagle Chase clock at the same moment."
+      ? "Pressing GO starts a 10-second countdown on every Eagle Chase clock."
+      : counting ? "The race starts by itself at zero. Cancel stops the countdown."
       : s.status === "running" ? "Stop freezes the clock on every screen. Resume picks up where it left off."
       : "Resume keeps counting from the stopped time. Reset gets the clock ready for another start.";
   });
@@ -110,6 +115,7 @@
   }
   $("goBtn").addEventListener("click", function () { busy($("goBtn"), RaceClock.start()); });
   $("stopBtn").addEventListener("click", function () { busy($("stopBtn"), RaceClock.stop()); });
+  $("cancelBtn").addEventListener("click", function () { busy($("cancelBtn"), RaceClock.reset()); });
   $("resumeBtn").addEventListener("click", function () { busy($("resumeBtn"), RaceClock.resume()); });
   $("resetBtn").addEventListener("click", function () { $("resetConfirm").hidden = false; });
   $("resetNo").addEventListener("click", function () { $("resetConfirm").hidden = true; });

@@ -14,7 +14,7 @@ window.FinishDesk = function (opts) {
   var editing = null, deleteArmed = false, editError = "";
 
   function paint() {
-    var f = RaceClock.format(RaceClock.elapsedMs());
+    var f = RaceClock.display();
     if (f.main !== lastMain) { mainEl.textContent = f.main; lastMain = f.main; }
     if (f.tenths !== lastTenths) { tenthsEl.textContent = f.tenths; lastTenths = f.tenths; }
     requestAnimationFrame(paint);
@@ -180,7 +180,7 @@ window.FinishDesk = function (opts) {
 
   function record(bib, elapsed) {
     if (!bib) return;
-    if (RaceClock.getState().status !== "running") { say("The race clock is not running, so there is no time to record yet."); return; }
+    if (RaceClock.getState().status !== "running" || RaceClock.countdownMs() > 0) { say("The race clock is not running, so there is no time to record yet."); return; }
     if (finishes[bib]) { say("Bib " + bib + " (" + runnerName(bib) + ") already finished at " + RaceClock.formatFull(finishes[bib].elapsed) + ". Not recorded again."); return; }
     var entry = { bib: bib, elapsed: elapsed, at: firebase.database.ServerValue.TIMESTAMP, by: me ? me.email : "" };
     // A transaction so two helpers entering the same bib can't overwrite the first time.
